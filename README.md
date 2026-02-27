@@ -26,8 +26,7 @@
 
 ## Project Overview
 
-**Project Name:** Counseling Appointment System  
-**Project Number:** Project 5  
+**Project Name:** Counseling Appointment System   
 **Course:** CS360  
 **Group Name:** Fridge  
 **Group Number:** 30
@@ -45,7 +44,7 @@
 > The backlog is maintained using the **GitHub Projects** tab. See the project board linked above for the full, up-to-date list of features and tasks.
 
 ### Screenshot / Overview
-
+(will be added later)
 
 ### Core Features / User Stories
 

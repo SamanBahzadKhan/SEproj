@@ -69,6 +69,11 @@
 
 > Wireframes are designed in Figma. See the Figma link above for the full interactive prototype.
 
+## Object-Oriented Analysis — CRC Cards
+
+![CRC Cards Part 1](crc-cards/crccards1.png)
+![CRC Cards Part 2](crc-cards/crc-card2.png)
+
 
 ## Repository Setup
 

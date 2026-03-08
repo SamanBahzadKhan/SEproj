@@ -65,9 +65,9 @@
 
 ---
 
-## Wireframes / Storyboards
+## User Interface Mockups and Storyboard Sequences:
 
-> Wireframes are designed in Figma. See the Figma link above for the full interactive prototype.
+https://www.figma.com/design/DzU0kC4zTAk8pEPzo6U2af/Untitled?node-id=3-196&t=uHs03rVGzgVsK1wr-1
 
 ## Object-Oriented Analysis — CRC Cards
 

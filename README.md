@@ -67,8 +67,8 @@
 
 ## User Interface Mockups and Storyboard Sequences:
 
-https://www.figma.com/design/DzU0kC4zTAk8pEPzo6U2af/Untitled?node-id=3-196&t=uHs03rVGzgVsK1wr-1
-
+[https://www.figma.com/design/DzU0kC4zTAk8pEPzo6U2af/Untitled?node-id=3-196&t=uHs03rVGzgVsK1wr-1
+](https://www.figma.com/design/dk2YYcR1BGSy4XawKpfIvX/Untitled--Copy-?node-id=0-1&t=BC5YhjqHL7HpvgNS-1)
 ![User Interface Mockups](UImockups.png)
 
 ## Object-Oriented Analysis — CRC Cards

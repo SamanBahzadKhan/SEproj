@@ -69,6 +69,8 @@
 
 https://www.figma.com/design/DzU0kC4zTAk8pEPzo6U2af/Untitled?node-id=3-196&t=uHs03rVGzgVsK1wr-1
 
+![User Interface Mockups](UI.png)
+
 ## Object-Oriented Analysis — CRC Cards
 
 ![CRC Cards Part 1](crc-cards/crccards1.png)

@@ -23,7 +23,7 @@
 
 ### Meeting 2 — [27/2/26]
 **Attendees:** Saman Bahzad Khan, Aurangzaib, Owais Amir, Ishal Rahat, Husnain Khattak  
-**Instructor:** Safa  
+**TA:** Muhammad Mustafa   
 **Mode:** Online  
 
 **Agenda & Discussion:**

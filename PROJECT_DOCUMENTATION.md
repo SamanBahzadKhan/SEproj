@@ -21,7 +21,7 @@
 
 <br>
 
-### Meeting 2 — [10/3/26]
+### Meeting 2 — [27/2/26]
 **Attendees:** Saman Bahzad Khan, Aurangzaib, Owais Amir, Ishal Rahat, Husnain Khattak  
 **Instructor:** Safa  
 **Mode:** Online  
@@ -48,7 +48,7 @@
 
 <br>
 
-### Meeting 3 — [11/3/26]
+### Meeting 3 — [6/3/26]
 **Attendees:** Saman Bahzad Khan, Aurangzaib, Owais Amir, Ishal Rahat, Husnain Khattak  
 **TA:** Muhammad Mustafa  
 **Mode:** Online  

@@ -65,16 +65,129 @@
 
 ---
 
-## User Interface Mockups and Storyboard Sequences:
 
-[Figma Project Link
-](https://www.figma.com/design/dk2YYcR1BGSy4XawKpfIvX/Untitled--Copy-?node-id=0-1&t=BC5YhjqHL7HpvgNS-1)
-![User Interface Mockups](UImockups.png)
+# Phase 2 Deliverables
 
-## Object-Oriented Analysis — CRC Cards
+This repository contains the design artifacts created for **Project Phase 2**.
 
-![CRC Cards Part 1](crc-cards/c1.png)
-![CRC Cards Part 2](crc-cards/c2.png)
+---
+
+# 1. Product Backlog
+
+The product backlog contains a list of user stories describing the functional requirements of the system.
+Each user story includes:
+
+* User Story ID
+* Story description
+* Story points (effort estimation)
+* Risk level (Low / Medium / High)
+* Halfway release indicator
+
+The backlog is maintained using **GitHub Issues**.
+Direct link: https://github.com/orgs/CS360S26fridge/projects/1
+
+---
+
+# 2. CRC Cards
+
+CRC (Class–Responsibility–Collaborator) cards were created to identify the key classes in the system, their responsibilities, and the classes they interact with.
+
+Location in repository:
+
+```
+crc-cards/
+```
+
+Example classes identified:
+
+* Student
+* Counselor
+* Appointment
+* Schedule
+* TimeSlot
+* Notification
+* Admin
+* Feedback
+* Authentication Service
+
+---
+
+# 3. UI Mockups
+
+User interface mockups were designed to visualize the main screens of the application. These mockups represent the expected layout and functionality of the system interface.
+
+Location in repository:
+
+```
+UI_Mockups/
+```
+
+Screens included:
+
+* Splash Screen
+* Login Screen
+* Student Dashboard
+* Counselor Dashboard
+* Appointment Booking Screen
+* Appointment History Screen
+* Notification Screen
+* Profile Screen
+* Admin Dashboard
+
+---
+
+# 4. Storyboards
+
+Storyboards describe interaction scenarios that demonstrate how users interact with the system to perform common tasks.
+
+Location in repository:
+
+```
+docs/storyboard.md
+```
+
+Implemented scenarios:
+
+1. Authentication / Login
+2. Student Books Appointment
+3. Student Cancels or Reschedules Appointment
+4. Counselor Manages Availability
+
+Each storyboard describes:
+
+* reference to the screen involved
+* user actions
+* system responses
+
+---
+
+# Repository Structure
+
+```
+project-repository/
+
+README.md
+
+docs/
+   storyboard.md
+
+crc-cards/
+   c1.png
+   c2.png
+
+mockups/
+   Splash.png
+   Login.png
+   User.png
+   Counselor.png
+   Appointment.png
+   Appointment_hist.png
+   Notification.png
+   Profile.png
+   Admin.png
+```
+
+---
 
 
 ## Repository Setup

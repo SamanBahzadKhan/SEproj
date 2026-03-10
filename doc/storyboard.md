@@ -14,7 +14,9 @@ A user (student or counselor) logs into the CAPS platform to access system featu
 
 ### Step 1 — Open Application
 
-* **Screen:** `Splash.png`
+* **Screen:** 
+
+ ![Splash Screen](../UI_Mockups/Splash.png)
 * **User Action:** The user launches the CAPS application.
 * **System Response:** The system displays the splash screen while loading the application.
 
@@ -22,7 +24,9 @@ A user (student or counselor) logs into the CAPS platform to access system featu
 
 ### Step 2 — Navigate to Login Screen
 
-* **Screen:** `Login.png`
+* **Screen:**
+
+  ![Login Screen](../UI_Mockups/Login.png)
 * **User Action:** The user is presented with the login interface.
 * **System Response:** The system displays input fields for email/username and password.
 
@@ -30,7 +34,9 @@ A user (student or counselor) logs into the CAPS platform to access system featu
 
 ### Step 3 — Enter Credentials
 
-* **Screen:** `Login.png`
+* **Screen:** 
+
+![Login Screen](../UI_Mockups/Login.png)
 * **User Action:** The user enters their email/username and password.
 * **System Response:** The system waits for the user to submit the login form.
 
@@ -38,7 +44,7 @@ A user (student or counselor) logs into the CAPS platform to access system featu
 
 ### Step 4 — Submit Login Request
 
-* **Screen:** `Login.png`
+* **Screen:** 
 * **User Action:** The user clicks the **Login** button.
 * **System Response:** The system verifies the credentials using the authentication service.
 
@@ -46,7 +52,9 @@ A user (student or counselor) logs into the CAPS platform to access system featu
 
 ### Step 5 — Redirect to Dashboard
 
-* **Screen:** `User.png`
+* **Screen:** 
+
+  ![User Screen](../UI_Mockups/User.png)
 * **System Response:**
 
   * If credentials are valid, the user is redirected to their dashboard.
@@ -63,7 +71,11 @@ A student schedules a counseling session with an available counselor.
 
 ### Step 1 — Access Student Dashboard
 
-* **Screen:** `User.png`
+* **Screen:** 
+
+![User Screen](../UI_Mockups/User.png)
+
+  
 * **User Action:** The student logs in and views the dashboard.
 * **System Response:** The system displays available actions such as viewing counselors and appointments.
 
@@ -71,7 +83,10 @@ A student schedules a counseling session with an available counselor.
 
 ### Step 2 — Browse Available Counselors
 
-* **Screen:** `Counselor.png`
+* **Screen:** 
+
+![Counselor Screen](../UI_Mockups/Counselor.png)
+
 * **User Action:** The student browses the list of available counselors.
 * **System Response:** The system displays counselor profiles and availability information.
 
@@ -79,7 +94,10 @@ A student schedules a counseling session with an available counselor.
 
 ### Step 3 — Select Appointment Slot
 
-* **Screen:** `Appointment.png`
+* **Screen:** 
+
+![Appointment Screen](../UI_Mockups/Appointment.png)
+
 * **User Action:** The student chooses a preferred date and available time slot.
 * **System Response:** The system checks whether the selected slot is available.
 
@@ -87,7 +105,9 @@ A student schedules a counseling session with an available counselor.
 
 ### Step 4 — Confirm Appointment Booking
 
-* **Screen:** `Appointment.png`
+* **Screen:** 
+
+![Appointment Screen](../UI_Mockups/Appointment.png)
 * **User Action:** The student confirms the booking.
 * **System Response:** The system creates the appointment record.
 
@@ -95,7 +115,10 @@ A student schedules a counseling session with an available counselor.
 
 ### Step 5 — Receive Confirmation Notification
 
-* **Screen:** `Notification.png`
+* **Screen:** 
+
+![Notification Screen](../UI_Mockups/Notification.png)
+
 * **System Response:**
   The system sends a confirmation notification to the student and updates the counselor’s schedule.
 
@@ -110,7 +133,10 @@ A student modifies an existing counseling appointment by canceling or rescheduli
 
 ### Step 1 — Open Student Dashboard
 
-* **Screen:** `User.png`
+* **Screen:** 
+
+![User Screen](../UI_Mockups/User.png)
+
 * **User Action:** The student navigates to their dashboard.
 * **System Response:** The system displays the student’s appointment options.
 
@@ -118,7 +144,10 @@ A student modifies an existing counseling appointment by canceling or rescheduli
 
 ### Step 2 — View Appointment History
 
-* **Screen:** `Appointment_hist.png`
+* **Screen:** 
+
+![Appointment_history Screen](../UI_Mockups/Appointment_hist.png)
+
 * **User Action:** The student opens the appointment history section.
 * **System Response:** The system displays a list of current and past appointments.
 
@@ -126,7 +155,10 @@ A student modifies an existing counseling appointment by canceling or rescheduli
 
 ### Step 3 — Select Appointment to Modify
 
-* **Screen:** `Appointment_hist.png`
+* **Screen:** 
+
+![Appointment_history Screen](../UI_Mockups/Appointment_hist.png)
+
 * **User Action:** The student selects the appointment they wish to modify.
 * **System Response:** The system shows available options such as cancel or reschedule.
 
@@ -134,7 +166,10 @@ A student modifies an existing counseling appointment by canceling or rescheduli
 
 ### Step 4 — Cancel or Reschedule Appointment
 
-* **Screen:** `Appointment.png`
+* **Screen:** 
+
+![Appointment Screen](../UI_Mockups/Appointment.png)
+
 * **User Action:**
 
   * If canceling, the student confirms cancellation.
@@ -145,7 +180,7 @@ A student modifies an existing counseling appointment by canceling or rescheduli
 
 ### Step 5 — System Sends Update Notification
 
-* **Screen:** `Notification.png`
+* **Screen:** 
 * **System Response:**
   The system notifies the student and counselor about the updated appointment status.
 
@@ -160,7 +195,7 @@ A counselor updates their availability schedule so students can book appointment
 
 ### Step 1 — Counselor Login
 
-* **Screen:** `Login.png`
+* **Screen:** 
 * **User Action:** The counselor logs into the CAPS system.
 * **System Response:** The system verifies credentials and redirects to the counselor dashboard.
 
@@ -168,7 +203,10 @@ A counselor updates their availability schedule so students can book appointment
 
 ### Step 2 — Access Counselor Dashboard
 
-* **Screen:** `Counselor.png`
+* **Screen:** 
+
+![Counselor Screen](../UI_Mockups/Counselor.png)
+
 * **User Action:** The counselor opens the dashboard to manage appointments and schedules.
 * **System Response:** The system displays the counselor’s current availability and appointments.
 
@@ -176,7 +214,10 @@ A counselor updates their availability schedule so students can book appointment
 
 ### Step 3 — Update Availability
 
-* **Screen:** `Appointment.png`
+* **Screen:** 
+
+![Appointment Screen](../UI_Mockups/Appointment.png)
+
 * **User Action:** The counselor adds, removes, or modifies available time slots.
 * **System Response:** The system updates the availability schedule.
 
@@ -184,7 +225,10 @@ A counselor updates their availability schedule so students can book appointment
 
 ### Step 4 — Save Schedule Changes
 
-* **Screen:** `Appointment.png`
+* **Screen:** 
+
+ ![Appointment Screen](../UI_Mockups/Appointment.png)
+
 * **User Action:** The counselor saves the updated schedule.
 * **System Response:** The system records the new availability.
 
@@ -192,7 +236,10 @@ A counselor updates their availability schedule so students can book appointment
 
 ### Step 5 — Updated Availability Visible to Students
 
-* **Screen:** `Counselor.png`
+* **Screen:** 
+
+![Counselor Screen](../UI_Mockups/Counselor.png)
+
 * **System Response:**
   Students can now view the updated availability when booking appointments.
 

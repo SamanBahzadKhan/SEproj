@@ -99,6 +99,9 @@ Location in repository:
 crc-cards/
 ```
 
+![CRC Cards Part 1](crc-cards/c1.png)
+![CRC Cards Part 2](crc-cards/c2.png)
+
 Example classes identified:
 
 * Student

@@ -127,6 +127,7 @@ Location in repository:
 ```
 UI_Mockups/
 ```
+![UI Mockups](UI_Mockups/UImockups.png) 
 
 Screens included:
 

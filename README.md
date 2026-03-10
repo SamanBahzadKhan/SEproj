@@ -186,6 +186,7 @@ crc-cards/
 mockups/
    Splash.png
    Login.png
+   UImockups
    User.png
    Counselor.png
    Appointment.png
@@ -193,6 +194,8 @@ mockups/
    Notification.png
    Profile.png
    Admin.png
+
+
 ```
 
 ---

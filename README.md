@@ -167,7 +167,7 @@ Implemented scenarios:
 
 Each storyboard describes:
 
-* reference to the screen involved
+* the screen 
 * user actions
 * system responses
 

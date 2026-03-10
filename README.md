@@ -84,6 +84,7 @@ Each user story includes:
 * Halfway release indicator
 
 The backlog is maintained using **GitHub Issues**.
+
 Direct link: https://github.com/orgs/CS360S26fridge/projects/1
 
 ---
@@ -115,6 +116,9 @@ Example classes identified:
 # 3. UI Mockups
 
 User interface mockups were designed to visualize the main screens of the application. These mockups represent the expected layout and functionality of the system interface.
+
+
+https://www.figma.com/design/DzU0kC4zTAk8pEPzo6U2af/Untitled?node-id=3-195&t=uHs03rVGzgVsK1wr-1
 
 Location in repository:
 

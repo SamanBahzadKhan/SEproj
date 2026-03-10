@@ -117,8 +117,7 @@ Example classes identified:
 
 User interface mockups were designed to visualize the main screens of the application. These mockups represent the expected layout and functionality of the system interface.
 
-
-https://www.figma.com/design/DzU0kC4zTAk8pEPzo6U2af/Untitled?node-id=3-195&t=uHs03rVGzgVsK1wr-1
+https://www.figma.com/design/dk2YYcR1BGSy4XawKpfIvX/UI-mockups?node-id=0-1&t=QIxRpU81BfCgoctf-0
 
 Location in repository:
 

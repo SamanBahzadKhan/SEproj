@@ -145,7 +145,7 @@ Screens included:
  The prototype is available here:
  https://www.figma.com/proto/dk2YYcR1BGSy4XawKpfIvX/UI-mockups?node-id=3-195&t=zTCo6jLrJ8p1zkOM-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=3%3A195
 
-![Prototype](UI_Mockups/prototypes .png) 
+![Prototype](UI_Mockups/prototypes.png) 
 
  
 # 4. Storyboards

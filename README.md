@@ -138,7 +138,8 @@ Screens included:
 * Admin Dashboard
 
 ---
-
+ The prototype is available here:
+ https://www.figma.com/proto/dk2YYcR1BGSy4XawKpfIvX/UI-mockups?node-id=3-195&t=zTCo6jLrJ8p1zkOM-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=3%3A195
 # 4. Storyboards
 
 Storyboards describe interaction scenarios that demonstrate how users interact with the system to perform common tasks.

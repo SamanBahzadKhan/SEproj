@@ -4,9 +4,9 @@
 
 ## Quick Links
 - [GitHub Project Board](#) *(https://github.com/orgs/CS360S26fridge/projects/1/views/1?verticalGroupedBy%5BcolumnId%5D=Status)*
-- [Figma Wireframes](#) *(add link here)*
-- [Backlog](#project-backlog)
-- [Meeting Minutes](#meeting-minutes)
+- [Figma Wireframes](#) *(https://www.figma.com/design/dk2YYcR1BGSy4XawKpfIvX/UI-mockups?node-id=0-1&t=QIxRpU81BfCgoctf-0)*
+- [Backlog]*(https://github.com/CS360S26fridge/fridge-project/blob/main/doc/storyboard.md)*
+- [Meeting Minutes]*(https://github.com/CS360S26fridge/fridge-project/blob/main/PROJECT_DOCUMENTATION.md)*
 
 ---
 
@@ -144,6 +144,10 @@ Screens included:
 ---
  The prototype is available here:
  https://www.figma.com/proto/dk2YYcR1BGSy4XawKpfIvX/UI-mockups?node-id=3-195&t=zTCo6jLrJ8p1zkOM-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=3%3A195
+
+![Prototype](UI_Mockups/prototypes.png) 
+
+ 
 # 4. Storyboards
 
 Storyboards describe interaction scenarios that demonstrate how users interact with the system to perform common tasks.

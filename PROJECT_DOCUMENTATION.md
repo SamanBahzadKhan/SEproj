@@ -61,3 +61,31 @@
 **Action Items:**
 - [ ] TA to review CRC Cards, Storyboard, and Project Backlog on Sunday
 - [ ] Aurangzaib to take on Scrum Master responsibilities going forward
+
+<br> 
+
+### Meeting 4 — [26/3/26]
+**Attendees:** Saman Bahzad Khan, Aurangzaib, Owais Amir, Ishal Rahat, Husnain Khattak   
+**Mode:** Online 
+
+---
+
+## Agenda & Discussion
+
+* The team reviewed and discussed all **Project Part 3 deliverables** to ensure clarity on requirements and expectations.
+* The UML class diagrams prepared earlier by a team member (Husnain) were finalized as the implementation reference.
+* Based on the UML design, the team agreed to begin development of the **working prototype**.
+* Project features were divided equally among all team members to maintain balanced workload and contribution.
+* The team set an internal deadline of **29 March 2026** to complete the working prototype phase.
+* It was decided that remaining deliverables will be started after successful completion of the prototype.
+* The team discussed adopting a **Test-Driven Development (TDD)** approach for implementing test cases.
+* Before finalizing the testing methodology, the team will confirm with the TA whether **TDD or a conventional testing approach** is required or preferred.
+
+---
+
+## Action Items
+
+* All members to complete assigned prototype features by **29 March 2026**.
+* Team to consult TA regarding approval of **TDD vs conventional testing approach**.
+* Team to proceed with remaining deliverables after prototype completion.
+

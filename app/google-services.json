@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "744198650286",
+    "project_id": "fridge-156bb",
+    "storage_bucket": "fridge-156bb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:744198650286:android:bfa1a7ffa589631b17f03f",
+        "android_client_info": {
+          "package_name": "com.fridge.caps"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3gVpNB28YchxuITdD1v8Pded__3jOjvQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

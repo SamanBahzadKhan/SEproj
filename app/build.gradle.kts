@@ -1,4 +1,6 @@
 plugins {
+
+    id("com.google.gms.google-services")
     alias(libs.plugins.android.application)
 }
 
@@ -41,4 +43,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    // Firebase
+    implementation("com.google.firebase:firebase-auth:22.3.0")
+    implementation("com.google.firebase:firebase-firestore:24.10.0")
+// Google Play Services (required for Firebase)
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
 }

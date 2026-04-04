@@ -43,7 +43,12 @@ public class FeedbackController {
         db.collection(FEEDBACK)
                 .document(id)
                 .set(feedback)
-                .addOnSuccessListener(unused -> callback.onSuccess())
+                .addOnSuccessListener(unused ->
+                        db.collection("appointments")
+                                .document(appointmentId)
+                                .update("feedbackSubmitted", true)
+                                .addOnSuccessListener(u2 -> callback.onSuccess())
+                                .addOnFailureListener(e -> callback.onFailure(e.getMessage())))
                 .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
     }
 }

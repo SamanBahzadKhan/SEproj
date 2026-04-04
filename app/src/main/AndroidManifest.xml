@@ -25,10 +25,18 @@
 
         <activity android:name=".views.activities.LoginActivity" />
         <activity android:name=".views.activities.RegisterActivity" />
+        <activity android:name=".views.activities.StudentDashboardActivity" />
+        <activity android:name=".views.activities.CounselorDashboardActivity" />
         <activity android:name=".views.activities.AdminDashboardActivity" />
+        <activity android:name=".views.activities.CounselorListActivity" />
         <activity android:name=".views.activities.CounselorProfileActivity" />
         <activity android:name=".views.activities.TimeSlotsActivity" />
-
+        <activity android:name=".views.activities.BookAppointmentActivity" />
+        <activity android:name=".views.activities.ProfileActivity" />
+        <activity android:name=".views.activities.NotificationsActivity" />
+        <activity android:name=".views.activities.AppointmentsActivity" />
+        <activity android:name=".views.activities.FeedbackActivity" />
+        <activity android:name=".views.activities.AvailabilityActivity" />
     </application>
 
 </manifest>

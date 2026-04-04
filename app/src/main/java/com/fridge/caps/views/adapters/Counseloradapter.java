@@ -12,6 +12,7 @@ import com.fridge.caps.R;
 import com.fridge.caps.models.Counselor;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * CounselorAdapter.java
@@ -45,6 +46,7 @@ public class CounselorAdapter extends RecyclerView.Adapter<CounselorAdapter.Coun
         Counselor c = counselors.get(position);
         holder.tvName.setText(c.getName());
         holder.tvSpecialization.setText(c.getSpecialization());
+        holder.tvRating.setText(String.format(Locale.getDefault(), "★ %.1f", c.getRating()));
         holder.tvAccepting.setText(c.isAcceptingClients() ? "Accepting" : "Not Accepting");
         holder.tvAccepting.setTextColor(c.isAcceptingClients()
                 ? holder.itemView.getContext().getColor(android.R.color.holo_green_dark)
@@ -56,12 +58,13 @@ public class CounselorAdapter extends RecyclerView.Adapter<CounselorAdapter.Coun
     public int getItemCount() { return counselors.size(); }
 
     static class CounselorViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvSpecialization, tvAccepting;
+        TextView tvName, tvSpecialization, tvAccepting, tvRating;
         CounselorViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName           = itemView.findViewById(R.id.tvName);
             tvSpecialization = itemView.findViewById(R.id.tvSpecialization);
             tvAccepting      = itemView.findViewById(R.id.tvAccepting);
+            tvRating         = itemView.findViewById(R.id.tvRating);
         }
     }
 }

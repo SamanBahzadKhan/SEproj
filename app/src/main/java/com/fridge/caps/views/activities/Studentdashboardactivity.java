@@ -63,8 +63,8 @@ public class StudentDashboardActivity extends AppCompatActivity {
         // Quick action buttons
         findViewById(R.id.btnBookAppointment).setOnClickListener(v ->
                 startActivity(new Intent(this, CounselorListActivity.class)));
-        findViewById(R.id.btnViewCounselors).setOnClickListener(v ->
-                startActivity(new Intent(this, CounselorListActivity.class)));
+        findViewById(R.id.btnViewProfile).setOnClickListener(v ->
+                startActivity(new Intent(this, ProfileActivity.class)));
         findViewById(R.id.btnNotifications).setOnClickListener(v ->
                 startActivity(new Intent(this, NotificationsActivity.class)));
         findViewById(R.id.btnHistory).setOnClickListener(v ->
@@ -124,12 +124,14 @@ public class StudentDashboardActivity extends AppCompatActivity {
                 tvNoUpcoming.setVisibility(upcoming.isEmpty() ? View.VISIBLE : View.GONE);
                 tvNoPast.setVisibility(past.isEmpty() ? View.VISIBLE : View.GONE);
 
-                rvUpcoming.setAdapter(new AppointmentAdapter(upcoming, true,
+                rvUpcoming.setAdapter(new AppointmentAdapter(upcoming,
+                        AppointmentAdapter.MODE_STUDENT_UPCOMING,
                         appt -> cancelAppointment(appt),
                         appt -> rescheduleAppointment(appt),
-                        null));
+                        null, null, null));
 
-                rvPast.setAdapter(new AppointmentAdapter(past, false,
+                rvPast.setAdapter(new AppointmentAdapter(past,
+                        AppointmentAdapter.MODE_STUDENT_PAST,
                         null, null,
                         appt -> {
                             Intent i = new Intent(StudentDashboardActivity.this,
@@ -138,7 +140,8 @@ public class StudentDashboardActivity extends AppCompatActivity {
                             i.putExtra("counselorId", appt.getCounselorId());
                             i.putExtra("counselorName", appt.getCounselorName());
                             startActivity(i);
-                        }));
+                        },
+                        null, null));
             }
 
             @Override
@@ -178,8 +181,9 @@ public class StudentDashboardActivity extends AppCompatActivity {
     private void rescheduleAppointment(Appointment appt) {
         Intent i = new Intent(this, TimeSlotsActivity.class);
         i.putExtra(TimeSlotsActivity.EXTRA_COUNSELOR_ID, appt.getCounselorId());
-        i.putExtra("rescheduleAppointmentId", appt.getAppointmentId());
-        i.putExtra("oldSlotId", appt.getTimeSlotId());
+        i.putExtra(TimeSlotsActivity.EXTRA_COUNSELOR_NAME, appt.getCounselorName());
+        i.putExtra(TimeSlotsActivity.EXTRA_RESCHEDULE_APPOINTMENT_ID, appt.getAppointmentId());
+        i.putExtra(TimeSlotsActivity.EXTRA_OLD_SLOT_ID, appt.getTimeSlotId());
         startActivity(i);
     }
 }

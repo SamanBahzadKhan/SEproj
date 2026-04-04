@@ -143,7 +143,6 @@ public class AppointmentController {
     public void getCounselorAppointments(String counselorId, AppointmentListCallback callback) {
         db.collection(APPOINTMENTS)
                 .whereEqualTo("counselorId", counselorId)
-                .whereEqualTo("status", AppointmentStatus.CONFIRMED)
                 .get()
                 .addOnSuccessListener(query -> {
                     List<Appointment> list = new ArrayList<>();
@@ -187,6 +186,17 @@ public class AppointmentController {
         db.collection(APPOINTMENTS)
                 .document(appointmentId)
                 .update("status", AppointmentStatus.NO_SHOW)
+                .addOnSuccessListener(u -> callback.onSuccess())
+                .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
+    }
+
+    /**
+     * Marks an appointment as completed (session held).
+     */
+    public void markComplete(String appointmentId, AppointmentCallback callback) {
+        db.collection(APPOINTMENTS)
+                .document(appointmentId)
+                .update("status", AppointmentStatus.COMPLETED)
                 .addOnSuccessListener(u -> callback.onSuccess())
                 .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
     }

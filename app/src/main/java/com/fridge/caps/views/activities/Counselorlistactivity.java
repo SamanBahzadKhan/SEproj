@@ -2,7 +2,10 @@ package com.fridge.caps.views.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,21 +19,23 @@ import com.fridge.caps.controllers.CounselorController;
 import com.fridge.caps.models.Counselor;
 import com.fridge.caps.views.adapters.CounselorAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 /**
- * CounselorListActivity.java
- * Displays all available counselors for students to browse (US-3).
- * Tapping a counselor opens their full profile.
- * View in the MVC pattern.
+ * CounselorListActivity — browse counsellors.
  */
 public class CounselorListActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private ProgressBar  progressBar;
     private TextView     tvEmpty;
+    private EditText     etSearch;
 
     private CounselorController counselorController;
+    private List<Counselor> allCounselors = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,13 +47,22 @@ public class CounselorListActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerViewCounselors);
         progressBar  = findViewById(R.id.progressBar);
         tvEmpty      = findViewById(R.id.tvEmpty);
+        etSearch     = findViewById(R.id.etSearch);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Counselors");
+            getSupportActionBar().setTitle("Counsellors");
         }
+
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                applyFilter(s != null ? s.toString() : "");
+            }
+            @Override public void afterTextChanged(Editable s) {}
+        });
 
         loadCounselors();
     }
@@ -60,17 +74,8 @@ public class CounselorListActivity extends AppCompatActivity {
             @Override
             public void onSuccess(List<Counselor> counselors) {
                 progressBar.setVisibility(View.GONE);
-                if (counselors.isEmpty()) {
-                    tvEmpty.setVisibility(View.VISIBLE);
-                } else {
-                    recyclerView.setAdapter(new CounselorAdapter(counselors, counselor -> {
-                        Intent i = new Intent(CounselorListActivity.this,
-                                CounselorProfileActivity.class);
-                        i.putExtra(CounselorProfileActivity.EXTRA_COUNSELOR_ID,
-                                counselor.getUserId());
-                        startActivity(i);
-                    }));
-                }
+                allCounselors = counselors;
+                applyFilter(etSearch.getText().toString());
             }
 
             @Override
@@ -81,6 +86,33 @@ public class CounselorListActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void applyFilter(String query) {
+        String q = query.trim().toLowerCase(Locale.getDefault());
+        List<Counselor> filtered = allCounselors.stream()
+                .filter(c -> {
+                    if (q.isEmpty()) return true;
+                    String name = c.getName() != null ? c.getName().toLowerCase(Locale.getDefault()) : "";
+                    String spec = c.getSpecialization() != null
+                            ? c.getSpecialization().toLowerCase(Locale.getDefault()) : "";
+                    return name.contains(q) || spec.contains(q);
+                })
+                .collect(Collectors.toList());
+
+        if (filtered.isEmpty()) {
+            tvEmpty.setVisibility(View.VISIBLE);
+            recyclerView.setAdapter(null);
+        } else {
+            tvEmpty.setVisibility(View.GONE);
+            recyclerView.setAdapter(new CounselorAdapter(filtered, counselor -> {
+                Intent i = new Intent(CounselorListActivity.this,
+                        CounselorProfileActivity.class);
+                i.putExtra(CounselorProfileActivity.EXTRA_COUNSELOR_ID,
+                        counselor.getUserId());
+                startActivity(i);
+            }));
+        }
     }
 
     @Override

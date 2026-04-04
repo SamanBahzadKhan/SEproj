@@ -2,4 +2,12 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="caps_primary">#5BA3D9</color>
+    <color name="caps_bg_light">#DAEEFF</color>
+    <color name="caps_card">#F0F8FF</color>
+    <color name="caps_text_dark">#2A4A6B</color>
+    <color name="caps_green">#4CAF50</color>
+    <color name="caps_amber">#FFA000</color>
+    <color name="caps_red">#F44336</color>
+    <color name="caps_grey">#9E9E9E</color>
 </resources>

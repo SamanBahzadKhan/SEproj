@@ -5,7 +5,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,18 +15,12 @@ import com.fridge.caps.R;
 import com.fridge.caps.controllers.AppointmentController;
 import com.fridge.caps.controllers.NotificationController;
 import com.fridge.caps.models.Appointment;
-import com.fridge.caps.models.TimeSlot;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
 /**
- * BookAppointmentActivity.java
- * Handles confirmation and booking of an appointment (US-6).
- * Receives selected time slot and counselor info via Intent.
- * View in the MVC pattern.
+ * Confirms booking or reschedules an existing appointment.
  */
 public class BookAppointmentActivity extends AppCompatActivity {
 
@@ -35,6 +28,9 @@ public class BookAppointmentActivity extends AppCompatActivity {
     public static final String EXTRA_COUNSELOR_NAME = "counselor_name";
     public static final String EXTRA_SLOT_ID        = "slot_id";
     public static final String EXTRA_SLOT_TIME      = "slot_time";
+    public static final String EXTRA_SLOT_START_MS  = "slot_start_ms";
+    public static final String EXTRA_RESCHEDULE_APPOINTMENT_ID = "reschedule_appointment_id";
+    public static final String EXTRA_OLD_SLOT_ID    = "old_slot_id";
 
     private TextView    tvCounselorName, tvSelectedTime;
     private RadioGroup  rgType;
@@ -46,6 +42,9 @@ public class BookAppointmentActivity extends AppCompatActivity {
     private NotificationController notificationController;
 
     private String counselorId, counselorName, slotId, slotTime;
+    private long   slotStartMs;
+    private String rescheduleAppointmentId;
+    private String oldSlotId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +58,9 @@ public class BookAppointmentActivity extends AppCompatActivity {
         counselorName = getIntent().getStringExtra(EXTRA_COUNSELOR_NAME);
         slotId        = getIntent().getStringExtra(EXTRA_SLOT_ID);
         slotTime      = getIntent().getStringExtra(EXTRA_SLOT_TIME);
+        slotStartMs   = getIntent().getLongExtra(EXTRA_SLOT_START_MS, 0L);
+        rescheduleAppointmentId = getIntent().getStringExtra(EXTRA_RESCHEDULE_APPOINTMENT_ID);
+        oldSlotId     = getIntent().getStringExtra(EXTRA_OLD_SLOT_ID);
 
         tvCounselorName = findViewById(R.id.tvCounselorName);
         tvSelectedTime  = findViewById(R.id.tvSelectedTime);
@@ -70,12 +72,22 @@ public class BookAppointmentActivity extends AppCompatActivity {
         tvCounselorName.setText(counselorName);
         tvSelectedTime.setText(slotTime);
 
+        if (rescheduleAppointmentId != null && !rescheduleAppointmentId.isEmpty()) {
+            btnConfirm.setText("RESCHEDULE");
+        }
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle("Book Appointment");
         }
 
-        btnConfirm.setOnClickListener(v -> confirmBooking());
+        btnConfirm.setOnClickListener(v -> {
+            if (rescheduleAppointmentId != null && !rescheduleAppointmentId.isEmpty()) {
+                confirmReschedule();
+            } else {
+                confirmBooking();
+            }
+        });
     }
 
     private void confirmBooking() {
@@ -90,7 +102,6 @@ public class BookAppointmentActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         btnConfirm.setEnabled(false);
 
-        // Get student name first
         FirebaseFirestore.getInstance().collection("students").document(uid)
                 .get()
                 .addOnSuccessListener(doc -> {
@@ -100,12 +111,14 @@ public class BookAppointmentActivity extends AppCompatActivity {
                     Appointment appointment = new Appointment(
                             "", uid, counselorId, counselorName,
                             studentName, slotId, null, slotTime, type, notes);
+                    if (slotStartMs > 0) {
+                        appointment.setDate(new Timestamp(new java.util.Date(slotStartMs)));
+                    }
 
                     appointmentController.bookAppointment(appointment,
                             new AppointmentController.AppointmentCallback() {
                                 @Override
                                 public void onSuccess() {
-                                    // Send confirmation notification
                                     notificationController.sendConfirmation(
                                             uid, counselorName, slotTime);
                                     progressBar.setVisibility(View.GONE);
@@ -122,6 +135,44 @@ public class BookAppointmentActivity extends AppCompatActivity {
                                             "Failed: " + error, Toast.LENGTH_SHORT).show();
                                 }
                             });
+                })
+                .addOnFailureListener(e -> {
+                    progressBar.setVisibility(View.GONE);
+                    btnConfirm.setEnabled(true);
+                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void confirmReschedule() {
+        String uid = FirebaseAuth.getInstance().getCurrentUser() != null
+                ? FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
+        if (uid == null || rescheduleAppointmentId == null || oldSlotId == null || slotId == null) {
+            Toast.makeText(this, "Missing data for reschedule.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        progressBar.setVisibility(View.VISIBLE);
+        btnConfirm.setEnabled(false);
+
+        appointmentController.rescheduleAppointment(
+                rescheduleAppointmentId, oldSlotId, slotId, slotTime,
+                new AppointmentController.AppointmentCallback() {
+                    @Override
+                    public void onSuccess() {
+                        notificationController.sendReschedule(uid, counselorName, slotTime);
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(BookAppointmentActivity.this,
+                                "Appointment rescheduled.", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+
+                    @Override
+                    public void onFailure(String error) {
+                        progressBar.setVisibility(View.GONE);
+                        btnConfirm.setEnabled(true);
+                        Toast.makeText(BookAppointmentActivity.this,
+                                "Failed: " + error, Toast.LENGTH_SHORT).show();
+                    }
                 });
     }
 

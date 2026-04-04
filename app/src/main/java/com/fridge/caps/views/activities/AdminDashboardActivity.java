@@ -19,20 +19,21 @@ import com.fridge.caps.controllers.AppointmentController;
 import com.fridge.caps.controllers.AuthController;
 import com.fridge.caps.controllers.CounselorController;
 import com.fridge.caps.models.Appointment;
+import com.fridge.caps.models.AppointmentStatus;
 import com.fridge.caps.models.Counselor;
 import com.fridge.caps.views.adapters.AppointmentAdapter;
 import com.fridge.caps.views.adapters.CounselorAdapter;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
- * AdminDashboardActivity.java
- * Admin panel for viewing all appointments and managing counselors (US-16, US-17).
- * View in the MVC pattern.
+ * Admin panel — overview stats, appointments, counsellors.
  */
 public class AdminDashboardActivity extends AppCompatActivity {
 
-    private TextView     tvTotalAppts, tvTotalCounselors;
+    private TextView     tvTotalAppts, tvTotalCounselors, tvTotalStudents, tvNoShows;
     private RecyclerView rvAppointments, rvCounselors;
     private ProgressBar  progressBar;
     private Button       btnAddCounselor;
@@ -50,12 +51,14 @@ public class AdminDashboardActivity extends AppCompatActivity {
         counselorController   = new CounselorController();
         authController        = new AuthController();
 
-        tvTotalAppts     = findViewById(R.id.tvTotalAppts);
-        tvTotalCounselors= findViewById(R.id.tvTotalCounselors);
-        rvAppointments   = findViewById(R.id.rvAppointments);
-        rvCounselors     = findViewById(R.id.rvCounselors);
-        progressBar      = findViewById(R.id.progressBar);
-        btnAddCounselor  = findViewById(R.id.btnAddCounselor);
+        tvTotalAppts      = findViewById(R.id.tvTotalAppts);
+        tvTotalCounselors = findViewById(R.id.tvTotalCounselors);
+        tvTotalStudents   = findViewById(R.id.tvTotalStudents);
+        tvNoShows         = findViewById(R.id.tvNoShows);
+        rvAppointments    = findViewById(R.id.rvAppointments);
+        rvCounselors      = findViewById(R.id.rvCounselors);
+        progressBar       = findViewById(R.id.progressBar);
+        btnAddCounselor   = findViewById(R.id.btnAddCounselor);
 
         rvAppointments.setLayoutManager(new LinearLayoutManager(this));
         rvCounselors.setLayoutManager(new LinearLayoutManager(this));
@@ -76,12 +79,38 @@ public class AdminDashboardActivity extends AppCompatActivity {
     private void loadAll() {
         progressBar.setVisibility(View.VISIBLE);
 
+        FirebaseFirestore.getInstance().collection("students").get()
+                .addOnSuccessListener(q -> {
+                    if (tvTotalStudents != null) {
+                        tvTotalStudents.setText(String.valueOf(q.size()));
+                    }
+                });
+
         appointmentController.getAllAppointments(new AppointmentController.AppointmentListCallback() {
             @Override
             public void onSuccess(List<Appointment> appointments) {
                 tvTotalAppts.setText(String.valueOf(appointments.size()));
-                rvAppointments.setAdapter(new AppointmentAdapter(
-                        appointments, false, null, null, null));
+                int noShowToday = 0;
+                Calendar cal = Calendar.getInstance();
+                cal.set(Calendar.HOUR_OF_DAY, 0);
+                cal.set(Calendar.MINUTE, 0);
+                cal.set(Calendar.SECOND, 0);
+                cal.set(Calendar.MILLISECOND, 0);
+                long start = cal.getTimeInMillis();
+                long end = start + 86400000L;
+                for (Appointment a : appointments) {
+                    if (a.getStatus() == AppointmentStatus.NO_SHOW
+                            && a.getDate() != null) {
+                        long t = a.getDate().toDate().getTime();
+                        if (t >= start && t < end) noShowToday++;
+                    }
+                }
+                if (tvNoShows != null) {
+                    tvNoShows.setText(String.valueOf(noShowToday));
+                }
+                rvAppointments.setAdapter(new AppointmentAdapter(appointments,
+                        AppointmentAdapter.MODE_ADMIN,
+                        null, null, null, null, null));
                 progressBar.setVisibility(View.GONE);
             }
             @Override public void onFailure(String e) { progressBar.setVisibility(View.GONE); }
@@ -111,7 +140,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         EditText etPass  = dialogView.findViewById(R.id.etPassword);
 
         new AlertDialog.Builder(this)
-                .setTitle("Add New Counselor")
+                .setTitle("Add New Counsellor")
                 .setView(dialogView)
                 .setPositiveButton("Add", (d, w) -> {
                     String name  = etName.getText().toString().trim();
@@ -122,18 +151,18 @@ public class AdminDashboardActivity extends AppCompatActivity {
                         Toast.makeText(this, "Name and email required.", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    // Register counselor via Firebase Auth + Firestore
-                    authController.registerStudent(name, email, pass, "", spec, "", new AuthController.RegisterCallback() {
-                        @Override public void onSuccess() {
-                            Toast.makeText(AdminDashboardActivity.this,
-                                    "Counselor added!", Toast.LENGTH_SHORT).show();
-                            loadAll();
-                        }
-                        @Override public void onFailure(String error) {
-                            Toast.makeText(AdminDashboardActivity.this,
-                                    "Failed: " + error, Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    authController.registerCounselor(name, email, pass, spec,
+                            new AuthController.RegisterCallback() {
+                                @Override public void onSuccess() {
+                                    Toast.makeText(AdminDashboardActivity.this,
+                                            "Counsellor added.", Toast.LENGTH_SHORT).show();
+                                    loadAll();
+                                }
+                                @Override public void onFailure(String error) {
+                                    Toast.makeText(AdminDashboardActivity.this,
+                                            "Failed: " + error, Toast.LENGTH_SHORT).show();
+                                }
+                            });
                 })
                 .setNegativeButton("Cancel", null)
                 .show();

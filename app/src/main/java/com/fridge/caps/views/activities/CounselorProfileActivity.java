@@ -32,6 +32,7 @@ public class CounselorProfileActivity extends AppCompatActivity {
 
     private CounselorController counselorController;
     private String counselorId;
+    private String loadedCounselorName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +67,9 @@ public class CounselorProfileActivity extends AppCompatActivity {
         btnViewSlots.setOnClickListener(v -> {
             Intent intent = new Intent(this, TimeSlotsActivity.class);
             intent.putExtra(TimeSlotsActivity.EXTRA_COUNSELOR_ID, counselorId);
+            if (loadedCounselorName != null) {
+                intent.putExtra(TimeSlotsActivity.EXTRA_COUNSELOR_NAME, loadedCounselorName);
+            }
             startActivity(intent);
         });
     }
@@ -94,6 +98,7 @@ public class CounselorProfileActivity extends AppCompatActivity {
     }
 
     private void populateUI(Counselor counselor) {
+        loadedCounselorName = counselor.getName();
         tvName.setText(counselor.getName());
         tvSpecialization.setText(counselor.getSpecialization());
         tvBio.setText(counselor.getBio());

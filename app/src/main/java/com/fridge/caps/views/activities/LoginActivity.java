@@ -54,8 +54,7 @@ public class LoginActivity extends AppCompatActivity {
         tvRegisterLink.setOnClickListener(v ->
                 startActivity(new Intent(this, RegisterActivity.class)));
 
-        btnCounselorLogin.setOnClickListener(v ->
-                Toast.makeText(this, "Counsellor login coming soon.", Toast.LENGTH_SHORT).show());
+        btnCounselorLogin.setOnClickListener(v -> handleCounselorLogin());
 
         btnAdminLogin.setOnClickListener(v ->
                 startActivity(new Intent(this, AdminDashboardActivity.class)));
@@ -88,10 +87,36 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void goToDashboard() {
-        Intent intent = new Intent(this, AdminDashboardActivity.class);
+        Intent intent = new Intent(this, StudentDashboardActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+    }
+
+    private void handleCounselorLogin() {
+        String email    = etEmail.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Email and password are required.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        showLoading(true);
+        authController.loginCounselor(email, password, new AuthController.LoginCallback() {
+            @Override
+            public void onSuccess() {
+                showLoading(false);
+                Intent intent = new Intent(LoginActivity.this, CounselorDashboardActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                showLoading(false);
+                Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void showLoading(boolean isLoading) {

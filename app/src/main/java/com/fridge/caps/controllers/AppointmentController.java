@@ -14,6 +14,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
@@ -174,6 +175,14 @@ public class AppointmentController {
                 });
     }
 
+    /**
+     * Maps raw {@link TimeSlot} list to {@link Appointment} list with counselor/student names
+     * (same as internal {@link #enrichAndMap}).
+     */
+    public void enrichSlotsToAppointments(List<TimeSlot> slots, AppointmentListCallback callback) {
+        enrichAndMap(slots, callback);
+    }
+
     public void getStudentAppointments(AppointmentListCallback callback) {
         String uid = currentUid();
         if (uid == null) {
@@ -268,6 +277,80 @@ public class AppointmentController {
                     Log.e(TAG, e.getMessage() != null ? e.getMessage() : "confirmPending", e);
                     callback.onFailure(e.getMessage() != null ? e.getMessage() : "Confirm failed");
                 });
+    }
+
+    /** Stable document id for counsellor + date + start time. */
+    public static String slotDocumentId(String counselorId, String date, String startTime) {
+        String safe = startTime == null ? "slot" : startTime.replaceAll("[^A-Za-z0-9]", "");
+        return counselorId + "_" + date + "_" + safe;
+    }
+
+    /**
+     * Student books a new concrete hour from availability (creates / merges timeslot doc).
+     */
+    public void createBookingFromAvailability(String counselorId, String date, String startTime,
+                                            String period, String appointmentType,
+                                            String studentId, String studentName, String notes,
+                                            AppointmentCallback callback) {
+        String docId = slotDocumentId(counselorId, date, startTime);
+        DocumentReference ref = db.collection(TIMESLOTS).document(docId);
+        db.runTransaction(transaction -> {
+            DocumentSnapshot snap = transaction.get(ref);
+            if (snap.exists()) {
+                if (Boolean.TRUE.equals(snap.getBoolean("isBooked"))) {
+                    throw new FirebaseFirestoreException("Slot taken",
+                            FirebaseFirestoreException.Code.ABORTED);
+                }
+            }
+            Map<String, Object> data = new HashMap<>();
+            data.put("counselorId", counselorId);
+            data.put("date", date);
+            data.put("startTime", startTime);
+            data.put("period", period);
+            data.put("appointmentType", appointmentType != null ? appointmentType : "In-Person");
+            data.put("isBooked", true);
+            data.put("status", "PENDING");
+            data.put("studentId", studentId);
+            data.put("studentName", studentName != null ? studentName : "");
+            data.put("notes", notes != null ? notes : "");
+            data.put("bookedAt", System.currentTimeMillis());
+            data.put("feedbackSubmitted", false);
+            data.put("createdAt", String.valueOf(System.currentTimeMillis()));
+            if (snap.exists()) {
+                transaction.set(ref, data, SetOptions.merge());
+            } else {
+                transaction.set(ref, data);
+            }
+            return null;
+        }).addOnSuccessListener(v -> callback.onSuccess())
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, e.getMessage() != null ? e.getMessage() : "createBooking", e);
+                    if (e instanceof FirebaseFirestoreException
+                            && ((FirebaseFirestoreException) e).getCode()
+                            == FirebaseFirestoreException.Code.ABORTED) {
+                        callback.onFailure("This slot is no longer available.");
+                    } else {
+                        callback.onFailure(e.getMessage() != null ? e.getMessage() : "Booking failed");
+                    }
+                });
+    }
+
+    public void rescheduleCreateNew(String oldTimeslotId, String counselorId, String date,
+                                    String startTime, String period, String appointmentType,
+                                    String studentId, String studentName, String notes,
+                                    AppointmentCallback callback) {
+        cancelBooking(oldTimeslotId, new AppointmentCallback() {
+            @Override
+            public void onSuccess() {
+                createBookingFromAvailability(counselorId, date, startTime, period, appointmentType,
+                        studentId, studentName, notes, callback);
+            }
+
+            @Override
+            public void onFailure(String error) {
+                callback.onFailure(error);
+            }
+        });
     }
 
     /** Backward-compatible names used by activities. */

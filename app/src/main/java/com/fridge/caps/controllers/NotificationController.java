@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.fridge.caps.models.Notification;
 import com.fridge.caps.models.NotificationType;
+import com.fridge.caps.utils.NotificationUtils;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -133,15 +134,7 @@ public class NotificationController {
     }
 
     private void writeNotification(String recipientId, String title, String message, String type) {
-        Map<String, Object> m = new HashMap<>();
-        m.put("recipientId", recipientId);
-        m.put("title", title);
-        m.put("message", message);
-        m.put("type", type);
-        m.put("timestamp", System.currentTimeMillis());
-        m.put("read", false);
-        db.collection(NOTIFICATIONS).add(m)
-                .addOnFailureListener(e -> Log.e(TAG, e.getMessage() != null ? e.getMessage() : "notif"));
+        NotificationUtils.writeNotification(db, recipientId, title, message, type);
     }
 
     public void getMyNotifications(NotificationListCallback callback) {

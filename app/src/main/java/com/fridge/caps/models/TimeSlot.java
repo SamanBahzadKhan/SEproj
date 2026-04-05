@@ -19,6 +19,8 @@ public class TimeSlot {
     private String  studentId;
     /** Denormalized for counsellor pending list (optional). */
     private String  studentName;
+    /** "Morning" or "Afternoon" when set. */
+    private String  period;
     private String  status;
     private String  notes;
     private boolean feedbackSubmitted;
@@ -55,11 +57,17 @@ public class TimeSlot {
 
         t.setStudentId(doc.getString("studentId"));
         t.setStudentName(doc.getString("studentName"));
+        t.setPeriod(doc.getString("period"));
         t.setStatus(doc.getString("status"));
         t.setNotes(doc.getString("notes"));
         Boolean fs = doc.getBoolean("feedbackSubmitted");
         t.setFeedbackSubmitted(fs != null && fs);
-        t.setBookedAt(doc.getString("bookedAt"));
+        Object bookedAtRaw = doc.get("bookedAt");
+        if (bookedAtRaw instanceof Long) {
+            t.setBookedAt(String.valueOf((Long) bookedAtRaw));
+        } else if (bookedAtRaw instanceof String) {
+            t.setBookedAt((String) bookedAtRaw);
+        }
 
         Object stRaw = doc.get("startTime");
         if (stRaw instanceof Timestamp) {
@@ -107,6 +115,7 @@ public class TimeSlot {
     public boolean isBooked() { return isBooked; }
     public String getStudentId() { return studentId; }
     public String getStudentName() { return studentName; }
+    public String getPeriod() { return period; }
     public String getStatus() { return status; }
     public String getNotes() { return notes; }
     public boolean isFeedbackSubmitted() { return feedbackSubmitted; }
@@ -125,6 +134,7 @@ public class TimeSlot {
     public void setBooked(boolean booked) { isBooked = booked; }
     public void setStudentId(String studentId) { this.studentId = studentId; }
     public void setStudentName(String studentName) { this.studentName = studentName; }
+    public void setPeriod(String period) { this.period = period; }
     public void setStatus(String status) { this.status = status; }
     public void setNotes(String notes) { this.notes = notes; }
     public void setFeedbackSubmitted(boolean feedbackSubmitted) { this.feedbackSubmitted = feedbackSubmitted; }

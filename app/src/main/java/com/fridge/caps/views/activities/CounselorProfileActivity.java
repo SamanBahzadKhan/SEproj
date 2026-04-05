@@ -41,6 +41,7 @@ public class CounselorProfileActivity extends AppCompatActivity {
     public static final String EXTRA_COUNSELOR_NAME = "counselor_name";
 
     private ImageButton btnEditProfile;
+    private com.google.android.material.button.MaterialButton btnBookAppointment;
     private com.google.android.material.button.MaterialButton btnSignOut;
     private SwitchCompat switchAccepting;
     private View cardOwnProfile;
@@ -60,6 +61,7 @@ public class CounselorProfileActivity extends AppCompatActivity {
     private String counselorId;
     private String loadedCounselorName;
     private boolean isOwnProfile;
+    private boolean counselorAcceptingClients = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +101,7 @@ public class CounselorProfileActivity extends AppCompatActivity {
         switchAccepting = findViewById(R.id.switchAccepting);
         btnSignOut = findViewById(R.id.btnSignOut);
         btnEditProfile = findViewById(R.id.btnEditProfile);
+        btnBookAppointment = findViewById(R.id.btnBookAppointment);
 
         starAvg = new ImageView[]{
                 findViewById(R.id.starAvg1),
@@ -130,8 +133,29 @@ public class CounselorProfileActivity extends AppCompatActivity {
             btnEditProfile.setVisibility(View.VISIBLE);
             btnEditProfile.setOnClickListener(v ->
                     startActivity(new Intent(this, EditCounselorProfileActivity.class)));
+            if (btnBookAppointment != null) {
+                btnBookAppointment.setVisibility(View.GONE);
+            }
         } else {
             btnEditProfile.setVisibility(View.GONE);
+            if (myUid != null && btnBookAppointment != null) {
+                db.collection("students").document(myUid).get()
+                        .addOnSuccessListener(studentDoc -> {
+                            if (studentDoc.exists()) {
+                                btnBookAppointment.setVisibility(View.VISIBLE);
+                                btnBookAppointment.setOnClickListener(v -> {
+                                    Intent intent = new Intent(this, BookAppointmentActivity.class);
+                                    intent.putExtra(BookAppointmentActivity.EXTRA_COUNSELOR_ID, counselorId);
+                                    intent.putExtra(BookAppointmentActivity.EXTRA_COUNSELOR_NAME,
+                                            loadedCounselorName != null
+                                                    ? loadedCounselorName
+                                                    : tvName.getText().toString());
+                                    startActivity(intent);
+                                });
+                                refreshBookAppointmentEnabled();
+                            }
+                        });
+            }
         }
 
         switchAccepting.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -209,6 +233,17 @@ public class CounselorProfileActivity extends AppCompatActivity {
                         .update("isAcceptingClients", isChecked);
             });
         }
+
+        counselorAcceptingClients = counselor.isAcceptingClients();
+        refreshBookAppointmentEnabled();
+    }
+
+    private void refreshBookAppointmentEnabled() {
+        if (btnBookAppointment == null || btnBookAppointment.getVisibility() != View.VISIBLE) {
+            return;
+        }
+        btnBookAppointment.setEnabled(counselorAcceptingClients);
+        btnBookAppointment.setAlpha(counselorAcceptingClients ? 1f : 0.5f);
     }
 
     private void loadFeedbackReviews() {

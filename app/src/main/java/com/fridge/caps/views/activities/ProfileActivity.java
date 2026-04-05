@@ -13,18 +13,20 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
+import com.bumptech.glide.Glide;
 import com.fridge.caps.R;
 import com.fridge.caps.controllers.AuthController;
-import com.fridge.caps.models.Student;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Student profile, stats from {@code timeslots}, and settings.
  */
 public class ProfileActivity extends AppCompatActivity {
 
-    private static final String TAG = "ProfileStats";
+    private static final String TAG = "ProfileActivity";
 
     private static final String PREFS = "caps_prefs";
     private static final String KEY_NOTIF_REMINDERS = "notif_reminders_enabled";
@@ -33,6 +35,7 @@ public class ProfileActivity extends AppCompatActivity {
             tvDepartment, tvYearOfStudy;
     private TextView    tvStatTotal, tvStatUpcoming, tvStatCancelled;
     private ProgressBar progressBar;
+    private CircleImageView ivAvatar;
     private AuthController authController;
 
     @Override
@@ -52,6 +55,7 @@ public class ProfileActivity extends AppCompatActivity {
         tvStatUpcoming   = findViewById(R.id.tvStatUpcoming);
         tvStatCancelled  = findViewById(R.id.tvStatCancelled);
         progressBar      = findViewById(R.id.progressBar);
+        ivAvatar         = findViewById(R.id.ivAvatar);
 
         if (tvStatTotal != null) tvStatTotal.setText("0");
         if (tvStatUpcoming != null) tvStatUpcoming.setText("0");
@@ -106,14 +110,11 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void loadStudentProfile() {
-        String uid = FirebaseAuth.getInstance().getCurrentUser() != null
-                ? FirebaseAuth.getInstance().getCurrentUser().getUid()
-                : null;
-
-        if (uid == null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             Toast.makeText(this, "Not logged in.", Toast.LENGTH_SHORT).show();
             return;
         }
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         progressBar.setVisibility(View.VISIBLE);
 
@@ -123,21 +124,51 @@ public class ProfileActivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(doc -> {
                     progressBar.setVisibility(View.GONE);
-                    if (doc.exists()) {
-                        Student student = doc.toObject(Student.class);
-                        if (student != null) {
-                            tvUsername.setText(student.getName());
-                            tvStudentId.setText(student.getUserId().substring(0, 8).toUpperCase());
-                            tvEmail.setText(student.getEmail());
-                            tvPhone.setText(student.getPhone() != null ? student.getPhone() : "Not set");
-                            tvDepartment.setText(student.getDepartment() != null ? student.getDepartment() : "Not set");
-                            tvYearOfStudy.setText(student.getYearOfStudy() != null ? student.getYearOfStudy() : "Not set");
-                        }
+                    if (!doc.exists()) {
+                        Log.w(TAG, "No student document for uid: " + uid);
+                        FirebaseAuth.getInstance().signOut();
+                        Intent intent = new Intent(this, LoginActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                        return;
+                    }
+
+                    String name = doc.getString("name");
+                    String studentId = doc.getString("studentId");
+                    String email = doc.getString("email");
+                    String phone = doc.getString("phone");
+                    String department = doc.getString("department");
+                    String yearOfStudy = doc.getString("yearOfStudy");
+                    String profilePicUrl = doc.getString("profilePictureUrl");
+
+                    tvUsername.setText(name != null && !name.isEmpty() ? name : "Not set");
+
+                    if (studentId != null && !studentId.isEmpty()) {
+                        tvStudentId.setText(studentId);
+                    } else if (uid.length() >= 8) {
+                        tvStudentId.setText(uid.substring(0, 8).toUpperCase(java.util.Locale.US));
+                    } else {
+                        tvStudentId.setText("—");
+                    }
+
+                    tvEmail.setText(email != null && !email.isEmpty() ? email : "Not set");
+                    tvPhone.setText(phone != null && !phone.isEmpty() ? phone : "Not set");
+                    tvDepartment.setText(department != null && !department.isEmpty() ? department : "Not set");
+                    tvYearOfStudy.setText(yearOfStudy != null && !yearOfStudy.isEmpty() ? yearOfStudy : "Not set");
+
+                    if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
+                        Glide.with(this).load(profilePicUrl).circleCrop().into(ivAvatar);
+                    } else {
+                        ivAvatar.setImageResource(R.drawable.circle_blue_bg);
                     }
                 })
                 .addOnFailureListener(e -> {
                     progressBar.setVisibility(View.GONE);
-                    Toast.makeText(this, "Failed to load profile.", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Failed to load profile: " + (e.getMessage() != null ? e.getMessage() : ""));
+                    Toast.makeText(this, "Failed to load profile. Check connection.",
+                            Toast.LENGTH_SHORT).show();
+                    finish();
                 });
     }
 

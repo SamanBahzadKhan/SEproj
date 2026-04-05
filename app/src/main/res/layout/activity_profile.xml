@@ -54,20 +54,11 @@
             android:paddingTop="24dp"
             android:paddingBottom="16dp">
 
-            <FrameLayout
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/ivAvatar"
                 android:layout_width="80dp"
-                android:layout_height="80dp">
-                <View
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:background="@drawable/circle_blue_bg" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="👤"
-                    android:textSize="36sp" />
-            </FrameLayout>
+                android:layout_height="80dp"
+                android:src="@drawable/circle_blue_bg" />
 
             <TextView
                 android:id="@+id/tvUsername"

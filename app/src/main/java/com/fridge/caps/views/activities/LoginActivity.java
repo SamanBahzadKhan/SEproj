@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.fridge.caps.R;
 import com.fridge.caps.controllers.AuthController;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
  * Login screen for students; counsellor and admin use separate flows from here.
@@ -27,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView    tvForgotPassword;
 
     private AuthController authController;
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,11 +37,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         authController = new AuthController();
-
-        if (authController.isLoggedIn()) {
-            goToDashboard();
-            return;
-        }
 
         etEmail           = findViewById(R.id.etEmail);
         etPassword        = findViewById(R.id.etPassword);
@@ -49,6 +47,11 @@ public class LoginActivity extends AppCompatActivity {
         progressBar       = findViewById(R.id.progressBar);
         tvRegisterLink    = findViewById(R.id.tvRegisterLink);
         tvForgotPassword  = findViewById(R.id.tvForgotPassword);
+
+        if (authController.isLoggedIn()) {
+            routeExistingSessionFromLogin();
+            return;
+        }
 
         btnLogin.setOnClickListener(v -> handleLogin());
 
@@ -66,6 +69,75 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         tvForgotPassword.setOnClickListener(v -> showForgotPasswordDialog());
+    }
+
+    /**
+     * If Auth has a session, verify Firestore before routing (same rules as {@link SplashActivity}).
+     */
+    private void routeExistingSessionFromLogin() {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() == null) {
+            return;
+        }
+        String uid = auth.getCurrentUser().getUid();
+        db.collection("students").document(uid).get()
+                .addOnSuccessListener(studentDoc -> {
+                    if (studentDoc.exists()) {
+                        goToStudentDashboard();
+                        return;
+                    }
+                    db.collection("counselors").document(uid).get()
+                            .addOnSuccessListener(counselorDoc -> {
+                                if (counselorDoc.exists()) {
+                                    goToCounselorDashboard();
+                                    return;
+                                }
+                                db.collection("admins").document(uid).get()
+                                        .addOnSuccessListener(adminDoc -> {
+                                            if (adminDoc.exists()) {
+                                                goToAdminDashboard();
+                                            } else {
+                                                auth.signOut();
+                                                Toast.makeText(this,
+                                                        "Account not found. Please sign in again.",
+                                                        Toast.LENGTH_LONG).show();
+                                            }
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            auth.signOut();
+                                            Toast.makeText(this,
+                                                    "Connection error. Please sign in again.",
+                                                    Toast.LENGTH_SHORT).show();
+                                        });
+                            })
+                            .addOnFailureListener(e -> auth.signOut());
+                })
+                .addOnFailureListener(e -> {
+                    auth.signOut();
+                    Toast.makeText(this, "Connection error. Please sign in again.",
+                            Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void goToStudentDashboard() {
+        Intent intent = new Intent(this, StudentDashboardActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    private void goToCounselorDashboard() {
+        Intent intent = new Intent(this, CounselorDashboardActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    private void goToAdminDashboard() {
+        Intent intent = new Intent(this, AdminDashboardActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void showForgotPasswordDialog() {
@@ -108,26 +180,53 @@ public class LoginActivity extends AppCompatActivity {
 
         showLoading(true);
 
-        authController.loginStudent(email, password, new AuthController.LoginCallback() {
-            @Override
-            public void onSuccess() {
-                showLoading(false);
-                goToDashboard();
-            }
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+                .addOnSuccessListener(authResult -> {
+                    if (authResult.getUser() == null) {
+                        showLoading(false);
+                        Toast.makeText(this, "Login failed.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    String uid = authResult.getUser().getUid();
 
-            @Override
-            public void onFailure(String errorMessage) {
-                showLoading(false);
-                Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    private void goToDashboard() {
-        Intent intent = new Intent(this, StudentDashboardActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
+                    db.collection("students").document(uid).get()
+                            .addOnSuccessListener(doc -> {
+                                showLoading(false);
+                                if (doc.exists()) {
+                                    goToStudentDashboard();
+                                } else {
+                                    db.collection("counselors").document(uid).get()
+                                            .addOnSuccessListener(cDoc -> {
+                                                if (cDoc.exists()) {
+                                                    FirebaseAuth.getInstance().signOut();
+                                                    Toast.makeText(this,
+                                                            "Please use 'Sign in as Counsellor' instead.",
+                                                            Toast.LENGTH_LONG).show();
+                                                } else {
+                                                    FirebaseAuth.getInstance().signOut();
+                                                    Toast.makeText(this,
+                                                            "Account not found. Please register first.",
+                                                            Toast.LENGTH_LONG).show();
+                                                }
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                FirebaseAuth.getInstance().signOut();
+                                                Toast.makeText(this, "Login failed: connection error.",
+                                                        Toast.LENGTH_SHORT).show();
+                                            });
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                showLoading(false);
+                                FirebaseAuth.getInstance().signOut();
+                                Toast.makeText(this, "Login failed: connection error.",
+                                        Toast.LENGTH_SHORT).show();
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    showLoading(false);
+                    Toast.makeText(this, "Invalid email or password.", Toast.LENGTH_SHORT).show();
+                });
     }
 
     private void handleCounselorLogin() {
@@ -142,10 +241,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 showLoading(false);
-                Intent intent = new Intent(LoginActivity.this, CounselorDashboardActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                finish();
+                goToCounselorDashboard();
             }
 
             @Override

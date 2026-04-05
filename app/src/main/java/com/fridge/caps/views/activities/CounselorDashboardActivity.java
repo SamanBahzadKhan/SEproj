@@ -2,6 +2,7 @@ package com.fridge.caps.views.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.PopupMenu;
@@ -25,6 +26,7 @@ import com.fridge.caps.views.adapters.AppointmentAdapter;
 import com.fridge.caps.views.adapters.PendingRequestAdapter;
 import com.fridge.caps.views.fragments.AvailabilityBottomSheet;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -444,6 +446,33 @@ public class CounselorDashboardActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        db.collection("counselors").document(user.getUid()).get()
+                .addOnSuccessListener(doc -> {
+                    if (!doc.exists()) {
+                        FirebaseAuth.getInstance().signOut();
+                        Intent intent = new Intent(this, LoginActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("CounselorDashboard",
+                        "Session check failed: " + (e.getMessage() != null ? e.getMessage() : "")));
     }
 
     @Override

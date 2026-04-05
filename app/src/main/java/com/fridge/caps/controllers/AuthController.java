@@ -127,8 +127,21 @@ public class AuthController {
                                 if (doc.exists()) {
                                     callback.onSuccess();
                                 } else {
-                                    auth.signOut();
-                                    callback.onFailure("This account is not registered as a counsellor.");
+                                    db.collection(STUDENTS_COLLECTION).document(uid).get()
+                                            .addOnSuccessListener(sDoc -> {
+                                                auth.signOut();
+                                                if (sDoc.exists()) {
+                                                    callback.onFailure(
+                                                            "Please use the student sign-in instead.");
+                                                } else {
+                                                    callback.onFailure(
+                                                            "This account is not registered as a counsellor.");
+                                                }
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                auth.signOut();
+                                                callback.onFailure(e.getMessage());
+                                            });
                                 }
                             })
                             .addOnFailureListener(e -> {

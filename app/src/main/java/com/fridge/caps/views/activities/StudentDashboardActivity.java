@@ -19,6 +19,7 @@ import com.fridge.caps.models.Appointment;
 import com.fridge.caps.models.AppointmentStatus;
 import com.fridge.caps.views.adapters.AppointmentAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 
@@ -66,7 +67,6 @@ public class StudentDashboardActivity extends AppCompatActivity {
         rvPast.setLayoutManager(new LinearLayoutManager(this));
 
         loadWelcomeName();
-        loadAppointments();
         attachUnreadBadge();
 
         findViewById(R.id.topBarBell).setOnClickListener(v ->
@@ -117,7 +117,34 @@ public class StudentDashboardActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        loadAppointments();
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        FirebaseFirestore.getInstance()
+                .collection("students").document(user.getUid()).get()
+                .addOnSuccessListener(doc -> {
+                    if (!doc.exists()) {
+                        FirebaseAuth.getInstance().signOut();
+                        Intent intent = new Intent(this, LoginActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                        return;
+                    }
+                    loadAppointments();
+                })
+                .addOnFailureListener(e -> {
+                    android.util.Log.e("StudentDashboard",
+                            "Session check failed: " + (e.getMessage() != null ? e.getMessage() : ""));
+                    loadAppointments();
+                });
     }
 
     private void loadWelcomeName() {

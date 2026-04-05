@@ -9,16 +9,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fridge.caps.R;
 import com.fridge.caps.controllers.AuthController;
 
 /**
- * LoginActivity.java
- * Login screen for student users (US-2).
- * Verifies credentials via AuthController and navigates to dashboard on success.
- * View in the MVC pattern.
+ * Login screen for students; counsellor and admin use separate flows from here.
  */
 public class LoginActivity extends AppCompatActivity {
 
@@ -26,6 +24,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button      btnLogin, btnCounselorLogin, btnAdminLogin;
     private ProgressBar progressBar;
     private TextView    tvRegisterLink;
+    private TextView    tvForgotPassword;
 
     private AuthController authController;
 
@@ -41,13 +40,15 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        etEmail          = findViewById(R.id.etEmail);
-        etPassword       = findViewById(R.id.etPassword);
-        btnLogin         = findViewById(R.id.btnLogin);
-        btnCounselorLogin= findViewById(R.id.btnCounselorLogin);
-        btnAdminLogin    = findViewById(R.id.btnAdminLogin);
-        progressBar      = findViewById(R.id.progressBar);
-        tvRegisterLink   = findViewById(R.id.tvRegisterLink);
+        etEmail           = findViewById(R.id.etEmail);
+        etPassword        = findViewById(R.id.etPassword);
+        btnLogin          = findViewById(R.id.btnLogin);
+        btnCounselorLogin = findViewById(R.id.btnCounselorLogin);
+        btnAdminLogin     = findViewById(R.id.btnAdminLogin);
+        TextView tvCounselorRegister = findViewById(R.id.tvCounselorRegister);
+        progressBar       = findViewById(R.id.progressBar);
+        tvRegisterLink    = findViewById(R.id.tvRegisterLink);
+        tvForgotPassword  = findViewById(R.id.tvForgotPassword);
 
         btnLogin.setOnClickListener(v -> handleLogin());
 
@@ -57,7 +58,43 @@ public class LoginActivity extends AppCompatActivity {
         btnCounselorLogin.setOnClickListener(v -> handleCounselorLogin());
 
         btnAdminLogin.setOnClickListener(v ->
-                startActivity(new Intent(this, AdminDashboardActivity.class)));
+                startActivity(new Intent(this, AdminLoginActivity.class)));
+
+        if (tvCounselorRegister != null) {
+            tvCounselorRegister.setOnClickListener(v ->
+                    startActivity(new Intent(this, CounselorRegisterActivity.class)));
+        }
+
+        tvForgotPassword.setOnClickListener(v -> showForgotPasswordDialog());
+    }
+
+    private void showForgotPasswordDialog() {
+        final EditText input = new EditText(this);
+        input.setHint("Email");
+        input.setInputType(android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Reset password")
+                .setMessage("Enter your account email. We will send a reset link.")
+                .setView(input)
+                .setPositiveButton("Send Reset Link", (d, w) -> {
+                    String email = input.getText() != null
+                            ? input.getText().toString().trim() : "";
+                    authController.sendPasswordResetEmail(email, new AuthController.PasswordResetCallback() {
+                        @Override
+                        public void onSuccess() {
+                            Toast.makeText(LoginActivity.this,
+                                    "Password reset email sent", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onFailure(String errorMessage) {
+                            Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void handleLogin() {

@@ -11,6 +11,8 @@ public class Feedback {
 
     private String    feedbackId;
     private String    appointmentId;
+    /** Same as timeslot document ID. */
+    private String    timeslotId;
     private String    studentId;
     private String    counselorId;
     private int       rating;
@@ -19,11 +21,12 @@ public class Feedback {
 
     public Feedback() {}
 
-    public Feedback(String feedbackId, String appointmentId,
+    public Feedback(String feedbackId, String timeslotId,
                     String studentId, String counselorId,
                     int rating, String comment, Timestamp submittedAt) {
         this.feedbackId    = feedbackId;
-        this.appointmentId = appointmentId;
+        this.timeslotId    = timeslotId;
+        this.appointmentId = timeslotId;
         this.studentId     = studentId;
         this.counselorId   = counselorId;
         this.rating        = rating;
@@ -33,6 +36,7 @@ public class Feedback {
 
     public String getFeedbackId()    { return feedbackId; }
     public String getAppointmentId() { return appointmentId; }
+    public String getTimeslotId() { return timeslotId; }
     public String getStudentId()     { return studentId; }
     public String getCounselorId()   { return counselorId; }
     public int getRating()           { return rating; }
@@ -41,6 +45,7 @@ public class Feedback {
 
     public void setFeedbackId(String id)        { this.feedbackId = id; }
     public void setAppointmentId(String id)     { this.appointmentId = id; }
+    public void setTimeslotId(String timeslotId) { this.timeslotId = timeslotId; }
     public void setStudentId(String id)         { this.studentId = id; }
     public void setCounselorId(String id)       { this.counselorId = id; }
     public void setRating(int rating)           { this.rating = rating; }

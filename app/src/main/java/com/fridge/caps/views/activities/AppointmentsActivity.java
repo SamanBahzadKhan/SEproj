@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fridge.caps.R;
 import com.fridge.caps.controllers.AppointmentController;
+import com.fridge.caps.controllers.NotificationController;
 import com.fridge.caps.models.Appointment;
 import com.fridge.caps.models.AppointmentStatus;
 import com.fridge.caps.views.adapters.AppointmentAdapter;
@@ -35,7 +36,8 @@ public class AppointmentsActivity extends AppCompatActivity {
     private ProgressBar  progressBar;
     private TextView     tvEmpty;
 
-    private AppointmentController appointmentController;
+    private AppointmentController  appointmentController;
+    private NotificationController notificationController;
     private List<Appointment> allAppointments = new ArrayList<>();
     private boolean isStudent = true;
 
@@ -44,7 +46,8 @@ public class AppointmentsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appointments);
 
-        appointmentController = new AppointmentController();
+        appointmentController  = new AppointmentController();
+        notificationController = new NotificationController();
 
         tabLayout    = findViewById(R.id.tabLayout);
         recyclerView = findViewById(R.id.recyclerView);
@@ -148,9 +151,20 @@ public class AppointmentsActivity extends AppCompatActivity {
                     tabPosition == 0 ? this::rescheduleAppt : null,
                     tabPosition == 1 ? appt -> {
                         Intent i = new Intent(this, FeedbackActivity.class);
-                        i.putExtra("appointmentId", appt.getAppointmentId());
-                        i.putExtra("counselorId", appt.getCounselorId());
-                        i.putExtra("counselorName", appt.getCounselorName());
+                        i.putExtra(FeedbackActivity.EXTRA_TIMESLOT_ID, appt.getTimeSlotId());
+                        i.putExtra(FeedbackActivity.EXTRA_COUNSELOR_ID, appt.getCounselorId());
+                        i.putExtra(FeedbackActivity.EXTRA_COUNSELOR_NAME, appt.getCounselorName());
+                        i.putExtra(FeedbackActivity.EXTRA_COUNSELOR_SPECIALIZATION, "");
+                        String dateLine = "";
+                        if (appt.getDate() != null) {
+                            dateLine = new java.text.SimpleDateFormat(
+                                    com.fridge.caps.utils.DateUtils.DISPLAY_DATE,
+                                    java.util.Locale.US).format(appt.getDate().toDate());
+                            if (appt.getTimeDisplay() != null) {
+                                dateLine = dateLine + " · " + appt.getTimeDisplay();
+                            }
+                        }
+                        i.putExtra(FeedbackActivity.EXTRA_APPOINTMENT_DATE, dateLine);
                         startActivity(i);
                     } : null,
                     null, null));
@@ -161,11 +175,62 @@ public class AppointmentsActivity extends AppCompatActivity {
             recyclerView.setAdapter(new AppointmentAdapter(filtered, mode,
                     tabPosition == 0 ? this::counselorCancel : null,
                     null, null,
-                    tabPosition == 0 ? appt -> appointmentController.markComplete(
-                            appt.getAppointmentId(), simpleCb("Marked complete.")) : null,
-                    tabPosition == 0 ? appt -> appointmentController.markNoShow(
-                            appt.getAppointmentId(), simpleCb("Marked no-show.")) : null));
+                    tabPosition == 0 ? this::showCounselorCompleteDialog : null,
+                    null));
         }
+    }
+
+    private void showCounselorCompleteDialog(Appointment appt) {
+        new AlertDialog.Builder(this)
+                .setTitle("Update session")
+                .setItems(new String[]{
+                        "Mark as Completed",
+                        "Mark as No-Show",
+                        "Cancel"
+                }, (d, which) -> {
+                    if (which == 2) return;
+                    String tid = appt.getTimeSlotId();
+                    if (which == 0) {
+                        appointmentController.markComplete(tid, new AppointmentController.AppointmentCallback() {
+                            @Override
+                            public void onSuccess() {
+                                notificationController.sendSessionCompleted(
+                                        appt.getStudentId(), appt.getCounselorName());
+                                Toast.makeText(AppointmentsActivity.this,
+                                        "Marked complete.", Toast.LENGTH_SHORT).show();
+                                loadAppointments();
+                            }
+
+                            @Override
+                            public void onFailure(String error) {
+                                Toast.makeText(AppointmentsActivity.this,
+                                        error, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else {
+                        appointmentController.markNoShow(tid, new AppointmentController.AppointmentCallback() {
+                            @Override
+                            public void onSuccess() {
+                                String line = appt.getDate() != null
+                                        ? new java.text.SimpleDateFormat(
+                                        com.fridge.caps.utils.DateUtils.DISPLAY_DATE,
+                                        java.util.Locale.US).format(appt.getDate().toDate()) : "";
+                                notificationController.sendMissedSession(
+                                        appt.getStudentId(), appt.getCounselorName(), line);
+                                Toast.makeText(AppointmentsActivity.this,
+                                        "Marked no-show.", Toast.LENGTH_SHORT).show();
+                                loadAppointments();
+                            }
+
+                            @Override
+                            public void onFailure(String error) {
+                                Toast.makeText(AppointmentsActivity.this,
+                                        error, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                })
+                .show();
     }
 
     private AppointmentController.AppointmentCallback simpleCb(String msg) {

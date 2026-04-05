@@ -14,11 +14,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fridge.caps.R;
 import com.fridge.caps.controllers.AppointmentController;
+import com.fridge.caps.controllers.NotificationController;
 import com.fridge.caps.models.Appointment;
 import com.fridge.caps.models.AppointmentStatus;
 import com.fridge.caps.views.adapters.AppointmentAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +39,11 @@ public class StudentDashboardActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private TextView    tvNoUpcoming, tvNoPast;
 
-    private AppointmentController appointmentController;
+    private AppointmentController  appointmentController;
+    private NotificationController notificationController;
+    private ListenerRegistration   unreadListener;
+    private View                     bellBadge;
+
     private List<Appointment> allAppointments = new ArrayList<>();
 
     @Override
@@ -45,7 +51,8 @@ public class StudentDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_dashboard);
 
-        appointmentController = new AppointmentController();
+        appointmentController  = new AppointmentController();
+        notificationController = new NotificationController();
 
         tvWelcome    = findViewById(R.id.tvWelcome);
         rvUpcoming   = findViewById(R.id.rvUpcoming);
@@ -53,12 +60,19 @@ public class StudentDashboardActivity extends AppCompatActivity {
         progressBar  = findViewById(R.id.progressBar);
         tvNoUpcoming = findViewById(R.id.tvNoUpcoming);
         tvNoPast     = findViewById(R.id.tvNoPast);
+        bellBadge    = findViewById(R.id.bellBadge);
 
         rvUpcoming.setLayoutManager(new LinearLayoutManager(this));
         rvPast.setLayoutManager(new LinearLayoutManager(this));
 
         loadWelcomeName();
         loadAppointments();
+        attachUnreadBadge();
+
+        findViewById(R.id.topBarBell).setOnClickListener(v ->
+                startActivity(new Intent(this, NotificationsActivity.class)));
+        findViewById(R.id.topBarSettings).setOnClickListener(v ->
+                startActivity(new Intent(this, ProfileActivity.class)));
 
         // Quick action buttons
         findViewById(R.id.btnBookAppointment).setOnClickListener(v ->
@@ -80,6 +94,24 @@ public class StudentDashboardActivity extends AppCompatActivity {
                 startActivity(new Intent(this, NotificationsActivity.class)));
         findViewById(R.id.navProfile).setOnClickListener(v ->
                 startActivity(new Intent(this, ProfileActivity.class)));
+    }
+
+    private void attachUnreadBadge() {
+        unreadListener = notificationController.listenUnreadCount((snap, e) -> {
+            if (e != null || snap == null || bellBadge == null) {
+                if (bellBadge != null) bellBadge.setVisibility(View.GONE);
+                return;
+            }
+            bellBadge.setVisibility(snap.size() > 0 ? View.VISIBLE : View.GONE);
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (unreadListener != null) {
+            unreadListener.remove();
+        }
     }
 
     @Override
@@ -136,9 +168,20 @@ public class StudentDashboardActivity extends AppCompatActivity {
                         appt -> {
                             Intent i = new Intent(StudentDashboardActivity.this,
                                     FeedbackActivity.class);
-                            i.putExtra("appointmentId", appt.getAppointmentId());
-                            i.putExtra("counselorId", appt.getCounselorId());
-                            i.putExtra("counselorName", appt.getCounselorName());
+                            i.putExtra(FeedbackActivity.EXTRA_TIMESLOT_ID, appt.getTimeSlotId());
+                            i.putExtra(FeedbackActivity.EXTRA_COUNSELOR_ID, appt.getCounselorId());
+                            i.putExtra(FeedbackActivity.EXTRA_COUNSELOR_NAME, appt.getCounselorName());
+                            i.putExtra(FeedbackActivity.EXTRA_COUNSELOR_SPECIALIZATION, "");
+                            String dateLine = "";
+                            if (appt.getDate() != null) {
+                                dateLine = new java.text.SimpleDateFormat(
+                                        com.fridge.caps.utils.DateUtils.DISPLAY_DATE,
+                                        java.util.Locale.US).format(appt.getDate().toDate());
+                                if (appt.getTimeDisplay() != null) {
+                                    dateLine = dateLine + " · " + appt.getTimeDisplay();
+                                }
+                            }
+                            i.putExtra(FeedbackActivity.EXTRA_APPOINTMENT_DATE, dateLine);
                             startActivity(i);
                         },
                         null, null));
@@ -159,13 +202,34 @@ public class StudentDashboardActivity extends AppCompatActivity {
                         + appt.getCounselorName() + "?")
                 .setPositiveButton("Yes, Cancel", (d, w) -> {
                     appointmentController.cancelAppointment(
-                            appt.getAppointmentId(), appt.getTimeSlotId(),
+                            appt.getTimeSlotId(), appt.getTimeSlotId(),
                             new AppointmentController.AppointmentCallback() {
                                 @Override
                                 public void onSuccess() {
-                                    Toast.makeText(StudentDashboardActivity.this,
-                                            "Appointment cancelled.", Toast.LENGTH_SHORT).show();
-                                    loadAppointments();
+                                    String uid = FirebaseAuth.getInstance().getCurrentUser() != null
+                                            ? FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
+                                    if (uid == null) {
+                                        Toast.makeText(StudentDashboardActivity.this,
+                                                "Appointment cancelled.", Toast.LENGTH_SHORT).show();
+                                        loadAppointments();
+                                        return;
+                                    }
+                                    FirebaseFirestore.getInstance().collection("students")
+                                            .document(uid).get()
+                                            .addOnSuccessListener(doc -> {
+                                                String sn = doc.getString("name");
+                                                notifyCounselorCancel(appt,
+                                                        sn != null ? sn : "Student");
+                                                Toast.makeText(StudentDashboardActivity.this,
+                                                        "Appointment cancelled.", Toast.LENGTH_SHORT).show();
+                                                loadAppointments();
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                notifyCounselorCancel(appt, "Student");
+                                                Toast.makeText(StudentDashboardActivity.this,
+                                                        "Appointment cancelled.", Toast.LENGTH_SHORT).show();
+                                                loadAppointments();
+                                            });
                                 }
                                 @Override
                                 public void onFailure(String error) {
@@ -176,6 +240,17 @@ public class StudentDashboardActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("No", null)
                 .show();
+    }
+
+    private void notifyCounselorCancel(Appointment appt, String studentName) {
+        String dateLine = "";
+        if (appt.getDate() != null) {
+            dateLine = new java.text.SimpleDateFormat(
+                    com.fridge.caps.utils.DateUtils.DISPLAY_DATE, java.util.Locale.US)
+                    .format(appt.getDate().toDate());
+        }
+        notificationController.sendStudentCancelledCounselor(
+                appt.getCounselorId(), studentName, dateLine, appt.getTimeDisplay());
     }
 
     private void rescheduleAppointment(Appointment appt) {

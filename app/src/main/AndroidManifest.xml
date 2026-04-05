@@ -3,6 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 
     <application
         android:allowBackup="true"
@@ -24,7 +28,10 @@
         </activity>
 
         <activity android:name=".views.activities.LoginActivity" />
+        <activity android:name=".views.activities.AdminLoginActivity" />
         <activity android:name=".views.activities.RegisterActivity" />
+        <activity android:name=".views.activities.CounselorRegisterActivity" />
+        <activity android:name=".views.activities.StudentListActivity" />
         <activity android:name=".views.activities.StudentDashboardActivity" />
         <activity android:name=".views.activities.CounselorDashboardActivity" />
         <activity android:name=".views.activities.AdminDashboardActivity" />

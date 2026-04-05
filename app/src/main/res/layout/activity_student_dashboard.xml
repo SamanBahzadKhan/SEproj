@@ -24,16 +24,33 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <TextView
+        <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingEnd="12dp"
-            android:text="🔔"
-            android:textSize="18sp" />
+            android:paddingEnd="12dp">
+
+            <TextView
+                android:id="@+id/topBarBell"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:text="🔔"
+                android:textSize="18sp" />
+
+            <View
+                android:id="@+id/bellBadge"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_gravity="end|top"
+                android:background="@android:color/holo_red_dark"
+                android:visibility="gone" />
+        </FrameLayout>
 
         <TextView
+            android:id="@+id/topBarSettings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:text="⚙"
             android:textSize="18sp" />
     </LinearLayout>

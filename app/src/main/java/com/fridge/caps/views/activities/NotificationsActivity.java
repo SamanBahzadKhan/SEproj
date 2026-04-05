@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,13 +13,16 @@ import com.fridge.caps.R;
 import com.fridge.caps.controllers.NotificationController;
 import com.fridge.caps.models.Notification;
 import com.fridge.caps.views.adapters.NotificationAdapter;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
- * NotificationsActivity.java
- * Displays all notifications for the logged-in student (US-9, US-10).
- * View in the MVC pattern.
+ * Live notifications list; marks visible items read when opened.
  */
 public class NotificationsActivity extends AppCompatActivity {
 
@@ -29,6 +31,7 @@ public class NotificationsActivity extends AppCompatActivity {
     private TextView     tvEmpty, tvMarkAll;
 
     private NotificationController notificationController;
+    private ListenerRegistration   registration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,37 +52,45 @@ public class NotificationsActivity extends AppCompatActivity {
             getSupportActionBar().setTitle("Notifications");
         }
 
-        loadNotifications();
+        tvMarkAll.setOnClickListener(v ->
+                notificationController.markAllReadForCurrentUser(null));
 
-        tvMarkAll.setOnClickListener(v -> {
-            Toast.makeText(this, "All marked as read.", Toast.LENGTH_SHORT).show();
-        });
-    }
-
-    private void loadNotifications() {
         progressBar.setVisibility(View.VISIBLE);
-        notificationController.getMyNotifications(new NotificationController.NotificationListCallback() {
-            @Override
-            public void onSuccess(List<Notification> notifications) {
-                progressBar.setVisibility(View.GONE);
-                if (notifications.isEmpty()) {
-                    tvEmpty.setVisibility(View.VISIBLE);
-                } else {
-                    recyclerView.setAdapter(new NotificationAdapter(notifications,
-                            notification -> notificationController.markAsRead(
-                                    notification.getNotificationId())));
-                }
+        registration = notificationController.listenToMyNotifications((snap, e) -> {
+            progressBar.setVisibility(View.GONE);
+            if (e != null || snap == null) {
+                tvEmpty.setVisibility(View.VISIBLE);
+                return;
             }
-
-            @Override
-            public void onFailure(String error) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(NotificationsActivity.this,
-                        "Failed to load notifications.", Toast.LENGTH_SHORT).show();
+            List<Notification> list = new ArrayList<>();
+            for (QueryDocumentSnapshot doc : snap) {
+                list.add(Notification.fromDocument(doc));
             }
+            Collections.sort(list, (a, b) ->
+                    Long.compare(b.getTimestampMillis(), a.getTimestampMillis()));
+            if (list.isEmpty()) {
+                tvEmpty.setVisibility(View.VISIBLE);
+                recyclerView.setAdapter(null);
+            } else {
+                tvEmpty.setVisibility(View.GONE);
+                recyclerView.setAdapter(new NotificationAdapter(list,
+                        n -> notificationController.markAsRead(n.getNotificationId())));
+            }
+            notificationController.markAllReadForCurrentUser(null);
         });
     }
 
     @Override
-    public boolean onSupportNavigateUp() { finish(); return true; }
+    protected void onDestroy() {
+        super.onDestroy();
+        if (registration != null) {
+            registration.remove();
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
+    }
 }

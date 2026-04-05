@@ -50,33 +50,63 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
         int bar = Color.parseColor("#5BA3D9");
         String icon = "🔔";
-        NotificationType t = n.getType();
-        if (t != null) {
-            switch (t) {
-                case CONFIRMATION:
+        String tk = n.getTypeKey();
+        if (tk != null && !tk.isEmpty()) {
+            switch (tk) {
+                case "CONFIRMATION":
+                case "NEW_BOOKING":
                     bar = Color.parseColor("#5BA3D9");
                     icon = "✓";
                     break;
-                case REMINDER:
+                case "PENDING":
+                    bar = Color.parseColor("#FFA000");
+                    icon = "⏳";
+                    break;
+                case "REMINDER":
                     bar = Color.parseColor("#FFA000");
                     icon = "⏰";
                     break;
-                case CANCELLATION:
+                case "COMPLETED":
+                    bar = Color.parseColor("#4CAF50");
+                    icon = "✓";
+                    break;
+                case "CANCELLED":
+                case "CANCELLATION":
                     bar = Color.parseColor("#F44336");
                     icon = "✕";
                     break;
-                case RESCHEDULE:
+                case "RESCHEDULE":
                     bar = Color.parseColor("#4CAF50");
                     icon = "↻";
                     break;
                 default:
                     break;
             }
+        } else {
+            NotificationType t = n.getType();
+            if (t != null) {
+                switch (t) {
+                    case CONFIRMATION:
+                        bar = Color.parseColor("#5BA3D9");
+                        break;
+                    case REMINDER:
+                        bar = Color.parseColor("#FFA000");
+                        break;
+                    case CANCELLATION:
+                        bar = Color.parseColor("#F44336");
+                        break;
+                    case RESCHEDULE:
+                        bar = Color.parseColor("#4CAF50");
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
         h.barColor.setBackgroundColor(bar);
         h.tvIcon.setText(icon);
 
-        int bg = n.isRead() ? Color.WHITE : Color.parseColor("#E8F4FC");
+        int bg = n.isRead() ? Color.WHITE : Color.parseColor("#EBF5FF");
         h.cardRoot.setCardBackgroundColor(bg);
 
         h.itemView.setOnClickListener(v -> {
@@ -85,8 +115,12 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
 
     private static String relativeTime(Notification n) {
-        if (n.getSentAt() == null) return "";
-        long diffMs = System.currentTimeMillis() - n.getSentAt().toDate().getTime();
+        long base = n.getTimestampMillis();
+        if (base <= 0 && n.getSentAt() != null) {
+            base = n.getSentAt().toDate().getTime();
+        }
+        if (base <= 0) return "";
+        long diffMs = System.currentTimeMillis() - base;
         long mins = TimeUnit.MILLISECONDS.toMinutes(diffMs);
         if (mins < 1) return "Just now";
         if (mins < 60) return mins + " mins ago";

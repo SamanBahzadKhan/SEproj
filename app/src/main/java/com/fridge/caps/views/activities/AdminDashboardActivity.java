@@ -65,9 +65,15 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
         loadAll();
 
+        findViewById(R.id.cardStudents).setOnClickListener(v ->
+                startActivity(new Intent(this, StudentListActivity.class)));
+        findViewById(R.id.cardCounselors).setOnClickListener(v ->
+                startActivity(new Intent(this, CounselorListActivity.class)));
+
         btnAddCounselor.setOnClickListener(v -> showAddCounselorDialog());
 
         findViewById(R.id.btnSignOut).setOnClickListener(v -> {
+            getSharedPreferences("caps_prefs", MODE_PRIVATE).edit().clear().apply();
             authController.logout();
             Intent i = new Intent(this, LoginActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -86,7 +92,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
                     }
                 });
 
-        appointmentController.getAllAppointments(new AppointmentController.AppointmentListCallback() {
+        appointmentController.getAllBookedTimeslots(new AppointmentController.AppointmentListCallback() {
             @Override
             public void onSuccess(List<Appointment> appointments) {
                 tvTotalAppts.setText(String.valueOf(appointments.size()));

@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.fridge.caps.R;
 import com.fridge.caps.controllers.CounselorController;
@@ -107,10 +108,10 @@ public class CounselorProfileActivity extends AppCompatActivity {
 
         if (counselor.isAcceptingClients()) {
             tvAvailability.setText("Currently accepting new clients");
-            tvAvailability.setTextColor(getColor(android.R.color.holo_green_dark));
+            tvAvailability.setTextColor(ContextCompat.getColor(this, android.R.color.holo_green_dark));
         } else {
             tvAvailability.setText("Not currently accepting new clients");
-            tvAvailability.setTextColor(getColor(android.R.color.holo_red_dark));
+            tvAvailability.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
             btnViewSlots.setEnabled(false);
         }
     }

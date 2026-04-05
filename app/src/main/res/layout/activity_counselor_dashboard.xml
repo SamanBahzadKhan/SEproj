@@ -24,16 +24,33 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <TextView
+        <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingEnd="12dp"
-            android:text="🔔"
-            android:textSize="18sp" />
+            android:paddingEnd="12dp">
+
+            <TextView
+                android:id="@+id/topBarBell"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:text="🔔"
+                android:textSize="18sp" />
+
+            <View
+                android:id="@+id/bellBadge"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_gravity="end|top"
+                android:background="@android:color/holo_red_dark"
+                android:visibility="gone" />
+        </FrameLayout>
 
         <TextView
+            android:id="@+id/topBarSettings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:text="⚙"
             android:textSize="18sp" />
     </LinearLayout>
@@ -73,8 +90,9 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
                     android:layout_weight="1"
+                    app:cardBackgroundColor="#FFFFFF"
                     app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp">
+                    app:cardElevation="4dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -106,8 +124,9 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
                     android:layout_weight="1"
+                    app:cardBackgroundColor="#FFFFFF"
                     app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp">
+                    app:cardElevation="4dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -139,8 +158,9 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
                     android:layout_weight="1"
+                    app:cardBackgroundColor="#FFFFFF"
                     app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp">
+                    app:cardElevation="4dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -179,15 +199,36 @@
                 android:textColor="#FFFFFF"
                 app:cornerRadius="8dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="16dp"
-                android:text="TODAY'S APPOINTMENTS"
-                android:textColor="#2A4A6B"
-                android:textSize="11sp"
-                android:textStyle="bold" />
+        <TextView
+            android:id="@+id/labelPendingSection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
+            android:text="PENDING REQUESTS"
+            android:textColor="#2A4A6B"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvPending"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="8dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
+            android:text="TODAY'S APPOINTMENTS"
+            android:textColor="#2A4A6B"
+            android:textSize="11sp"
+            android:textStyle="bold" />
 
             <ProgressBar
                 android:id="@+id/progressBar"

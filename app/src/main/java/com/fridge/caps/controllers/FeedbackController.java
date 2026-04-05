@@ -1,18 +1,21 @@
 package com.fridge.caps.controllers;
 
+import android.util.Log;
+
 import com.fridge.caps.models.Feedback;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
- * FeedbackController.java
- * Handles submission of student feedback after appointments.
- * Controller in the MVC pattern.
+ * Persists feedback and updates the linked timeslot.
  */
 public class FeedbackController {
 
+    private static final String TAG = "Firestore";
+
     private final FirebaseFirestore db;
-    private static final String FEEDBACK = "feedback";
+    private static final String FEEDBACK   = "feedback";
+    private static final String TIMESLOTS = "timeslots";
 
     public interface FeedbackCallback {
         void onSuccess();
@@ -23,32 +26,27 @@ public class FeedbackController {
         this.db = FirebaseFirestore.getInstance();
     }
 
-    /**
-     * Submits feedback for a completed appointment.
-     *
-     * @param appointmentId The appointment being reviewed.
-     * @param studentId     The student submitting the feedback.
-     * @param counselorId   The counselor being reviewed.
-     * @param rating        Star rating (1-5).
-     * @param comment       Optional text comment.
-     * @param callback      Result callback.
-     */
-    public void submitFeedback(String appointmentId, String studentId,
+    public void submitFeedback(String timeslotId, String studentId,
                                String counselorId, int rating,
                                String comment, FeedbackCallback callback) {
         String id = db.collection(FEEDBACK).document().getId();
-        Feedback feedback = new Feedback(id, appointmentId, studentId,
-                counselorId, rating, comment, Timestamp.now());
+        Feedback feedback = new Feedback(id, timeslotId, studentId, counselorId,
+                rating, comment, Timestamp.now());
 
         db.collection(FEEDBACK)
                 .document(id)
                 .set(feedback)
                 .addOnSuccessListener(unused ->
-                        db.collection("appointments")
-                                .document(appointmentId)
+                        db.collection(TIMESLOTS).document(timeslotId)
                                 .update("feedbackSubmitted", true)
                                 .addOnSuccessListener(u2 -> callback.onSuccess())
-                                .addOnFailureListener(e -> callback.onFailure(e.getMessage())))
-                .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
+                                .addOnFailureListener(e -> {
+                                    Log.e(TAG, e.getMessage() != null ? e.getMessage() : "ts update", e);
+                                    callback.onFailure(e.getMessage() != null ? e.getMessage() : "Update failed");
+                                }))
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, e.getMessage() != null ? e.getMessage() : "feedback", e);
+                    callback.onFailure(e.getMessage() != null ? e.getMessage() : "Save failed");
+                });
     }
 }

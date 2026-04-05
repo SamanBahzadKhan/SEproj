@@ -1,30 +1,35 @@
 package com.fridge.caps.views.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.fridge.caps.R;
 import com.fridge.caps.controllers.AuthController;
 import com.fridge.caps.models.Student;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 /**
- * ProfileActivity.java
- * Displays the logged-in student's profile information and settings.
- * Fetches student data from Firestore and handles sign out.
- * View in the MVC pattern.
+ * Student profile, stats from {@code timeslots}, and settings.
  */
 public class ProfileActivity extends AppCompatActivity {
 
+    private static final String PREFS = "caps_prefs";
+    private static final String KEY_NOTIF_REMINDERS = "notif_reminders_enabled";
+
     private TextView    tvUsername, tvStudentId, tvEmail, tvPhone,
             tvDepartment, tvYearOfStudy;
+    private TextView    tvStatTotal, tvStatUpcoming, tvStatCancelled;
     private ProgressBar progressBar;
     private AuthController authController;
 
@@ -35,30 +40,58 @@ public class ProfileActivity extends AppCompatActivity {
 
         authController = new AuthController();
 
-        tvUsername    = findViewById(R.id.tvUsername);
-        tvStudentId   = findViewById(R.id.tvStudentId);
-        tvEmail       = findViewById(R.id.tvEmail);
-        tvPhone       = findViewById(R.id.tvPhone);
-        tvDepartment  = findViewById(R.id.tvDepartment);
-        tvYearOfStudy = findViewById(R.id.tvYearOfStudy);
-        progressBar   = findViewById(R.id.progressBar);
+        tvUsername       = findViewById(R.id.tvUsername);
+        tvStudentId      = findViewById(R.id.tvStudentId);
+        tvEmail          = findViewById(R.id.tvEmail);
+        tvPhone          = findViewById(R.id.tvPhone);
+        tvDepartment     = findViewById(R.id.tvDepartment);
+        tvYearOfStudy    = findViewById(R.id.tvYearOfStudy);
+        tvStatTotal      = findViewById(R.id.tvStatTotal);
+        tvStatUpcoming   = findViewById(R.id.tvStatUpcoming);
+        tvStatCancelled  = findViewById(R.id.tvStatCancelled);
+        progressBar      = findViewById(R.id.progressBar);
+
+        if (tvStatTotal != null) tvStatTotal.setText("0");
+        if (tvStatUpcoming != null) tvStatUpcoming.setText("0");
+        if (tvStatCancelled != null) tvStatCancelled.setText("0");
 
         loadStudentProfile();
+        loadAppointmentStats();
 
         findViewById(R.id.btnSignOut).setOnClickListener(v -> handleSignOut());
 
-        // Settings rows — placeholder toasts for now
-        findViewById(R.id.rowNotifications).setOnClickListener(v ->
-                Toast.makeText(this, "Notification Preferences coming soon.", Toast.LENGTH_SHORT).show());
-        findViewById(R.id.rowPrivacy).setOnClickListener(v ->
-                Toast.makeText(this, "Privacy Settings coming soon.", Toast.LENGTH_SHORT).show());
-        findViewById(R.id.rowHelp).setOnClickListener(v ->
-                Toast.makeText(this, "Help & Support coming soon.", Toast.LENGTH_SHORT).show());
+        findViewById(R.id.rowNotifications).setOnClickListener(v -> showNotificationPrefsDialog());
+        findViewById(R.id.rowPrivacy).setOnClickListener(v -> new AlertDialog.Builder(this)
+                .setTitle("Privacy")
+                .setMessage("Your data is stored securely and used only for appointment management within CAPs.")
+                .setPositiveButton("OK", null)
+                .show());
+        findViewById(R.id.rowHelp).setOnClickListener(v -> new AlertDialog.Builder(this)
+                .setTitle("Help & Support")
+                .setMessage("For assistance, contact: caps-support@lums.edu.pk\n\nVersion 1.0.0")
+                .setPositiveButton("OK", null)
+                .show());
     }
 
-    /**
-     * Fetches the current student's profile from Firestore and populates the UI.
-     */
+    private void showNotificationPrefsDialog() {
+        SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
+        boolean enabled = prefs.getBoolean(KEY_NOTIF_REMINDERS, true);
+
+        SwitchCompat sw = new SwitchCompat(this);
+        sw.setText("Enable appointment reminders");
+        sw.setChecked(enabled);
+        int pad = (int) (16 * getResources().getDisplayMetrics().density);
+        sw.setPadding(pad, pad, pad, pad);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Notification Preferences")
+                .setView(sw)
+                .setPositiveButton("Save", (d, w) ->
+                        prefs.edit().putBoolean(KEY_NOTIF_REMINDERS, sw.isChecked()).apply())
+                .setNegativeButton("Close", null)
+                .show();
+    }
+
     private void loadStudentProfile() {
         String uid = FirebaseAuth.getInstance().getCurrentUser() != null
                 ? FirebaseAuth.getInstance().getCurrentUser().getUid()
@@ -95,10 +128,37 @@ public class ProfileActivity extends AppCompatActivity {
                 });
     }
 
-    /**
-     * Signs out the current user and navigates back to LoginActivity.
-     */
+    private void loadAppointmentStats() {
+        String uid = FirebaseAuth.getInstance().getCurrentUser() != null
+                ? FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
+        if (uid == null || tvStatTotal == null) return;
+
+        FirebaseFirestore.getInstance().collection("timeslots")
+                .whereEqualTo("studentId", uid)
+                .get()
+                .addOnSuccessListener(q -> {
+                    int total = 0;
+                    int upcoming = 0;
+                    int cancelled = 0;
+                    for (QueryDocumentSnapshot doc : q) {
+                        total++;
+                        String st = doc.getString("status");
+                        if ("BOOKED".equals(st) || "PENDING".equals(st)) {
+                            upcoming++;
+                        }
+                        if ("CANCELLED".equals(st)) {
+                            cancelled++;
+                        }
+                    }
+                    tvStatTotal.setText(String.valueOf(total));
+                    tvStatUpcoming.setText(String.valueOf(upcoming));
+                    tvStatCancelled.setText(String.valueOf(cancelled));
+                })
+                .addOnFailureListener(e -> { /* keep 0 */ });
+    }
+
     private void handleSignOut() {
+        getSharedPreferences(PREFS, MODE_PRIVATE).edit().clear().apply();
         authController.logout();
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

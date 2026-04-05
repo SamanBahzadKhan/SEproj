@@ -84,8 +84,15 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                 h.tvSecondaryLine.setVisibility(View.VISIBLE);
                 h.tvSecondaryLine.setText("Counselling session");
                 h.tvStatusChip.setVisibility(View.VISIBLE);
-                h.tvStatusChip.setText("BOOKED");
-                styleChip(h.tvStatusChip, Color.parseColor("#4CAF50"));
+                if (st == AppointmentStatus.PENDING) {
+                    h.tvStatusChip.setText("PENDING");
+                    styleChip(h.tvStatusChip, Color.parseColor("#FFA000"));
+                    h.btnReschedule.setVisibility(View.GONE);
+                } else {
+                    h.tvStatusChip.setText("CONFIRMED");
+                    styleChip(h.tvStatusChip, Color.parseColor("#4CAF50"));
+                    h.btnReschedule.setVisibility(View.VISIBLE);
+                }
                 h.rowStudentActions.setVisibility(View.VISIBLE);
                 h.btnReschedule.setOnClickListener(v -> {
                     if (onReschedule != null) onReschedule.run(a);
@@ -125,6 +132,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                 h.rowStudentActions.setVisibility(View.GONE);
                 h.btnFeedback.setVisibility(View.GONE);
                 h.rowCounselorActions.setVisibility(View.VISIBLE);
+                h.btnNoShow.setVisibility(View.GONE);
                 h.btnComplete.setOnClickListener(v -> {
                     if (onComplete != null) onComplete.run(a);
                 });

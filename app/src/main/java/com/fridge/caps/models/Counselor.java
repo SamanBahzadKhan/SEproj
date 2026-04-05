@@ -8,6 +8,8 @@ package com.fridge.caps.models;
 public class Counselor extends User {
 
     private String  specialization;
+    private String  department;
+    private String  phone;
     private String  bio;
     private String  profilePhoto;
     private float   rating;
@@ -36,6 +38,8 @@ public class Counselor extends User {
     public boolean isAcceptingClients() { return isAcceptingClients; }
 
     public void setSpecialization(String specialization)      { this.specialization = specialization; }
+    public void setDepartment(String department)              { this.department = department; }
+    public void setPhone(String phone)                        { this.phone = phone; }
     public void setBio(String bio)                            { this.bio = bio; }
     public void setProfilePhoto(String profilePhoto)          { this.profilePhoto = profilePhoto; }
     public void setRating(float rating)                       { this.rating = rating; }

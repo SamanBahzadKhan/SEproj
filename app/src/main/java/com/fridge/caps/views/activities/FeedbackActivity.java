@@ -129,26 +129,43 @@ public class FeedbackActivity extends AppCompatActivity {
 
         String comment = etComment.getText() != null ? etComment.getText().toString().trim() : "";
 
+        if (counselorId == null || counselorId.isEmpty()) {
+            Toast.makeText(this, "Missing counsellor for feedback.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         progressBar.setVisibility(View.VISIBLE);
         btnSubmit.setEnabled(false);
 
-        feedbackController.submitFeedback(timeslotId, uid, counselorId, selectedRating, comment,
-                new FeedbackController.FeedbackCallback() {
-                    @Override
-                    public void onSuccess() {
-                        progressBar.setVisibility(View.GONE);
-                        Toast.makeText(FeedbackActivity.this,
-                                "Feedback submitted successfully", Toast.LENGTH_SHORT).show();
-                        finish();
-                    }
+        FirebaseFirestore.getInstance().collection("students").document(uid)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    String studentName = doc.getString("name") != null
+                            ? doc.getString("name") : "Student";
+                    feedbackController.submitFeedback(timeslotId, uid, studentName, counselorId,
+                            selectedRating, comment,
+                            new FeedbackController.FeedbackCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    progressBar.setVisibility(View.GONE);
+                                    Toast.makeText(FeedbackActivity.this,
+                                            "Feedback submitted!", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                }
 
-                    @Override
-                    public void onFailure(String error) {
-                        progressBar.setVisibility(View.GONE);
-                        btnSubmit.setEnabled(true);
-                        Toast.makeText(FeedbackActivity.this,
-                                error, Toast.LENGTH_SHORT).show();
-                    }
+                                @Override
+                                public void onFailure(String error) {
+                                    progressBar.setVisibility(View.GONE);
+                                    btnSubmit.setEnabled(true);
+                                    Toast.makeText(FeedbackActivity.this,
+                                            error, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    progressBar.setVisibility(View.GONE);
+                    btnSubmit.setEnabled(true);
+                    Toast.makeText(this, "Could not load your name.", Toast.LENGTH_SHORT).show();
                 });
     }
 }

@@ -3,6 +3,7 @@ package com.fridge.caps.views.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -17,12 +18,13 @@ import com.fridge.caps.controllers.AuthController;
 import com.fridge.caps.models.Student;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 /**
  * Student profile, stats from {@code timeslots}, and settings.
  */
 public class ProfileActivity extends AppCompatActivity {
+
+    private static final String TAG = "ProfileStats";
 
     private static final String PREFS = "caps_prefs";
     private static final String KEY_NOTIF_REMINDERS = "notif_reminders_enabled";
@@ -56,7 +58,12 @@ public class ProfileActivity extends AppCompatActivity {
         if (tvStatCancelled != null) tvStatCancelled.setText("0");
 
         loadStudentProfile();
-        loadAppointmentStats();
+
+        View edit = findViewById(R.id.btnEditProfile);
+        if (edit != null) {
+            edit.setOnClickListener(v ->
+                    startActivity(new Intent(this, EditProfileActivity.class)));
+        }
 
         findViewById(R.id.btnSignOut).setOnClickListener(v -> handleSignOut());
 
@@ -90,6 +97,12 @@ public class ProfileActivity extends AppCompatActivity {
                         prefs.edit().putBoolean(KEY_NOTIF_REMINDERS, sw.isChecked()).apply())
                 .setNegativeButton("Close", null)
                 .show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadAppointmentStats();
     }
 
     private void loadStudentProfile() {
@@ -129,32 +142,45 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void loadAppointmentStats() {
-        String uid = FirebaseAuth.getInstance().getCurrentUser() != null
+        String currentStudentId = FirebaseAuth.getInstance().getCurrentUser() != null
                 ? FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
-        if (uid == null || tvStatTotal == null) return;
+        if (currentStudentId == null || tvStatTotal == null) return;
 
         FirebaseFirestore.getInstance().collection("timeslots")
-                .whereEqualTo("studentId", uid)
+                .whereEqualTo("studentId", currentStudentId)
                 .get()
-                .addOnSuccessListener(q -> {
+                .addOnSuccessListener(querySnapshot -> {
                     int total = 0;
                     int upcoming = 0;
                     int cancelled = 0;
-                    for (QueryDocumentSnapshot doc : q) {
-                        total++;
-                        String st = doc.getString("status");
-                        if ("BOOKED".equals(st) || "PENDING".equals(st)) {
-                            upcoming++;
-                        }
-                        if ("CANCELLED".equals(st)) {
-                            cancelled++;
+                    for (com.google.firebase.firestore.DocumentSnapshot doc
+                            : querySnapshot.getDocuments()) {
+                        String status = doc.getString("status");
+                        if (status == null) continue;
+                        switch (status) {
+                            case "PENDING":
+                            case "BOOKED":
+                                upcoming++;
+                                total++;
+                                break;
+                            case "COMPLETED":
+                            case "NO_SHOW":
+                                total++;
+                                break;
+                            case "CANCELLED":
+                                cancelled++;
+                                total++;
+                                break;
+                            default:
+                                break;
                         }
                     }
                     tvStatTotal.setText(String.valueOf(total));
                     tvStatUpcoming.setText(String.valueOf(upcoming));
                     tvStatCancelled.setText(String.valueOf(cancelled));
                 })
-                .addOnFailureListener(e -> { /* keep 0 */ });
+                .addOnFailureListener(e ->
+                        Log.e(TAG, "Query failed: " + (e.getMessage() != null ? e.getMessage() : ""), e));
     }
 
     private void handleSignOut() {

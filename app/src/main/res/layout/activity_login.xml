@@ -74,7 +74,9 @@
                         android:id="@+id/etEmail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textEmailAddress" />
+                        android:inputType="textEmailAddress"
+                        android:textColor="#2A4A6B"
+                        android:textColorHint="#9E9E9E" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Password -->
@@ -89,7 +91,9 @@
                         android:id="@+id/etPassword"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textPassword" />
+                        android:inputType="textPassword"
+                        android:textColor="#2A4A6B"
+                        android:textColorHint="#9E9E9E" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Forgot Password -->

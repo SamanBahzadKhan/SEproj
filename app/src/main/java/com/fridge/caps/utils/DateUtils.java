@@ -85,15 +85,18 @@ public final class DateUtils {
         );
     }
 
-    /** Next 14 days as yyyy-MM-dd starting today. */
+    /** Next 14 days as yyyy-MM-dd starting today (local midnight). */
     public static List<String> getNextFourteenDays() {
         List<String> out = new ArrayList<>();
-        Calendar base = Calendar.getInstance(Locale.US);
-        SimpleDateFormat fmt = new SimpleDateFormat(STORAGE_DATE, Locale.US);
+        Calendar cal = Calendar.getInstance(Locale.getDefault());
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        SimpleDateFormat fmt = new SimpleDateFormat(STORAGE_DATE, Locale.getDefault());
         for (int i = 0; i < 14; i++) {
-            Calendar c = (Calendar) base.clone();
-            c.add(Calendar.DAY_OF_YEAR, i);
-            out.add(fmt.format(c.getTime()));
+            out.add(fmt.format(cal.getTime()));
+            cal.add(Calendar.DAY_OF_MONTH, 1);
         }
         return out;
     }

@@ -3,6 +3,7 @@ package com.fridge.caps.views.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fridge.caps.R;
 import com.fridge.caps.models.Counselor;
+import com.fridge.caps.utils.RatingDisplayHelper;
 
 import java.util.List;
 import java.util.Locale;
@@ -46,7 +48,9 @@ public class CounselorAdapter extends RecyclerView.Adapter<CounselorAdapter.Coun
         Counselor c = counselors.get(position);
         holder.tvName.setText(c.getName());
         holder.tvSpecialization.setText(c.getSpecialization());
-        holder.tvRating.setText(String.format(Locale.getDefault(), "★ %.1f", c.getRating()));
+        RatingDisplayHelper.applyStarRating(holder.miniStars, c.getRating());
+        holder.tvRatingDetail.setText(String.format(Locale.getDefault(), "%.1f (%d)",
+                c.getRating(), c.getRatingCount()));
         holder.tvAccepting.setText(c.isAcceptingClients() ? "Accepting" : "Not Accepting");
         holder.tvAccepting.setTextColor(c.isAcceptingClients()
                 ? holder.itemView.getContext().getColor(android.R.color.holo_green_dark)
@@ -58,13 +62,20 @@ public class CounselorAdapter extends RecyclerView.Adapter<CounselorAdapter.Coun
     public int getItemCount() { return counselors.size(); }
 
     static class CounselorViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvSpecialization, tvAccepting, tvRating;
+        TextView tvName, tvSpecialization, tvAccepting, tvRatingDetail;
+        final ImageView[] miniStars = new ImageView[5];
+
         CounselorViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName           = itemView.findViewById(R.id.tvName);
             tvSpecialization = itemView.findViewById(R.id.tvSpecialization);
             tvAccepting      = itemView.findViewById(R.id.tvAccepting);
-            tvRating         = itemView.findViewById(R.id.tvRating);
+            tvRatingDetail   = itemView.findViewById(R.id.tvRatingDetail);
+            miniStars[0] = itemView.findViewById(R.id.sm1);
+            miniStars[1] = itemView.findViewById(R.id.sm2);
+            miniStars[2] = itemView.findViewById(R.id.sm3);
+            miniStars[3] = itemView.findViewById(R.id.sm4);
+            miniStars[4] = itemView.findViewById(R.id.sm5);
         }
     }
 }

@@ -33,6 +33,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -149,11 +150,12 @@ public class CounselorDashboardActivity extends AppCompatActivity {
 
     private void fetchAvailabilityWeekSnapshot() {
         if (counselorUid == null) return;
-        String ws = DateUtils.getThisWeekMonday();
+        String todayString = new SimpleDateFormat(DateUtils.STORAGE_DATE, Locale.US)
+                .format(new Date());
         String we = DateUtils.getThisWeekSunday();
         db.collection("availability")
                 .whereEqualTo("counselorId", counselorUid)
-                .whereGreaterThanOrEqualTo("date", ws)
+                .whereGreaterThanOrEqualTo("date", todayString)
                 .whereLessThanOrEqualTo("date", we)
                 .get()
                 .addOnSuccessListener(q -> applyAvailabilityDocs(q.getDocuments()))
@@ -200,11 +202,12 @@ public class CounselorDashboardActivity extends AppCompatActivity {
 
     private void attachAvailabilityListener() {
         if (counselorUid == null) return;
-        String ws = DateUtils.getThisWeekMonday();
+        String todayString = new SimpleDateFormat(DateUtils.STORAGE_DATE, Locale.US)
+                .format(new Date());
         String we = DateUtils.getThisWeekSunday();
         availabilityListener = db.collection("availability")
                 .whereEqualTo("counselorId", counselorUid)
-                .whereGreaterThanOrEqualTo("date", ws)
+                .whereGreaterThanOrEqualTo("date", todayString)
                 .whereLessThanOrEqualTo("date", we)
                 .addSnapshotListener((snap, err) -> {
                     if (err != null || snap == null) return;
@@ -415,6 +418,7 @@ public class CounselorDashboardActivity extends AppCompatActivity {
         if (counselorUid == null) return;
         Intent i = new Intent(this, CounselorProfileActivity.class);
         i.putExtra(CounselorProfileActivity.EXTRA_COUNSELOR_ID, counselorUid);
+        i.putExtra("counselorId", counselorUid);
         startActivity(i);
     }
 

@@ -96,8 +96,7 @@ public class AppointmentController {
         Map<String, Object> updates = new HashMap<>();
         updates.put("isBooked", false);
         updates.put("status", "CANCELLED");
-        updates.put("studentId", FieldValue.delete());
-        updates.put("studentName", FieldValue.delete());
+        // Keep studentId/studentName so student profile stats and history queries still match.
         updates.put("notes", FieldValue.delete());
         updates.put("bookedAt", FieldValue.delete());
         updates.put("feedbackSubmitted", FieldValue.delete());
@@ -254,8 +253,7 @@ public class AppointmentController {
         Map<String, Object> updates = new HashMap<>();
         updates.put("isBooked", false);
         updates.put("status", "NO_SHOW");
-        updates.put("studentId", FieldValue.delete());
-        updates.put("studentName", FieldValue.delete());
+        // Keep studentId/studentName so student history and profile queries still match.
         updates.put("notes", FieldValue.delete());
         updates.put("bookedAt", FieldValue.delete());
         updates.put("feedbackSubmitted", FieldValue.delete());

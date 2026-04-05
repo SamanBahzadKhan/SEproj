@@ -192,14 +192,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="In-Person" />
+                android:text="In-Person"
+                android:textColor="#2A4A6B" />
 
             <RadioButton
                 android:id="@+id/rbOnline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
-                android:text="Online" />
+                android:text="Online"
+                android:textColor="#2A4A6B" />
         </RadioGroup>
 
         <TextView
@@ -220,7 +222,9 @@
             android:gravity="top|start"
             android:hint="Add any notes for your counsellor..."
             android:inputType="textMultiLine"
-            android:padding="12dp" />
+            android:padding="12dp"
+            android:textColor="#2A4A6B"
+            android:textColorHint="#9E9E9E" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnConfirm"

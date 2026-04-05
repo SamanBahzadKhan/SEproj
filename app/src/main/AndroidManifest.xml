@@ -40,6 +40,8 @@
         <activity android:name=".views.activities.TimeSlotsActivity" />
         <activity android:name=".views.activities.BookAppointmentActivity" />
         <activity android:name=".views.activities.ProfileActivity" />
+        <activity android:name=".views.activities.EditProfileActivity" />
+        <activity android:name=".views.activities.EditCounselorProfileActivity" />
         <activity android:name=".views.activities.NotificationsActivity" />
         <activity android:name=".views.activities.AppointmentsActivity" />
         <activity android:name=".views.activities.FeedbackActivity" />

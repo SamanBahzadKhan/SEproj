@@ -3,35 +3,60 @@ package com.fridge.caps.views.activities;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.fridge.caps.R;
-import com.fridge.caps.controllers.CounselorController;
 import com.fridge.caps.models.Counselor;
+import com.fridge.caps.models.FeedbackItem;
+import com.fridge.caps.utils.RatingDisplayHelper;
+import com.fridge.caps.views.adapters.FeedbackReviewAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Counsellor profile for students/admins; own profile adds accepting switch + sign out.
  */
 public class CounselorProfileActivity extends AppCompatActivity {
 
+    private static final String TAG = "CounselorProfile";
+
     public static final String EXTRA_COUNSELOR_ID   = "counselor_id";
     public static final String EXTRA_COUNSELOR_NAME = "counselor_name";
 
-    private com.google.android.material.button.MaterialButton btnViewSlots;
+    private ImageButton btnEditProfile;
     private com.google.android.material.button.MaterialButton btnSignOut;
     private SwitchCompat switchAccepting;
     private View cardOwnProfile;
     private android.widget.ProgressBar progressBar;
-    private android.widget.TextView tvName, tvSpecialization, tvBio, tvAvailability, tvEmail;
-    private android.widget.RatingBar ratingBar;
+    private TextView tvName, tvSpecialization, tvBio, tvAvailability, tvEmail;
+    private TextView tvRatingValue, tvRatingCount;
+    private TextView tvNoReviews;
+    private RecyclerView rvReviews;
 
-    private CounselorController counselorController;
+    private ImageView[] starAvg;
+
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private ListenerRegistration counselorListener;
+
+    private FeedbackReviewAdapter reviewsAdapter;
+
     private String counselorId;
     private String loadedCounselorName;
     private boolean isOwnProfile;
@@ -41,8 +66,15 @@ public class CounselorProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_counselor_profile);
 
-        counselorController = new CounselorController();
         counselorId = getIntent().getStringExtra(EXTRA_COUNSELOR_ID);
+        if (counselorId == null || counselorId.isEmpty()) {
+            counselorId = getIntent().getStringExtra("counselorId");
+        }
+        if (counselorId == null || counselorId.isEmpty()) {
+            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                counselorId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            }
+        }
         String nameExtra = getIntent().getStringExtra(EXTRA_COUNSELOR_NAME);
 
         if (counselorId == null || counselorId.isEmpty()) {
@@ -51,17 +83,34 @@ public class CounselorProfileActivity extends AppCompatActivity {
             return;
         }
 
+        Log.d(TAG, "Loading profile for counselorId: " + counselorId);
+
         tvName = findViewById(R.id.tvName);
         tvSpecialization = findViewById(R.id.tvSpecialization);
         tvBio = findViewById(R.id.tvBio);
         tvAvailability = findViewById(R.id.tvAvailability);
         tvEmail = findViewById(R.id.tvEmail);
-        ratingBar = findViewById(R.id.ratingBar);
-        btnViewSlots = findViewById(R.id.btnViewSlots);
+        tvRatingValue = findViewById(R.id.tvRatingValue);
+        tvRatingCount = findViewById(R.id.tvRatingCount);
+        tvNoReviews = findViewById(R.id.tvNoReviews);
+        rvReviews = findViewById(R.id.rvReviews);
         progressBar = findViewById(R.id.progressBar);
         cardOwnProfile = findViewById(R.id.cardOwnProfile);
         switchAccepting = findViewById(R.id.switchAccepting);
         btnSignOut = findViewById(R.id.btnSignOut);
+        btnEditProfile = findViewById(R.id.btnEditProfile);
+
+        starAvg = new ImageView[]{
+                findViewById(R.id.starAvg1),
+                findViewById(R.id.starAvg2),
+                findViewById(R.id.starAvg3),
+                findViewById(R.id.starAvg4),
+                findViewById(R.id.starAvg5),
+        };
+
+        rvReviews.setLayoutManager(new LinearLayoutManager(this));
+        reviewsAdapter = new FeedbackReviewAdapter();
+        rvReviews.setAdapter(reviewsAdapter);
 
         if (nameExtra != null && !nameExtra.isEmpty()) {
             tvName.setText(nameExtra);
@@ -78,23 +127,36 @@ public class CounselorProfileActivity extends AppCompatActivity {
         if (isOwnProfile) {
             cardOwnProfile.setVisibility(View.VISIBLE);
             btnSignOut.setVisibility(View.VISIBLE);
+            btnEditProfile.setVisibility(View.VISIBLE);
+            btnEditProfile.setOnClickListener(v ->
+                    startActivity(new Intent(this, EditCounselorProfileActivity.class)));
+        } else {
+            btnEditProfile.setVisibility(View.GONE);
         }
 
         switchAccepting.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (!buttonView.isPressed()) return;
-            FirebaseFirestore.getInstance().collection("counselors").document(counselorId)
+            db.collection("counselors").document(counselorId)
                     .update("isAcceptingClients", isChecked);
         });
 
-        loadProfile();
+        progressBar.setVisibility(View.VISIBLE);
 
-        btnViewSlots.setOnClickListener(v -> {
-            Intent intent = new Intent(this, BookAppointmentActivity.class);
-            intent.putExtra(BookAppointmentActivity.EXTRA_COUNSELOR_ID, counselorId);
-            intent.putExtra(BookAppointmentActivity.EXTRA_COUNSELOR_NAME,
-                    loadedCounselorName != null ? loadedCounselorName : tvName.getText().toString());
-            startActivity(intent);
-        });
+        counselorListener = db.collection("counselors").document(counselorId)
+                .addSnapshotListener((snap, err) -> {
+                    progressBar.setVisibility(View.GONE);
+                    if (err != null || snap == null || !snap.exists()) {
+                        if (err != null) {
+                            Toast.makeText(this, err.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                        return;
+                    }
+                    Counselor counselor = snap.toObject(Counselor.class);
+                    if (counselor != null) {
+                        counselor.setUserId(snap.getId());
+                    }
+                    applyCounselorDoc(snap, counselor);
+                });
 
         btnSignOut.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
@@ -105,36 +167,30 @@ public class CounselorProfileActivity extends AppCompatActivity {
         });
     }
 
-    private void loadProfile() {
-        progressBar.setVisibility(View.VISIBLE);
-        btnViewSlots.setEnabled(false);
-
-        counselorController.getCounselorProfile(counselorId,
-                new CounselorController.CounselorCallback() {
-                    @Override
-                    public void onSuccess(Counselor counselor) {
-                        progressBar.setVisibility(View.GONE);
-                        btnViewSlots.setEnabled(true);
-                        populateUI(counselor);
-                    }
-
-                    @Override
-                    public void onFailure(String errorMessage) {
-                        progressBar.setVisibility(View.GONE);
-                        Toast.makeText(CounselorProfileActivity.this,
-                                "Failed to load profile: " + errorMessage,
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
-    }
-
-    private void populateUI(Counselor counselor) {
+    private void applyCounselorDoc(DocumentSnapshot snap, Counselor counselor) {
+        if (counselor == null) return;
         loadedCounselorName = counselor.getName();
         tvName.setText(counselor.getName());
         tvSpecialization.setText(counselor.getSpecialization());
         tvBio.setText(counselor.getBio());
         tvEmail.setText(counselor.getEmail());
-        ratingBar.setRating(counselor.getRating());
+
+        double rating = 0.0;
+        if (snap.contains("rating")) {
+            Double d = snap.getDouble("rating");
+            if (d != null) rating = d;
+        } else {
+            rating = counselor.getRating();
+        }
+        int count = counselor.getRatingCount();
+        if (snap.contains("ratingCount")) {
+            Long rc = snap.getLong("ratingCount");
+            if (rc != null) count = rc.intValue();
+        }
+
+        tvRatingValue.setText(String.format(java.util.Locale.US, "%.1f", rating));
+        tvRatingCount.setText("(" + count + " reviews)");
+        RatingDisplayHelper.applyStarRating(starAvg, rating);
 
         if (counselor.isAcceptingClients()) {
             tvAvailability.setText("Currently accepting new clients");
@@ -142,7 +198,6 @@ public class CounselorProfileActivity extends AppCompatActivity {
         } else {
             tvAvailability.setText("Not currently accepting new clients");
             tvAvailability.setTextColor(Color.parseColor("#F44336"));
-            btnViewSlots.setEnabled(false);
         }
 
         if (isOwnProfile) {
@@ -150,9 +205,74 @@ public class CounselorProfileActivity extends AppCompatActivity {
             switchAccepting.setChecked(counselor.isAcceptingClients());
             switchAccepting.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (!buttonView.isPressed()) return;
-                FirebaseFirestore.getInstance().collection("counselors").document(counselorId)
+                db.collection("counselors").document(counselorId)
                         .update("isAcceptingClients", isChecked);
             });
+        }
+    }
+
+    private void loadFeedbackReviews() {
+        db.collection("feedback")
+                .whereEqualTo("counselorId", counselorId)
+                .get()
+                .addOnSuccessListener(snap -> {
+                    List<QueryDocumentSnapshot> docs = new ArrayList<>();
+                    for (QueryDocumentSnapshot d : snap) {
+                        docs.add(d);
+                    }
+                    if (docs.isEmpty()) {
+                        tvNoReviews.setText("No reviews yet");
+                        tvNoReviews.setVisibility(View.VISIBLE);
+                        rvReviews.setVisibility(View.GONE);
+                        reviewsAdapter.updateData(new ArrayList<>());
+                        return;
+                    }
+
+                    Collections.sort(docs, (a, b) -> {
+                        Long tA = a.getLong("timestamp");
+                        Long tB = b.getLong("timestamp");
+                        if (tA == null) tA = 0L;
+                        if (tB == null) tB = 0L;
+                        return Long.compare(tB, tA);
+                    });
+
+                    List<FeedbackItem> reviews = new ArrayList<>();
+                    for (DocumentSnapshot doc : docs) {
+                        String name = doc.getString("studentName");
+                        Long r = doc.getLong("rating");
+                        int rating = r != null ? r.intValue() : 0;
+                        String comment = doc.getString("comment");
+                        long ts = 0L;
+                        Object t = doc.get("timestamp");
+                        if (t instanceof Long) {
+                            ts = (Long) t;
+                        }
+                        reviews.add(new FeedbackItem(name, rating, comment, ts));
+                    }
+
+                    tvNoReviews.setVisibility(View.GONE);
+                    rvReviews.setVisibility(View.VISIBLE);
+                    reviewsAdapter.updateData(reviews);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to load reviews: " + (e.getMessage() != null ? e.getMessage() : ""));
+                    tvNoReviews.setText("Unable to load reviews.");
+                    tvNoReviews.setVisibility(View.VISIBLE);
+                    rvReviews.setVisibility(View.GONE);
+                });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadFeedbackReviews();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (counselorListener != null) {
+            counselorListener.remove();
         }
     }
 

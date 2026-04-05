@@ -56,7 +56,9 @@
                         android:id="@+id/etName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textPersonName" />
+                        android:inputType="textPersonName"
+                        android:textColor="#2A4A6B"
+                        android:textColorHint="#9E9E9E" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -70,7 +72,9 @@
                         android:id="@+id/etEmail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textEmailAddress" />
+                        android:inputType="textEmailAddress"
+                        android:textColor="#2A4A6B"
+                        android:textColorHint="#9E9E9E" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -85,7 +89,9 @@
                         android:id="@+id/etPassword"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textPassword" />
+                        android:inputType="textPassword"
+                        android:textColor="#2A4A6B"
+                        android:textColorHint="#9E9E9E" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -100,7 +106,9 @@
                         android:id="@+id/etPasswordConfirm"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textPassword" />
+                        android:inputType="textPassword"
+                        android:textColor="#2A4A6B"
+                        android:textColorHint="#9E9E9E" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -114,7 +122,9 @@
                         android:id="@+id/etSpecialization"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="text" />
+                        android:inputType="text"
+                        android:textColor="#2A4A6B"
+                        android:textColorHint="#9E9E9E" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -128,7 +138,9 @@
                         android:id="@+id/etDepartment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="text" />
+                        android:inputType="text"
+                        android:textColor="#2A4A6B"
+                        android:textColorHint="#9E9E9E" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -142,7 +154,9 @@
                         android:id="@+id/etPhone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="phone" />
+                        android:inputType="phone"
+                        android:textColor="#2A4A6B"
+                        android:textColorHint="#9E9E9E" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -160,7 +174,9 @@
                         android:hint="Tell students about yourself..."
                         android:inputType="textMultiLine"
                         android:lines="3"
-                        android:minLines="3" />
+                        android:minLines="3"
+                        android:textColor="#2A4A6B"
+                        android:textColorHint="#9E9E9E" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <ProgressBar

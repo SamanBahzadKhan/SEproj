@@ -131,6 +131,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
                             CounselorProfileActivity.class);
                     i.putExtra(CounselorProfileActivity.EXTRA_COUNSELOR_ID,
                             counselor.getUserId());
+                    i.putExtra("counselorId", counselor.getUserId());
                     startActivity(i);
                 }));
             }

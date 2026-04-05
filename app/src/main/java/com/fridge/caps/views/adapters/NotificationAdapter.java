@@ -79,6 +79,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                     bar = Color.parseColor("#4CAF50");
                     icon = "↻";
                     break;
+                case "FEEDBACK":
+                    bar = Color.parseColor("#FFC107");
+                    icon = "⭐";
+                    break;
                 default:
                     break;
             }

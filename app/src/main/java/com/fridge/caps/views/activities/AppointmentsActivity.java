@@ -1,5 +1,5 @@
 package com.fridge.caps.views.activities;
-//this shit 
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;

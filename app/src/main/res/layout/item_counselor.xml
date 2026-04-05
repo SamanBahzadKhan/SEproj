@@ -48,15 +48,63 @@
                 android:id="@+id/tvSpecialization"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#5BA3D9"
+                android:textColor="#555555"
                 android:textSize="13sp" />
 
-            <TextView
-                android:id="@+id/tvRating"
+            <LinearLayout
+                android:id="@+id/llMiniStars"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="★ 4.8"
-                android:textColor="#FFA000"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/sm1"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_star_outline" />
+
+                <ImageView
+                    android:id="@+id/sm2"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginStart="2dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_star_outline" />
+
+                <ImageView
+                    android:id="@+id/sm3"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginStart="2dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_star_outline" />
+
+                <ImageView
+                    android:id="@+id/sm4"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginStart="2dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_star_outline" />
+
+                <ImageView
+                    android:id="@+id/sm5"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginStart="2dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_star_outline" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvRatingDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="0.0 (0)"
+                android:textColor="#2A4A6B"
                 android:textSize="12sp" />
 
             <TextView

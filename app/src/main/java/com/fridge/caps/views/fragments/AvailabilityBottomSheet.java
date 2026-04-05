@@ -11,8 +11,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-
 import com.fridge.caps.R;
 import com.fridge.caps.utils.DateUtils;
 import com.fridge.caps.views.activities.CounselorDashboardActivity;

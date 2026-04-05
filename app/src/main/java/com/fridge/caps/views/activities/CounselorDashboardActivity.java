@@ -3,6 +3,8 @@ package com.fridge.caps.views.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,23 +19,45 @@ import com.fridge.caps.controllers.AppointmentController;
 import com.fridge.caps.controllers.NotificationController;
 import com.fridge.caps.models.Appointment;
 import com.fridge.caps.models.AppointmentStatus;
+import com.fridge.caps.models.TimeSlot;
 import com.fridge.caps.utils.DateUtils;
 import com.fridge.caps.views.adapters.AppointmentAdapter;
 import com.fridge.caps.views.adapters.PendingRequestAdapter;
+import com.fridge.caps.views.fragments.AvailabilityBottomSheet;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
- * Counsellor home: pending requests, today's confirmed sessions, availability.
+ * Counsellor home: availability grid, pending requests, today's confirmed sessions.
  */
 public class CounselorDashboardActivity extends AppCompatActivity {
+
+    private static final int[] DAY_HEADER_IDS = {
+            R.id.dayHeader0, R.id.dayHeader1, R.id.dayHeader2, R.id.dayHeader3,
+            R.id.dayHeader4, R.id.dayHeader5, R.id.dayHeader6
+    };
+    private static final int[] CELL_M_IDS = {
+            R.id.cell_m0, R.id.cell_m1, R.id.cell_m2, R.id.cell_m3,
+            R.id.cell_m4, R.id.cell_m5, R.id.cell_m6
+    };
+    private static final int[] CELL_A_IDS = {
+            R.id.cell_a0, R.id.cell_a1, R.id.cell_a2, R.id.cell_a3,
+            R.id.cell_a4, R.id.cell_a5, R.id.cell_a6
+    };
 
     private TextView     tvWelcome, tvTodayCount, tvWeekCount, tvPending;
     private RecyclerView rvAppointments, rvPending;
@@ -42,12 +66,21 @@ public class CounselorDashboardActivity extends AppCompatActivity {
     private TextView     labelPendingSection;
     private View         bellBadge;
 
+    private final FrameLayout[][] availabilityCells = new FrameLayout[2][7];
+    private final boolean[] morningAvailCache = new boolean[7];
+    private final boolean[] afternoonAvailCache = new boolean[7];
+
     private AppointmentController  appointmentController;
     private NotificationController notificationController;
-    private ListenerRegistration   unreadListener;
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    private ListenerRegistration unreadListener;
+    private ListenerRegistration timeslotsListener;
+    private ListenerRegistration availabilityListener;
 
     private String counselorNameCache = "";
     private String counselorUid;
+    private String[] weekDates = new String[7];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,19 +104,33 @@ public class CounselorDashboardActivity extends AppCompatActivity {
         labelPendingSection = findViewById(R.id.labelPendingSection);
         bellBadge       = findViewById(R.id.bellBadge);
 
+        for (int i = 0; i < 7; i++) {
+            availabilityCells[0][i] = findViewById(CELL_M_IDS[i]);
+            availabilityCells[1][i] = findViewById(CELL_A_IDS[i]);
+        }
+
         rvAppointments.setLayoutManager(new LinearLayoutManager(this));
         rvPending.setLayoutManager(new LinearLayoutManager(this));
 
+        computeWeekDates();
+        bindDayHeaders();
+
         loadWelcomeName();
-        loadAppointments();
         attachUnreadBadge();
+        attachTimeslotsListener();
+        attachAvailabilityListener();
+        wireAvailabilityCellClicks();
 
         findViewById(R.id.topBarBell).setOnClickListener(v ->
                 startActivity(new Intent(this, NotificationsActivity.class)));
-        findViewById(R.id.topBarSettings).setOnClickListener(v -> openOwnProfile());
 
-        findViewById(R.id.btnEditAvailability).setOnClickListener(v ->
-                startActivity(new Intent(this, AvailabilityActivity.class)));
+        findViewById(R.id.topBarSettings).setOnClickListener(this::showSettingsMenu);
+
+        findViewById(R.id.btnEditAvailability).setOnClickListener(v -> {
+            if (counselorUid == null) return;
+            AvailabilityBottomSheet.newInstance(counselorUid)
+                    .show(getSupportFragmentManager(), "availability_sheet");
+        });
 
         findViewById(R.id.navHome).setOnClickListener(v -> { });
         findViewById(R.id.navCounsel).setOnClickListener(v ->
@@ -95,11 +142,304 @@ public class CounselorDashboardActivity extends AppCompatActivity {
         findViewById(R.id.navProfile).setOnClickListener(v -> openOwnProfile());
     }
 
+    /** Called from {@link AvailabilityBottomSheet} after save/delete. */
+    public void refreshAvailabilityGrid() {
+        fetchAvailabilityWeekSnapshot();
+    }
+
+    private void fetchAvailabilityWeekSnapshot() {
+        if (counselorUid == null) return;
+        String ws = DateUtils.getThisWeekMonday();
+        String we = DateUtils.getThisWeekSunday();
+        db.collection("availability")
+                .whereEqualTo("counselorId", counselorUid)
+                .whereGreaterThanOrEqualTo("date", ws)
+                .whereLessThanOrEqualTo("date", we)
+                .get()
+                .addOnSuccessListener(q -> applyAvailabilityDocs(q.getDocuments()))
+                .addOnFailureListener(e -> { });
+    }
+
+    private void computeWeekDates() {
+        String mon = DateUtils.getThisWeekMonday();
+        SimpleDateFormat fmt = new SimpleDateFormat(DateUtils.STORAGE_DATE, Locale.US);
+        try {
+            Calendar c = Calendar.getInstance(Locale.US);
+            c.setTime(Objects.requireNonNull(fmt.parse(mon)));
+            for (int i = 0; i < 7; i++) {
+                weekDates[i] = fmt.format(c.getTime());
+                c.add(Calendar.DAY_OF_YEAR, 1);
+            }
+        } catch (ParseException e) {
+            weekDates = new String[7];
+        }
+    }
+
+    private void bindDayHeaders() {
+        SimpleDateFormat dow = new SimpleDateFormat("EEE", Locale.US);
+        SimpleDateFormat fmt = new SimpleDateFormat(DateUtils.STORAGE_DATE, Locale.US);
+        try {
+            for (int i = 0; i < 7; i++) {
+                TextView tv = findViewById(DAY_HEADER_IDS[i]);
+                Calendar c = Calendar.getInstance(Locale.US);
+                c.setTime(Objects.requireNonNull(fmt.parse(weekDates[i])));
+                String label = dow.format(c.getTime()) + "\n" + c.get(Calendar.DAY_OF_MONTH);
+                tv.setText(label);
+            }
+        } catch (ParseException ignored) {
+        }
+    }
+
+    private int columnForDate(String dateYmd) {
+        if (dateYmd == null) return -1;
+        for (int i = 0; i < weekDates.length; i++) {
+            if (dateYmd.equals(weekDates[i])) return i;
+        }
+        return -1;
+    }
+
+    private void attachAvailabilityListener() {
+        if (counselorUid == null) return;
+        String ws = DateUtils.getThisWeekMonday();
+        String we = DateUtils.getThisWeekSunday();
+        availabilityListener = db.collection("availability")
+                .whereEqualTo("counselorId", counselorUid)
+                .whereGreaterThanOrEqualTo("date", ws)
+                .whereLessThanOrEqualTo("date", we)
+                .addSnapshotListener((snap, err) -> {
+                    if (err != null || snap == null) return;
+                    applyAvailabilityDocs(snap.getDocuments());
+                });
+    }
+
+    private void applyAvailabilityDocs(Iterable<DocumentSnapshot> docs) {
+        boolean[] morning = new boolean[7];
+        boolean[] afternoon = new boolean[7];
+        for (DocumentSnapshot doc : docs) {
+            String date = doc.getString("date");
+            int col = columnForDate(date);
+            if (col < 0) continue;
+            if (Boolean.TRUE.equals(doc.getBoolean("morning"))) {
+                morning[col] = true;
+            }
+            if (Boolean.TRUE.equals(doc.getBoolean("afternoon"))) {
+                afternoon[col] = true;
+            }
+        }
+        System.arraycopy(morning, 0, morningAvailCache, 0, 7);
+        System.arraycopy(afternoon, 0, afternoonAvailCache, 0, 7);
+        for (int i = 0; i < 7; i++) {
+            availabilityCells[0][i].setBackgroundResource(
+                    morning[i] ? R.drawable.bg_avail_cell_green : R.drawable.bg_avail_cell_grey);
+            availabilityCells[1][i].setBackgroundResource(
+                    afternoon[i] ? R.drawable.bg_avail_cell_green : R.drawable.bg_avail_cell_grey);
+        }
+    }
+
+    private void wireAvailabilityCellClicks() {
+        for (int i = 0; i < 7; i++) {
+            final int col = i;
+            availabilityCells[0][col].setOnClickListener(v -> onCellTapped(col, true));
+            availabilityCells[1][col].setOnClickListener(v -> onCellTapped(col, false));
+        }
+    }
+
+    private void onCellTapped(int col, boolean morning) {
+        boolean avail = morning ? morningAvailCache[col] : afternoonAvailCache[col];
+        if (!avail) return;
+        String date = weekDates[col];
+        db.collection("timeslots")
+                .whereEqualTo("counselorId", counselorUid)
+                .whereEqualTo("date", date)
+                .whereEqualTo("isBooked", true)
+                .get()
+                .addOnSuccessListener(q -> {
+                    List<String> lines = new ArrayList<>();
+                    for (DocumentSnapshot d : q.getDocuments()) {
+                        TimeSlot s = TimeSlot.fromSnapshot(d);
+                        boolean slotM = "Morning".equalsIgnoreCase(s.getPeriod())
+                                || (s.getPeriod() == null && DateUtils.isMorningSlot(s.getStartTime()));
+                        boolean slotA = "Afternoon".equalsIgnoreCase(s.getPeriod())
+                                || (s.getPeriod() == null && s.getStartTime() != null
+                                && !DateUtils.isMorningSlot(s.getStartTime()));
+                        if (morning && slotM) {
+                            lines.add(s.getStartTime() != null ? s.getStartTime() : "?");
+                        }
+                        if (!morning && slotA) {
+                            lines.add(s.getStartTime() != null ? s.getStartTime() : "?");
+                        }
+                    }
+                    if (lines.isEmpty()) {
+                        new AlertDialog.Builder(this)
+                                .setTitle(morning ? "Morning" : "Afternoon")
+                                .setMessage("No bookings yet in this period.")
+                                .setPositiveButton("OK", null)
+                                .show();
+                    } else {
+                        new AlertDialog.Builder(this)
+                                .setTitle("Booked times")
+                                .setItems(lines.toArray(new String[0]), null)
+                                .setPositiveButton("OK", null)
+                                .show();
+                    }
+                });
+    }
+
+    private void attachTimeslotsListener() {
+        if (counselorUid == null) return;
+        progressBar.setVisibility(View.VISIBLE);
+        timeslotsListener = db.collection("timeslots")
+                .whereEqualTo("counselorId", counselorUid)
+                .addSnapshotListener((snap, e) -> {
+                    if (e != null) {
+                        progressBar.setVisibility(View.GONE);
+                        return;
+                    }
+                    if (snap == null) return;
+                    List<TimeSlot> all = new ArrayList<>();
+                    for (DocumentSnapshot doc : snap.getDocuments()) {
+                        all.add(TimeSlot.fromSnapshot(doc));
+                    }
+                    String todayStr = DateUtils.getTodayString();
+                    String weekStart = DateUtils.getThisWeekMonday();
+                    String weekEnd = DateUtils.getThisWeekSunday();
+
+                    int todayStat = 0;
+                    int weekStat = 0;
+                    for (TimeSlot s : all) {
+                        String st = s.getStatus();
+                        if (todayStr.equals(s.getDate())) {
+                            if ("BOOKED".equals(st) || "PENDING".equals(st) || "COMPLETED".equals(st)) {
+                                todayStat++;
+                            }
+                        }
+                        String d = s.getDate();
+                        if (s.isBooked() && d != null
+                                && d.compareTo(weekStart) >= 0 && d.compareTo(weekEnd) <= 0) {
+                            weekStat++;
+                        }
+                    }
+
+                    List<TimeSlot> pendingSlots = new ArrayList<>();
+                    List<TimeSlot> todayBookedSlots = new ArrayList<>();
+                    for (TimeSlot s : all) {
+                        if ("PENDING".equals(s.getStatus())) {
+                            pendingSlots.add(s);
+                        }
+                        if (todayStr.equals(s.getDate()) && "BOOKED".equals(s.getStatus())) {
+                            todayBookedSlots.add(s);
+                        }
+                    }
+
+                    tvTodayCount.setText(String.valueOf(todayStat));
+                    tvWeekCount.setText(String.valueOf(weekStat));
+                    tvPending.setText(String.valueOf(pendingSlots.size()));
+
+                    Set<String> ids = new HashSet<>();
+                    List<TimeSlot> forEnrich = new ArrayList<>();
+                    for (TimeSlot s : pendingSlots) {
+                        if (ids.add(s.getSlotId())) forEnrich.add(s);
+                    }
+                    for (TimeSlot s : todayBookedSlots) {
+                        if (ids.add(s.getSlotId())) forEnrich.add(s);
+                    }
+
+                    if (forEnrich.isEmpty()) {
+                        progressBar.setVisibility(View.GONE);
+                        bindPendingAndToday(new ArrayList<>(), new ArrayList<>());
+                        return;
+                    }
+
+                    appointmentController.enrichSlotsToAppointments(forEnrich,
+                            new AppointmentController.AppointmentListCallback() {
+                                @Override
+                                public void onSuccess(List<Appointment> appointments) {
+                                    progressBar.setVisibility(View.GONE);
+                                    Map<String, Appointment> byId = new HashMap<>();
+                                    for (Appointment a : appointments) {
+                                        byId.put(a.getTimeSlotId(), a);
+                                    }
+                                    List<Appointment> pApps = new ArrayList<>();
+                                    for (TimeSlot s : pendingSlots) {
+                                        Appointment a = byId.get(s.getSlotId());
+                                        if (a != null) pApps.add(a);
+                                    }
+                                    List<Appointment> tApps = new ArrayList<>();
+                                    for (TimeSlot s : todayBookedSlots) {
+                                        Appointment a = byId.get(s.getSlotId());
+                                        if (a != null) tApps.add(a);
+                                    }
+                                    bindPendingAndToday(pApps, tApps);
+                                }
+
+                                @Override
+                                public void onFailure(String error) {
+                                    progressBar.setVisibility(View.GONE);
+                                    Toast.makeText(CounselorDashboardActivity.this,
+                                            error, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                });
+    }
+
+    private void bindPendingAndToday(List<Appointment> pendingList, List<Appointment> todayBooked) {
+        boolean showPending = !pendingList.isEmpty();
+        labelPendingSection.setVisibility(showPending ? View.VISIBLE : View.GONE);
+        rvPending.setVisibility(showPending ? View.VISIBLE : View.GONE);
+        if (showPending) {
+            rvPending.setAdapter(new PendingRequestAdapter(pendingList,
+                    new PendingRequestAdapter.Action() {
+                        @Override
+                        public void onConfirm(Appointment a) {
+                            confirmPending(a);
+                        }
+
+                        @Override
+                        public void onDecline(Appointment a) {
+                            declinePending(a);
+                        }
+                    }));
+        }
+
+        tvEmpty.setVisibility(todayBooked.isEmpty() ? View.VISIBLE : View.GONE);
+
+        rvAppointments.setAdapter(new AppointmentAdapter(todayBooked,
+                AppointmentAdapter.MODE_COUNSELOR,
+                appt -> confirmCancelSession(appt),
+                null, null,
+                appt -> showCompleteDialog(appt),
+                null));
+    }
+
     private void openOwnProfile() {
         if (counselorUid == null) return;
         Intent i = new Intent(this, CounselorProfileActivity.class);
         i.putExtra(CounselorProfileActivity.EXTRA_COUNSELOR_ID, counselorUid);
         startActivity(i);
+    }
+
+    private void showSettingsMenu(View anchor) {
+        PopupMenu popup = new PopupMenu(this, anchor);
+        popup.getMenu().add("My Profile");
+        popup.getMenu().add("Sign Out");
+        popup.setOnMenuItemClickListener(item -> {
+            CharSequence title = item.getTitle();
+            if ("My Profile".contentEquals(title)) {
+                openOwnProfile();
+            } else {
+                signOut();
+            }
+            return true;
+        });
+        popup.show();
+    }
+
+    private void signOut() {
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -108,12 +448,18 @@ public class CounselorDashboardActivity extends AppCompatActivity {
         if (unreadListener != null) {
             unreadListener.remove();
         }
+        if (timeslotsListener != null) {
+            timeslotsListener.remove();
+        }
+        if (availabilityListener != null) {
+            availabilityListener.remove();
+        }
     }
 
     private void attachUnreadBadge() {
         if (counselorUid == null) return;
-        unreadListener = notificationController.listenUnreadCount((snap, e) -> {
-            if (e != null || snap == null) {
+        unreadListener = notificationController.listenUnreadCount((snap, err) -> {
+            if (err != null || snap == null) {
                 if (bellBadge != null) bellBadge.setVisibility(View.GONE);
                 return;
             }
@@ -124,113 +470,15 @@ public class CounselorDashboardActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadAppointments();
-    }
-
     private void loadWelcomeName() {
         if (counselorUid == null) return;
 
-        FirebaseFirestore.getInstance().collection("counselors").document(counselorUid)
+        db.collection("counselors").document(counselorUid)
                 .get()
                 .addOnSuccessListener(doc -> {
                     if (doc.exists() && doc.getString("name") != null) {
                         counselorNameCache = doc.getString("name");
                         tvWelcome.setText("Good Morning,\nDr. " + counselorNameCache);
-                    }
-                });
-    }
-
-    private void loadAppointments() {
-        if (counselorUid == null) return;
-        progressBar.setVisibility(View.VISIBLE);
-
-        appointmentController.getCounselorAppointments(counselorUid,
-                new AppointmentController.AppointmentListCallback() {
-                    @Override
-                    public void onSuccess(List<Appointment> appointments) {
-                        progressBar.setVisibility(View.GONE);
-
-                        Calendar cal = Calendar.getInstance();
-                        cal.set(Calendar.HOUR_OF_DAY, 0);
-                        cal.set(Calendar.MINUTE, 0);
-                        cal.set(Calendar.SECOND, 0);
-                        cal.set(Calendar.MILLISECOND, 0);
-                        long startOfDay = cal.getTimeInMillis();
-                        long endOfDay = startOfDay + 86400000L;
-
-                        Calendar weekCal = Calendar.getInstance();
-                        weekCal.add(Calendar.DAY_OF_YEAR, 7);
-                        long weekEnd = weekCal.getTimeInMillis();
-
-                        List<Appointment> pendingList = appointments.stream()
-                                .filter(a -> a.getStatus() == AppointmentStatus.PENDING)
-                                .collect(Collectors.toList());
-
-                        List<Appointment> todayBooked = appointments.stream()
-                                .filter(a -> {
-                                    if (a.getStatus() != AppointmentStatus.CONFIRMED) return false;
-                                    if (a.getDate() == null) return false;
-                                    long t = a.getDate().toDate().getTime();
-                                    return t >= startOfDay && t < endOfDay;
-                                })
-                                .collect(Collectors.toList());
-
-                        int todayN = todayBooked.size();
-                        int pendingN = pendingList.size();
-                        int week = 0;
-                        for (Appointment a : appointments) {
-                            AppointmentStatus st = a.getStatus();
-                            if (st != AppointmentStatus.CONFIRMED && st != AppointmentStatus.PENDING) {
-                                continue;
-                            }
-                            if (a.getDate() != null) {
-                                long t = a.getDate().toDate().getTime();
-                                if (t >= System.currentTimeMillis() && t <= weekEnd) {
-                                    week++;
-                                }
-                            }
-                        }
-
-                        tvTodayCount.setText(String.valueOf(todayN));
-                        tvWeekCount.setText(String.valueOf(week));
-                        tvPending.setText(String.valueOf(pendingN));
-
-                        boolean showPending = !pendingList.isEmpty();
-                        labelPendingSection.setVisibility(showPending ? View.VISIBLE : View.GONE);
-                        rvPending.setVisibility(showPending ? View.VISIBLE : View.GONE);
-                        if (showPending) {
-                            rvPending.setAdapter(new PendingRequestAdapter(pendingList,
-                                    new PendingRequestAdapter.Action() {
-                                        @Override
-                                        public void onConfirm(Appointment a) {
-                                            confirmPending(a);
-                                        }
-
-                                        @Override
-                                        public void onDecline(Appointment a) {
-                                            declinePending(a);
-                                        }
-                                    }));
-                        }
-
-                        tvEmpty.setVisibility(todayBooked.isEmpty() ? View.VISIBLE : View.GONE);
-
-                        rvAppointments.setAdapter(new AppointmentAdapter(todayBooked,
-                                AppointmentAdapter.MODE_COUNSELOR,
-                                appt -> confirmCancelSession(appt),
-                                null, null,
-                                appt -> showCompleteDialog(appt),
-                                null));
-                    }
-
-                    @Override
-                    public void onFailure(String error) {
-                        progressBar.setVisibility(View.GONE);
-                        Toast.makeText(CounselorDashboardActivity.this,
-                                error, Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -247,7 +495,6 @@ public class CounselorDashboardActivity extends AppCompatActivity {
                                 dt);
                         Toast.makeText(CounselorDashboardActivity.this,
                                 "Appointment confirmed.", Toast.LENGTH_SHORT).show();
-                        loadAppointments();
                     }
 
                     @Override
@@ -268,7 +515,6 @@ public class CounselorDashboardActivity extends AppCompatActivity {
                                 formatDateOnly(appt));
                         Toast.makeText(CounselorDashboardActivity.this,
                                 "Request declined.", Toast.LENGTH_SHORT).show();
-                        loadAppointments();
                     }
 
                     @Override
@@ -285,7 +531,7 @@ public class CounselorDashboardActivity extends AppCompatActivity {
                 .setItems(new String[]{
                         "Mark as Completed",
                         "Mark as No-Show",
-                        "Cancel"
+                        "Dismiss"
                 }, (d, which) -> {
                     if (which == 2) return;
                     String tid = appt.getTimeSlotId();
@@ -297,7 +543,6 @@ public class CounselorDashboardActivity extends AppCompatActivity {
                                         appt.getStudentId(), counselorNameCache);
                                 Toast.makeText(CounselorDashboardActivity.this,
                                         "Marked complete.", Toast.LENGTH_SHORT).show();
-                                loadAppointments();
                             }
 
                             @Override
@@ -314,7 +559,6 @@ public class CounselorDashboardActivity extends AppCompatActivity {
                                         appt.getStudentId(), counselorNameCache, formatApptLine(appt));
                                 Toast.makeText(CounselorDashboardActivity.this,
                                         "Marked no-show.", Toast.LENGTH_SHORT).show();
-                                loadAppointments();
                             }
 
                             @Override
@@ -346,7 +590,6 @@ public class CounselorDashboardActivity extends AppCompatActivity {
                                                 appt.getTimeDisplay());
                                         Toast.makeText(CounselorDashboardActivity.this,
                                                 "Cancelled.", Toast.LENGTH_SHORT).show();
-                                        loadAppointments();
                                     }
 
                                     @Override

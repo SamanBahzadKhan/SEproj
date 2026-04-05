@@ -136,32 +136,36 @@
             android:orientation="horizontal"
             android:visibility="gone">
 
-            <com.google.android.material.button.MaterialButton
+            <ImageButton
                 android:id="@+id/btnComplete"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="✓"
-                android:textColor="#4CAF50"
-                android:textSize="18sp" />
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_circle_green"
+                android:contentDescription="Complete"
+                android:padding="12dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_check_white_24" />
 
-            <com.google.android.material.button.MaterialButton
+            <ImageButton
                 android:id="@+id/btnNoShow"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="NS"
-                android:textColor="#9E9E9E"
-                android:textSize="12sp" />
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="No show"
+                android:padding="8dp"
+                android:visibility="gone" />
 
-            <com.google.android.material.button.MaterialButton
+            <ImageButton
                 android:id="@+id/btnCancelCounselor"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="✗"
-                android:textColor="#F44336"
-                android:textSize="18sp" />
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_circle_red"
+                android:contentDescription="Cancel"
+                android:padding="12dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_close_white_24" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

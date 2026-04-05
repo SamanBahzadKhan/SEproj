@@ -27,8 +27,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:textColor="#5BA3D9"
-            android:textSize="14sp" />
+            android:textColor="#888888"
+            android:textSize="13sp" />
 
         <TextView
             android:id="@+id/tvType"

@@ -254,11 +254,11 @@ public class StudentDashboardActivity extends AppCompatActivity {
     }
 
     private void rescheduleAppointment(Appointment appt) {
-        Intent i = new Intent(this, TimeSlotsActivity.class);
-        i.putExtra(TimeSlotsActivity.EXTRA_COUNSELOR_ID, appt.getCounselorId());
-        i.putExtra(TimeSlotsActivity.EXTRA_COUNSELOR_NAME, appt.getCounselorName());
-        i.putExtra(TimeSlotsActivity.EXTRA_RESCHEDULE_APPOINTMENT_ID, appt.getAppointmentId());
-        i.putExtra(TimeSlotsActivity.EXTRA_OLD_SLOT_ID, appt.getTimeSlotId());
+        Intent i = new Intent(this, BookAppointmentActivity.class);
+        i.putExtra(BookAppointmentActivity.EXTRA_COUNSELOR_ID, appt.getCounselorId());
+        i.putExtra(BookAppointmentActivity.EXTRA_COUNSELOR_NAME, appt.getCounselorName());
+        i.putExtra(BookAppointmentActivity.EXTRA_RESCHEDULE_APPOINTMENT_ID, appt.getAppointmentId());
+        i.putExtra(BookAppointmentActivity.EXTRA_OLD_SLOT_ID, appt.getTimeSlotId());
         startActivity(i);
     }
 }

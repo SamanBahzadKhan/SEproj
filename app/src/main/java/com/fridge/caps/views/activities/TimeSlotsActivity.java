@@ -143,28 +143,9 @@ public class TimeSlotsActivity extends AppCompatActivity {
 
     private void openBooking(TimeSlot slot, String dateYmd) {
         String name = counselorName != null ? counselorName : "Counsellor";
-        String timeStr;
-        long startMs = 0L;
-        if (slot.getStartTime() != null && !slot.getStartTime().isEmpty()) {
-            timeStr = slot.getStartTime();
-        } else if (slot.getLegacyStartTime() != null) {
-            java.text.SimpleDateFormat tf = new java.text.SimpleDateFormat("hh:mm a",
-                    java.util.Locale.getDefault());
-            timeStr = tf.format(slot.getLegacyStartTime().toDate());
-            startMs = slot.getLegacyStartTime().toDate().getTime();
-        } else {
-            timeStr = "";
-        }
-        if (slot.getLegacyStartTime() != null && startMs == 0L) {
-            startMs = slot.getLegacyStartTime().toDate().getTime();
-        }
         Intent i = new Intent(this, BookAppointmentActivity.class);
         i.putExtra(BookAppointmentActivity.EXTRA_COUNSELOR_ID, counselorId);
         i.putExtra(BookAppointmentActivity.EXTRA_COUNSELOR_NAME, name);
-        i.putExtra(BookAppointmentActivity.EXTRA_SLOT_ID, slot.getSlotId());
-        i.putExtra(BookAppointmentActivity.EXTRA_SLOT_TIME, timeStr);
-        i.putExtra(BookAppointmentActivity.EXTRA_SLOT_DATE, dateYmd != null ? dateYmd : slot.getDate());
-        i.putExtra(BookAppointmentActivity.EXTRA_SLOT_START_MS, startMs);
         if (rescheduleAppointmentId != null && oldSlotId != null) {
             i.putExtra(BookAppointmentActivity.EXTRA_RESCHEDULE_APPOINTMENT_ID, rescheduleAppointmentId);
             i.putExtra(BookAppointmentActivity.EXTRA_OLD_SLOT_ID, oldSlotId);

@@ -110,6 +110,9 @@ public class CounselorListActivity extends AppCompatActivity {
                         CounselorProfileActivity.class);
                 i.putExtra(CounselorProfileActivity.EXTRA_COUNSELOR_ID,
                         counselor.getUserId());
+                if (counselor.getName() != null) {
+                    i.putExtra(CounselorProfileActivity.EXTRA_COUNSELOR_NAME, counselor.getName());
+                }
                 startActivity(i);
             }));
         }

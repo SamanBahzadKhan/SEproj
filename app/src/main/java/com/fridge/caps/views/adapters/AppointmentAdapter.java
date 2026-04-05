@@ -1,6 +1,7 @@
 package com.fridge.caps.views.adapters;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,6 +73,10 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         Appointment a = items.get(position);
         AppointmentStatus st = a.getStatus() != null ? a.getStatus() : AppointmentStatus.PENDING;
 
+        h.tvPrimaryName.setTypeface(null, Typeface.NORMAL);
+        h.tvPrimaryName.setTextColor(Color.parseColor("#2A4A6B"));
+        h.tvDateTime.setVisibility(View.VISIBLE);
+
         String dateTimeStr = formatDateTime(a);
         h.tvDateTime.setText(dateTimeStr);
         String type = a.getType() != null && !a.getType().isEmpty()
@@ -125,10 +130,16 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                 break;
 
             case MODE_COUNSELOR:
-                h.tvPrimaryName.setText(a.getStudentName() != null ? a.getStudentName() : "Student");
-                h.tvSecondaryLine.setText(a.getTimeDisplay() != null ? a.getTimeDisplay() : "");
-                h.tvStatusChip.setText(statusLabel(st));
-                styleChip(h.tvStatusChip, colorForStatus(st));
+                h.tvPrimaryName.setText(a.getTimeDisplay() != null ? a.getTimeDisplay() : "");
+                h.tvPrimaryName.setTextColor(Color.parseColor("#5BA3D9"));
+                h.tvPrimaryName.setTypeface(null, Typeface.BOLD);
+                h.tvSecondaryLine.setText(a.getStudentName() != null ? a.getStudentName() : "Student");
+                h.tvSecondaryLine.setTextColor(Color.parseColor("#2A4A6B"));
+                h.tvDateTime.setVisibility(View.GONE);
+                String apType = a.getType() != null && !a.getType().isEmpty()
+                        ? a.getType() : "—";
+                h.tvStatusChip.setText(apType);
+                styleChip(h.tvStatusChip, Color.parseColor("#5BA3D9"));
                 h.rowStudentActions.setVisibility(View.GONE);
                 h.btnFeedback.setVisibility(View.GONE);
                 h.rowCounselorActions.setVisibility(View.VISIBLE);

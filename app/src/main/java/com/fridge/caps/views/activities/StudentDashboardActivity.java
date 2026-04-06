@@ -44,6 +44,7 @@ public class StudentDashboardActivity extends AppCompatActivity {
     private NotificationController notificationController;
     private ListenerRegistration   unreadListener;
     private View                     bellBadge;
+    private boolean                  isTestMode;
 
     private List<Appointment> allAppointments = new ArrayList<>();
 
@@ -62,12 +63,19 @@ public class StudentDashboardActivity extends AppCompatActivity {
         tvNoUpcoming = findViewById(R.id.tvNoUpcoming);
         tvNoPast     = findViewById(R.id.tvNoPast);
         bellBadge    = findViewById(R.id.bellBadge);
+        isTestMode = getIntent().getBooleanExtra("TEST_MODE", false);
 
         rvUpcoming.setLayoutManager(new LinearLayoutManager(this));
         rvPast.setLayoutManager(new LinearLayoutManager(this));
 
-        loadWelcomeName();
-        attachUnreadBadge();
+        if (!isTestMode) {
+            loadWelcomeName();
+            attachUnreadBadge();
+        } else {
+            tvWelcome.setText("Welcome back,\nAhmad Raza");
+            tvNoUpcoming.setVisibility(View.VISIBLE);
+            tvNoPast.setVisibility(View.VISIBLE);
+        }
 
         findViewById(R.id.topBarBell).setOnClickListener(v ->
                 startActivity(new Intent(this, NotificationsActivity.class)));
@@ -117,6 +125,9 @@ public class StudentDashboardActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (isTestMode) {
+            return;
+        }
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {

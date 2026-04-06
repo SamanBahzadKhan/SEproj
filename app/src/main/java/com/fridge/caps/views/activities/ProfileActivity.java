@@ -37,6 +37,7 @@ public class ProfileActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private CircleImageView ivAvatar;
     private AuthController authController;
+    private boolean isTestMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +57,26 @@ public class ProfileActivity extends AppCompatActivity {
         tvStatCancelled  = findViewById(R.id.tvStatCancelled);
         progressBar      = findViewById(R.id.progressBar);
         ivAvatar         = findViewById(R.id.ivAvatar);
+        isTestMode       = getIntent().getBooleanExtra("TEST_MODE", false);
 
         if (tvStatTotal != null) tvStatTotal.setText("0");
         if (tvStatUpcoming != null) tvStatUpcoming.setText("0");
         if (tvStatCancelled != null) tvStatCancelled.setText("0");
 
-        loadStudentProfile();
+        if (isTestMode) {
+            tvUsername.setText("Ahmad Raza");
+            tvStudentId.setText("25100111");
+            tvEmail.setText("ahmad.raza@lums.edu.pk");
+            tvPhone.setText("+92 301 1234567");
+            tvDepartment.setText("Computer Science");
+            tvYearOfStudy.setText("3rd Year");
+            tvStatTotal.setText("5");
+            tvStatUpcoming.setText("2");
+            tvStatCancelled.setText("1");
+            ivAvatar.setImageResource(R.drawable.circle_blue_bg);
+        } else {
+            loadStudentProfile();
+        }
 
         View edit = findViewById(R.id.btnEditProfile);
         if (edit != null) {
@@ -106,6 +121,7 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (isTestMode) return;
         loadAppointmentStats();
     }
 

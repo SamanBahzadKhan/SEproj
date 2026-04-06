@@ -30,6 +30,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private AuthController authController;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private boolean isTestMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +49,8 @@ public class LoginActivity extends AppCompatActivity {
         tvRegisterLink    = findViewById(R.id.tvRegisterLink);
         tvForgotPassword  = findViewById(R.id.tvForgotPassword);
 
-        if (authController.isLoggedIn()) {
+        isTestMode = getIntent().getBooleanExtra("TEST_MODE", false);
+        if (!isTestMode && authController.isLoggedIn()) {
             routeExistingSessionFromLogin();
             return;
         }
@@ -177,6 +179,10 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "Email and password are required.", Toast.LENGTH_SHORT).show();
             return;
         }
+        if (isTestMode) {
+            goToStudentDashboard();
+            return;
+        }
 
         showLoading(true);
 
@@ -234,6 +240,10 @@ public class LoginActivity extends AppCompatActivity {
         String password = etPassword.getText().toString().trim();
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Email and password are required.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (isTestMode) {
+            goToCounselorDashboard();
             return;
         }
         showLoading(true);

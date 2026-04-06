@@ -64,6 +64,7 @@ public class BookAppointmentActivity extends AppCompatActivity {
     private String selectedPeriod;
     private String selectedTime;
     private TextView selectedTimeView;
+    private boolean isTestMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +78,7 @@ public class BookAppointmentActivity extends AppCompatActivity {
         counselorName = getIntent().getStringExtra(EXTRA_COUNSELOR_NAME);
         rescheduleAppointmentId = getIntent().getStringExtra(EXTRA_RESCHEDULE_APPOINTMENT_ID);
         oldSlotId     = getIntent().getStringExtra(EXTRA_OLD_SLOT_ID);
+        isTestMode = getIntent().getBooleanExtra("TEST_MODE", false);
 
         tvCounselorName = findViewById(R.id.tvCounselorName);
         tvNoAvailability = findViewById(R.id.tvNoAvailability);
@@ -116,6 +118,16 @@ public class BookAppointmentActivity extends AppCompatActivity {
                 confirmBooking();
             }
         });
+
+        if (isTestMode) {
+            selectedDate = null;
+            llPeriods.setVisibility(android.view.View.VISIBLE);
+            cardPickMorning.setVisibility(android.view.View.VISIBLE);
+            cardPickAfternoon.setVisibility(android.view.View.VISIBLE);
+            progressBar.setVisibility(android.view.View.GONE);
+            tvNoAvailability.setVisibility(android.view.View.GONE);
+            return;
+        }
 
         loadAvailabilityForDate(selectedDate);
     }
@@ -335,6 +347,23 @@ public class BookAppointmentActivity extends AppCompatActivity {
     }
 
     private void confirmBooking() {
+        if (isTestMode) {
+            if (selectedDate == null) {
+                Toast.makeText(this, "Please select a date", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (selectedPeriod == null) {
+                Toast.makeText(this, "Please select a period", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (selectedTime == null || selectedTime.isEmpty()) {
+                Toast.makeText(this, "Please select a time slot", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Toast.makeText(this, "Appointment request sent!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String uid = FirebaseAuth.getInstance().getCurrentUser() != null
                 ? FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
         if (uid == null) {
@@ -414,6 +443,23 @@ public class BookAppointmentActivity extends AppCompatActivity {
     }
 
     private void confirmReschedule() {
+        if (isTestMode) {
+            if (selectedDate == null) {
+                Toast.makeText(this, "Please select a date", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (selectedPeriod == null) {
+                Toast.makeText(this, "Please select a period", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (selectedTime == null) {
+                Toast.makeText(this, "Please select a time slot", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Toast.makeText(this, "Appointment rescheduled.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String uid = FirebaseAuth.getInstance().getCurrentUser() != null
                 ? FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
         if (uid == null || oldSlotId == null || oldSlotId.isEmpty()) {

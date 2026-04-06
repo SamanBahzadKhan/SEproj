@@ -37,6 +37,7 @@ public class FeedbackActivity extends AppCompatActivity {
 
     private FeedbackController feedbackController;
     private String timeslotId, counselorId, counselorName;
+    private boolean isTestMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,7 @@ public class FeedbackActivity extends AppCompatActivity {
         counselorName = getIntent().getStringExtra(EXTRA_COUNSELOR_NAME);
         String spec  = getIntent().getStringExtra(EXTRA_COUNSELOR_SPECIALIZATION);
         String date  = getIntent().getStringExtra(EXTRA_APPOINTMENT_DATE);
+        isTestMode   = getIntent().getBooleanExtra("TEST_MODE", false);
 
         tvCounselorName    = findViewById(R.id.tvCounselorName);
         tvSpecialization   = findViewById(R.id.tvSpecialization);
@@ -114,6 +116,10 @@ public class FeedbackActivity extends AppCompatActivity {
     private void submitFeedback() {
         if (selectedRating <= 0) {
             Toast.makeText(this, "Please select a rating", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (isTestMode) {
+            Toast.makeText(this, "Feedback submitted!", Toast.LENGTH_SHORT).show();
             return;
         }
         String uid = FirebaseAuth.getInstance().getCurrentUser() != null

@@ -1,0 +1,20 @@
+[
+  {
+    "timeslotId": "slot_003",
+    "studentId": "student_002",
+    "studentName": "Fatima Malik",
+    "counselorId": "counselor_002",
+    "rating": 5,
+    "comment": "Dr. Omar was incredibly understanding. I felt heard for the first time.",
+    "timestamp": 1744250000000
+  },
+  {
+    "timeslotId": "slot_005",
+    "studentId": "student_001",
+    "studentName": "Ahmad Raza",
+    "counselorId": "counselor_001",
+    "rating": 4,
+    "comment": "Very professional and calming. Would definitely book again.",
+    "timestamp": 1744150000000
+  }
+]

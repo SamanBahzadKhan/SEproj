@@ -1,0 +1,22 @@
+[
+  {
+    "uid": "student_001",
+    "name": "Ahmad Raza",
+    "email": "ahmad.raza@lums.edu.pk",
+    "phone": "+92 301 1234567",
+    "department": "Computer Science",
+    "yearOfStudy": "3rd Year",
+    "role": "STUDENT",
+    "profilePictureUrl": ""
+  },
+  {
+    "uid": "student_002",
+    "name": "Fatima Malik",
+    "email": "fatima.malik@lums.edu.pk",
+    "phone": "+92 333 7654321",
+    "department": "Economics",
+    "yearOfStudy": "2nd Year",
+    "role": "STUDENT",
+    "profilePictureUrl": ""
+  }
+]

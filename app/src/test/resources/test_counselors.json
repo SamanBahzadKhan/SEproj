@@ -1,0 +1,15 @@
+[
+  {
+    "uid": "counselor_001",
+    "name": "Dr. Sara Khan",
+    "email": "sara.khan@lums.edu.pk",
+    "phone": "+92 333 9876543",
+    "specialization": "Anxiety & Stress Management",
+    "department": "Psychology",
+    "bio": "8 years of experience in student mental health counselling at LUMS.",
+    "rating": 4.3,
+    "ratingCount": 12,
+    "isAcceptingClients": true,
+    "role": "COUNSELOR"
+  }
+]

@@ -1,0 +1,25 @@
+[
+  {
+    "id": "slot_001",
+    "counselorId": "counselor_001",
+    "date": "2026-04-10",
+    "startTime": "10:00 AM",
+    "period": "Morning",
+    "appointmentType": "In-Person",
+    "isBooked": false,
+    "status": null
+  },
+  {
+    "id": "slot_002",
+    "counselorId": "counselor_001",
+    "date": "2026-04-10",
+    "startTime": "2:00 PM",
+    "period": "Morning",
+    "appointmentType": "Online",
+    "isBooked": true,
+    "status": "BOOKED",
+    "studentId": "student_001",
+    "studentName": "Ahmad Raza",
+    "feedbackSubmitted": false
+  }
+]

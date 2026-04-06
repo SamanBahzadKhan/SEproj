@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#DAEEFF">
+
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="#5BA3D9"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="CAPs"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="12dp">
+
+            <TextView
+                android:id="@+id/topBarBell"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:text="🔔"
+                android:textSize="18sp" />
+
+            <View
+                android:id="@+id/bellBadge"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_gravity="end|top"
+                android:background="@android:color/holo_red_dark"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/topBarSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:text="⚙"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavCounselor"
+        app:layout_constraintTop_toBottomOf="@id/topBar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="16dp">
+
+            <TextView
+                android:id="@+id/tvWelcome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="16dp"
+                android:text="Good Morning,"
+                android:textColor="#2A4A6B"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp"
+                android:paddingTop="12dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="4dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:id="@+id/tvTodayCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="#5BA3D9"
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Today"
+                            android:textColor="#888888"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="4dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:id="@+id/tvWeekCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="#4CAF50"
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="This Week"
+                            android:textColor="#888888"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="4dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:id="@+id/tvPending"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="#FFA000"
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Pending"
+                            android:textColor="#888888"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEditAvailability"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="#5BA3D9"
+                android:text="MY AVAILABILITY"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="8dp" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="12dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="My Availability"
+                        android:textColor="#2A4A6B"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="8dp"
+                        android:scrollbars="none">
+
+                        <TableLayout
+                            android:id="@+id/tableAvailability"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:stretchColumns="1,2,3,4,5,6,7">
+
+                            <TableRow android:paddingBottom="4dp">
+
+                                <TextView
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content" />
+
+                                <TextView
+                                    android:id="@+id/dayHeader0"
+                                    android:gravity="center"
+                                    android:padding="4dp"
+                                    android:text="Mon"
+                                    android:textColor="#2A4A6B"
+                                    android:textSize="11sp" />
+
+                                <TextView
+                                    android:id="@+id/dayHeader1"
+                                    android:gravity="center"
+                                    android:padding="4dp"
+                                    android:text="Tue"
+                                    android:textColor="#2A4A6B"
+                                    android:textSize="11sp" />
+
+                                <TextView
+                                    android:id="@+id/dayHeader2"
+                                    android:gravity="center"
+                                    android:padding="4dp"
+                                    android:text="Wed"
+                                    android:textColor="#2A4A6B"
+                                    android:textSize="11sp" />
+
+                                <TextView
+                                    android:id="@+id/dayHeader3"
+                                    android:gravity="center"
+                                    android:padding="4dp"
+                                    android:text="Thu"
+                                    android:textColor="#2A4A6B"
+                                    android:textSize="11sp" />
+
+                                <TextView
+                                    android:id="@+id/dayHeader4"
+                                    android:gravity="center"
+                                    android:padding="4dp"
+                                    android:text="Fri"
+                                    android:textColor="#2A4A6B"
+                                    android:textSize="11sp" />
+
+                                <TextView
+                                    android:id="@+id/dayHeader5"
+                                    android:gravity="center"
+                                    android:padding="4dp"
+                                    android:text="Sat"
+                                    android:textColor="#2A4A6B"
+                                    android:textSize="11sp" />
+
+                                <TextView
+                                    android:id="@+id/dayHeader6"
+                                    android:gravity="center"
+                                    android:padding="4dp"
+                                    android:text="Sun"
+                                    android:textColor="#2A4A6B"
+                                    android:textSize="11sp" />
+                            </TableRow>
+
+                            <TableRow android:paddingBottom="4dp">
+
+                                <TextView
+                                    android:layout_width="56dp"
+                                    android:gravity="center_vertical"
+                                    android:text="Morning"
+                                    android:textColor="#888888"
+                                    android:textSize="11sp" />
+
+                                <FrameLayout
+                                    android:id="@+id/cell_m0"
+                                    android:layout_width="40dp"
+                                    android:layout_height="32dp"
+                                    android:layout_margin="2dp"
+                                    android:background="@drawable/bg_avail_cell_grey" />
+
+                                <FrameLayout
+                                    android:id="@+id/cell_m1"
+                                    android:layout_width="40dp"
+                                    android:layout_height="32dp"
+                                    android:layout_margin="2dp"
+                                    android:background="@drawable/bg_avail_cell_grey" />
+
+                                <FrameLayout
+                                    android:id="@+id/cell_m2"
+                                    android:layout_width="40dp"
+                                    android:layout_height="32dp"
+                                    android:layout_margin="2dp"
+                                    android:background="@drawable/bg_avail_cell_grey" />
+
+                                <FrameLayout
+                                    android:id="@+id/cell_m3"
+                                    android:layout_width="40dp"
+                                    android:layout_height="32dp"
+                                    android:layout_margin="2dp"
+                                    android:background="@drawable/bg_avail_cell_grey" />
+
+                                <FrameLayout
+                                    android:id="@+id/cell_m4"
+                                    android:layout_width="40dp"
+                                    android:layout_height="32dp"
+                                    android:layout_margin="2dp"
+                                    android:background="@drawable/bg_avail_cell_grey" />
+
+                                <FrameLayout
+                                    android:id="@+id/cell_m5"
+                                    android:layout_width="40dp"
+                                    android:layout_height="32dp"
+                                    android:layout_margin="2dp"
+                                    android:background="@drawable/bg_avail_cell_grey" />
+
+                                <FrameLayout
+                                    android:id="@+id/cell_m6"
+                                    android:layout_width="40dp"
+                                    android:layout_height="32dp"
+                                    android:layout_margin="2dp"
+                                    android:background="@drawable/bg_avail_cell_grey" />
+                            </TableRow>
+
+                            <TableRow>
+
+                                <TextView
+                                    android:layout_width="56dp"
+                                    android:gravity="center_vertical"
+                                    android:text="Afternoon"
+                                    android:textColor="#888888"
+                                    android:textSize="11sp" />
+
+                                <FrameLayout
+                                    android:id="@+id/cell_a0"
+                                    android:layout_width="40dp"
+                                    android:layout_height="32dp"
+                                    android:layout_margin="2dp"
+                                    android:background="@drawable/bg_avail_cell_grey" />
+
+                                <FrameLayout
+                                    android:id="@+id/cell_a1"
+                                    android:layout_width="40dp"
+                                    android:layout_height="32dp"
+                                    android:layout_margin="2dp"
+                                    android:background="@drawable/bg_avail_cell_grey" />
+
+                                <FrameLayout
+                                    android:id="@+id/cell_a2"
+                                    android:layout_width="40dp"
+                                    android:layout_height="32dp"
+                                    android:layout_margin="2dp"
+                                    android:background="@drawable/bg_avail_cell_grey" />
+
+                                <FrameLayout
+                                    android:id="@+id/cell_a3"
+                                    android:layout_width="40dp"
+                                    android:layout_height="32dp"
+                                    android:layout_margin="2dp"
+                                    android:background="@drawable/bg_avail_cell_grey" />
+
+                                <FrameLayout
+                                    android:id="@+id/cell_a4"
+                                    android:layout_width="40dp"
+                                    android:layout_height="32dp"
+                                    android:layout_margin="2dp"
+                                    android:background="@drawable/bg_avail_cell_grey" />
+
+                                <FrameLayout
+                                    android:id="@+id/cell_a5"
+                                    android:layout_width="40dp"
+                                    android:layout_height="32dp"
+                                    android:layout_margin="2dp"
+                                    android:background="@drawable/bg_avail_cell_grey" />
+
+                                <FrameLayout
+                                    android:id="@+id/cell_a6"
+                                    android:layout_width="40dp"
+                                    android:layout_height="32dp"
+                                    android:layout_margin="2dp"
+                                    android:background="@drawable/bg_avail_cell_grey" />
+                            </TableRow>
+                        </TableLayout>
+                    </HorizontalScrollView>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/labelPendingSection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
+            android:text="PENDING REQUESTS"
+            android:textColor="#2A4A6B"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvPending"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="8dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
+            android:text="TODAY'S APPOINTMENTS"
+            android:textColor="#2A4A6B"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvEmpty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="16dp"
+                android:text="No appointments today."
+                android:textColor="#888888"
+                android:visibility="gone" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAppointments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="8dp" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/bottomNavCounselor"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="#FFFFFF"
+        android:elevation="8dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/navHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:text="Home"
+            android:textColor="#888888"
+            android:textSize="11sp" />
+
+        <TextView
+            android:id="@+id/navCounsel"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:text="Counsel"
+            android:textColor="#5BA3D9"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/navAppts"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:text="Appts"
+            android:textColor="#888888"
+            android:textSize="11sp" />
+
+        <TextView
+            android:id="@+id/navAlerts"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:text="Alerts"
+            android:textColor="#888888"
+            android:textSize="11sp" />
+
+        <TextView
+            android:id="@+id/navProfile"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:text="Profile"
+            android:textColor="#888888"
+            android:textSize="11sp" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

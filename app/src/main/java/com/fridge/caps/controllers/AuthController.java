@@ -1,12 +1,16 @@
 package com.fridge.caps.controllers;
 
+import com.fridge.caps.models.Counselor;
 import com.fridge.caps.models.Student;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * AuthController.java
@@ -18,7 +22,9 @@ public class AuthController {
     private final FirebaseAuth      auth;
     private final FirebaseFirestore db;
 
-    private static final String STUDENTS_COLLECTION = "students";
+    private static final String STUDENTS_COLLECTION   = "students";
+    private static final String COUNSELORS_COLLECTION = "counselors";
+    private static final String ADMINS_COLLECTION     = "admins";
 
     public interface RegisterCallback {
         void onSuccess();
@@ -26,6 +32,11 @@ public class AuthController {
     }
 
     public interface LoginCallback {
+        void onSuccess();
+        void onFailure(String errorMessage);
+    }
+
+    public interface PasswordResetCallback {
         void onSuccess();
         void onFailure(String errorMessage);
     }
@@ -96,6 +107,169 @@ public class AuthController {
     }
 
     /**
+     * Signs in and verifies the account exists in the counselors collection.
+     */
+    public void loginCounselor(String email, String password, LoginCallback callback) {
+        if (email.isEmpty() || password.isEmpty()) {
+            callback.onFailure("Email and password are required.");
+            return;
+        }
+        auth.signInWithEmailAndPassword(email, password)
+                .addOnSuccessListener(authResult -> {
+                    String uid = authResult.getUser() != null
+                            ? authResult.getUser().getUid() : null;
+                    if (uid == null) {
+                        callback.onFailure("Login failed.");
+                        return;
+                    }
+                    db.collection(COUNSELORS_COLLECTION).document(uid).get()
+                            .addOnSuccessListener(doc -> {
+                                if (doc.exists()) {
+                                    callback.onSuccess();
+                                } else {
+                                    db.collection(STUDENTS_COLLECTION).document(uid).get()
+                                            .addOnSuccessListener(sDoc -> {
+                                                auth.signOut();
+                                                if (sDoc.exists()) {
+                                                    callback.onFailure(
+                                                            "Please use the student sign-in instead.");
+                                                } else {
+                                                    callback.onFailure(
+                                                            "This account is not registered as a counsellor.");
+                                                }
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                auth.signOut();
+                                                callback.onFailure(e.getMessage());
+                                            });
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                auth.signOut();
+                                callback.onFailure(e.getMessage());
+                            });
+                })
+                .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
+    }
+
+    /**
+     * Signs in and verifies the account exists in the {@code admins} collection.
+     */
+    public void loginAdmin(String email, String password, LoginCallback callback) {
+        if (email.isEmpty() || password.isEmpty()) {
+            callback.onFailure("Email and password are required.");
+            return;
+        }
+        auth.signInWithEmailAndPassword(email, password)
+                .addOnSuccessListener(authResult -> {
+                    String uid = authResult.getUser() != null
+                            ? authResult.getUser().getUid() : null;
+                    if (uid == null) {
+                        callback.onFailure("Login failed.");
+                        return;
+                    }
+                    db.collection(ADMINS_COLLECTION).document(uid).get()
+                            .addOnSuccessListener(doc -> {
+                                if (doc.exists()) {
+                                    callback.onSuccess();
+                                } else {
+                                    auth.signOut();
+                                    callback.onFailure("This account is not registered as an admin.");
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                auth.signOut();
+                                callback.onFailure(e.getMessage());
+                            });
+                })
+                .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
+    }
+
+    /**
+     * Self-service counsellor registration (same as spec: role, rating, accepting clients).
+     */
+    public void registerCounselorAccount(String name, String email, String password,
+                                         String specialization, String department,
+                                         String phone, String bio,
+                                         RegisterCallback callback) {
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            callback.onFailure("All required fields must be filled.");
+            return;
+        }
+        if (password.length() < 6) {
+            callback.onFailure("Password must be at least 6 characters.");
+            return;
+        }
+        auth.createUserWithEmailAndPassword(email, password)
+                .addOnSuccessListener(authResult -> {
+                    String uid = authResult.getUser() != null
+                            ? authResult.getUser().getUid() : null;
+                    if (uid == null) {
+                        callback.onFailure("Account creation failed.");
+                        return;
+                    }
+                    String createdAt = new SimpleDateFormat(
+                            "yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+                            .format(new Date());
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("name", name);
+                    data.put("email", email);
+                    data.put("specialization", specialization != null ? specialization : "");
+                    data.put("department", department != null ? department : "");
+                    data.put("phone", phone != null ? phone : "");
+                    data.put("bio", bio != null ? bio : "");
+                    data.put("role", "COUNSELOR");
+                    data.put("rating", 0.0);
+                    data.put("isAcceptingClients", true);
+                    data.put("createdAt", createdAt);
+                    db.collection(COUNSELORS_COLLECTION).document(uid)
+                            .set(data)
+                            .addOnSuccessListener(unused -> callback.onSuccess())
+                            .addOnFailureListener(e ->
+                                    callback.onFailure("Profile save failed: " + e.getMessage()));
+                })
+                .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
+    }
+
+    /**
+     * Creates a counsellor account (Auth + Firestore counsellors doc). Used from admin panel.
+     */
+    public void registerCounselor(String name, String email, String password,
+                                  String specialization, RegisterCallback callback) {
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            callback.onFailure("Name, email and password are required.");
+            return;
+        }
+        if (password.length() < 6) {
+            callback.onFailure("Password must be at least 6 characters.");
+            return;
+        }
+
+        auth.createUserWithEmailAndPassword(email, password)
+                .addOnSuccessListener(authResult -> {
+                    String uid = authResult.getUser() != null
+                            ? authResult.getUser().getUid() : null;
+                    if (uid == null) {
+                        callback.onFailure("Account creation failed.");
+                        return;
+                    }
+                    String createdAt = new SimpleDateFormat(
+                            "yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+                            .format(new Date());
+                    Counselor counselor = new Counselor(uid, name, email,
+                            specialization != null ? specialization : "",
+                            "", "", 0f, true, createdAt);
+
+                    db.collection(COUNSELORS_COLLECTION).document(uid)
+                            .set(counselor)
+                            .addOnSuccessListener(unused -> callback.onSuccess())
+                            .addOnFailureListener(e ->
+                                    callback.onFailure("Profile save failed: " + e.getMessage()));
+                })
+                .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
+    }
+
+    /**
      * Returns true if a user session currently exists.
      */
     public boolean isLoggedIn() {
@@ -105,5 +279,21 @@ public class AuthController {
     /** Signs out the current user. */
     public void logout() {
         auth.signOut();
+    }
+
+    public void sendPasswordResetEmail(String email, PasswordResetCallback callback) {
+        if (email == null || email.trim().isEmpty()) {
+            callback.onFailure("Email is required.");
+            return;
+        }
+        auth.sendPasswordResetEmail(email.trim())
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        callback.onSuccess();
+                    } else {
+                        Exception e = task.getException();
+                        callback.onFailure(e != null ? e.getMessage() : "Failed to send email.");
+                    }
+                });
     }
 }

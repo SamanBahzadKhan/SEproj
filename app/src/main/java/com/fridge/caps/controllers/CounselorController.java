@@ -2,10 +2,14 @@ package com.fridge.caps.controllers;
 
 import com.fridge.caps.models.Counselor;
 import com.fridge.caps.models.TimeSlot;
+import android.util.Log;
+
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -82,26 +86,49 @@ public class CounselorController {
     }
 
     /**
-     * Fetches available time slots for a given counselor.
-     * Only returns slots where isAvailable is true.
-     *
-     * @param counselorId ID of the counselor.
-     * @param callback    Result callback with list of available slots.
+     * Fetches available (unbooked) time slots for a counselor.
      */
     public void getAvailableTimeSlots(String counselorId, TimeSlotsCallback callback) {
         db.collection(TIMESLOTS_COLLECTION)
                 .whereEqualTo("counselorId", counselorId)
-                .whereEqualTo("isAvailable", true)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     List<TimeSlot> slots = new ArrayList<>();
                     for (QueryDocumentSnapshot doc : querySnapshot) {
-                        TimeSlot slot = doc.toObject(TimeSlot.class);
-                        slot.setSlotId(doc.getId());
-                        slots.add(slot);
+                        TimeSlot slot = TimeSlot.fromSnapshot(doc);
+                        if (!slot.isBooked()) {
+                            slots.add(slot);
+                        }
                     }
                     callback.onSuccess(slots);
                 })
                 .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
+    }
+
+    /**
+     * Free slots for one day ({@code dateYmd} = yyyy-MM-dd). Filters client-side so
+     * {@code isBooked == false} only.
+     */
+    public void getAvailableSlotsForDate(String counselorId, String dateYmd, TimeSlotsCallback callback) {
+        db.collection(TIMESLOTS_COLLECTION)
+                .whereEqualTo("counselorId", counselorId)
+                .whereEqualTo("date", dateYmd)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<TimeSlot> slots = new ArrayList<>();
+                    for (QueryDocumentSnapshot doc : querySnapshot) {
+                        TimeSlot slot = TimeSlot.fromSnapshot(doc);
+                        if (!slot.isBooked()) {
+                            slots.add(slot);
+                        }
+                    }
+                    Collections.sort(slots, Comparator.comparing(s ->
+                            s.getStartTime() != null ? s.getStartTime() : ""));
+                    callback.onSuccess(slots);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", e.getMessage() != null ? e.getMessage() : "slotsDate");
+                    callback.onFailure(e.getMessage());
+                });
     }
 }

@@ -20,6 +20,7 @@ public class Appointment {
     private String            type;
     private String            notes;
     private AppointmentStatus status;
+    private boolean           feedbackSubmitted;
 
     public Appointment() {}
 
@@ -59,6 +60,7 @@ public class Appointment {
     public String getType()                 { return type; }
     public String getNotes()                { return notes; }
     public AppointmentStatus getStatus()    { return status; }
+    public boolean isFeedbackSubmitted()   { return feedbackSubmitted; }
 
     public void setAppointmentId(String id)         { this.appointmentId = id; }
     public void setStudentId(String id)             { this.studentId = id; }
@@ -71,4 +73,7 @@ public class Appointment {
     public void setType(String type)                { this.type = type; }
     public void setNotes(String notes)              { this.notes = notes; }
     public void setStatus(AppointmentStatus status) { this.status = status; }
+    public void setFeedbackSubmitted(boolean feedbackSubmitted) {
+        this.feedbackSubmitted = feedbackSubmitted;
+    }
 }

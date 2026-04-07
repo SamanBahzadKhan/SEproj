@@ -8,10 +8,15 @@ package com.fridge.caps.models;
 public class Counselor extends User {
 
     private String  specialization;
+    private String  department;
+    private String  phone;
     private String  bio;
     private String  profilePhoto;
     private float   rating;
-    private boolean isAcceptingClients;
+    /** Number of feedback submissions used for {@link #rating} mean. */
+    private Long    ratingCount;
+    /** Null from Firestore means “accepting” (default). */
+    private Boolean isAcceptingClients;
 
     public Counselor() {}
 
@@ -33,11 +38,23 @@ public class Counselor extends User {
     public String getBio()              { return bio; }
     public String getProfilePhoto()     { return profilePhoto; }
     public float getRating()            { return rating; }
-    public boolean isAcceptingClients() { return isAcceptingClients; }
+    public int getRatingCount() {
+        return ratingCount == null ? 0 : ratingCount.intValue();
+    }
+    public boolean isAcceptingClients() {
+        return isAcceptingClients == null || Boolean.TRUE.equals(isAcceptingClients);
+    }
 
     public void setSpecialization(String specialization)      { this.specialization = specialization; }
+    public void setDepartment(String department)              { this.department = department; }
+    public void setPhone(String phone)                        { this.phone = phone; }
     public void setBio(String bio)                            { this.bio = bio; }
     public void setProfilePhoto(String profilePhoto)          { this.profilePhoto = profilePhoto; }
     public void setRating(float rating)                       { this.rating = rating; }
-    public void setAcceptingClients(boolean acceptingClients) { this.isAcceptingClients = acceptingClients; }
+    public void setRatingCount(long ratingCount) {
+        this.ratingCount = ratingCount;
+    }
+    public void setAcceptingClients(boolean acceptingClients) {
+        this.isAcceptingClients = acceptingClients;
+    }
 }

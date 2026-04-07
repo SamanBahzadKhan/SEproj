@@ -10,20 +10,19 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fridge.caps.R;
-import com.fridge.caps.models.TimeSlot;
-import com.google.firebase.Timestamp;
+import com.fridge.caps.utils.DateUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
- * AvailabilityActivity.java
- * Allows counselors to add available time slots (US-12).
- * View in the MVC pattern.
+ * Creates an unbooked timeslot in Firestore (single source of truth).
  */
 public class AvailabilityActivity extends AppCompatActivity {
 
@@ -55,7 +54,7 @@ public class AvailabilityActivity extends AppCompatActivity {
         btnPickDate.setOnClickListener(v -> {
             new DatePickerDialog(this, (view, year, month, day) -> {
                 selectedDate.set(year, month, day);
-                tvSelectedDate.setText(day + "/" + (month+1) + "/" + year);
+                tvSelectedDate.setText(day + "/" + (month + 1) + "/" + year);
             }, selectedDate.get(Calendar.YEAR),
                     selectedDate.get(Calendar.MONTH),
                     selectedDate.get(Calendar.DAY_OF_MONTH)).show();
@@ -67,7 +66,7 @@ public class AvailabilityActivity extends AppCompatActivity {
                 startTime.set(Calendar.MINUTE, minute);
                 tvStartTime.setText(String.format(Locale.getDefault(), "%02d:%02d", hour, minute));
             }, startTime.get(Calendar.HOUR_OF_DAY),
-                    startTime.get(Calendar.MINUTE), true).show();
+                    startTime.get(Calendar.MINUTE), false).show();
         });
 
         btnPickEnd.setOnClickListener(v -> {
@@ -76,7 +75,7 @@ public class AvailabilityActivity extends AppCompatActivity {
                 endTime.set(Calendar.MINUTE, minute);
                 tvEndTime.setText(String.format(Locale.getDefault(), "%02d:%02d", hour, minute));
             }, endTime.get(Calendar.HOUR_OF_DAY),
-                    endTime.get(Calendar.MINUTE), true).show();
+                    endTime.get(Calendar.MINUTE), false).show();
         });
 
         btnSave.setOnClickListener(v -> saveSlot());
@@ -97,17 +96,24 @@ public class AvailabilityActivity extends AppCompatActivity {
         selectedDate.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
         Date start = selectedDate.getTime();
 
-        selectedDate.set(Calendar.HOUR_OF_DAY, endTime.get(Calendar.HOUR_OF_DAY));
-        selectedDate.set(Calendar.MINUTE, endTime.get(Calendar.MINUTE));
-        Date end = selectedDate.getTime();
+        SimpleDateFormat dateFmt = new SimpleDateFormat(DateUtils.STORAGE_DATE, Locale.US);
+        SimpleDateFormat timeFmt = new SimpleDateFormat(DateUtils.STORAGE_TIME, Locale.US);
+        String dateStr = dateFmt.format(start);
+        String startStr = timeFmt.format(start);
 
         String slotId = FirebaseFirestore.getInstance().collection("timeslots").document().getId();
-        TimeSlot slot = new TimeSlot(slotId, uid,
-                new Timestamp(start), new Timestamp(end), true);
+        Map<String, Object> data = new HashMap<>();
+        data.put("counselorId", uid);
+        data.put("date", dateStr);
+        data.put("startTime", startStr);
+        data.put("appointmentType", "In-Person");
+        data.put("createdAt", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+                .format(new Date()));
+        data.put("isBooked", false);
 
         FirebaseFirestore.getInstance().collection("timeslots")
                 .document(slotId)
-                .set(slot)
+                .set(data)
                 .addOnSuccessListener(u -> {
                     Toast.makeText(this, "Slot added successfully!", Toast.LENGTH_SHORT).show();
                     finish();

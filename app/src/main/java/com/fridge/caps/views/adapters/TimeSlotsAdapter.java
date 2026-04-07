@@ -10,8 +10,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fridge.caps.R;
 import com.fridge.caps.models.TimeSlot;
+import com.fridge.caps.utils.DateUtils;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -49,8 +51,17 @@ public class TimeSlotsAdapter extends RecyclerView.Adapter<TimeSlotsAdapter.Slot
     @Override
     public void onBindViewHolder(@NonNull SlotViewHolder holder, int position) {
         TimeSlot slot = slots.get(position);
-        holder.tvDate.setText(dateFormat.format(slot.getStartTime().toDate()));
-        holder.tvTime.setText(timeFormat.format(slot.getStartTime().toDate()));
+        if (slot.getDate() != null && slot.getStartTime() != null) {
+            holder.tvDate.setText(DateUtils.toDisplayDate(slot.getDate()));
+            holder.tvTime.setText(slot.getStartTime());
+        } else if (slot.getLegacyStartTime() != null) {
+            Date d = slot.getLegacyStartTime().toDate();
+            holder.tvDate.setText(dateFormat.format(d));
+            holder.tvTime.setText(timeFormat.format(d));
+        } else {
+            holder.tvDate.setText("—");
+            holder.tvTime.setText("—");
+        }
         holder.itemView.setOnClickListener(v -> listener.onSlotClick(slot));
     }
 

@@ -8,5 +8,7 @@ public enum NotificationType {
     REMINDER,
     CONFIRMATION,
     CANCELLATION,
-    RESCHEDULE
+    RESCHEDULE,
+    COMPLETED,
+    PENDING
 }

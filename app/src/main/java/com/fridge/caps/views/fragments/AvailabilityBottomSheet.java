@@ -15,7 +15,6 @@ import com.fridge.caps.R;
 import com.fridge.caps.utils.DateUtils;
 import com.fridge.caps.views.activities.CounselorDashboardActivity;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -39,8 +38,8 @@ public class AvailabilityBottomSheet extends BottomSheetDialogFragment {
     private String counselorId;
 
     private LinearLayout llDateChips;
-    private MaterialCardView cardMorning;
-    private MaterialCardView cardAfternoon;
+    private View cardMorning;
+    private View cardAfternoon;
     private LinearLayout llScheduledRows;
     private View btnSave;
 
@@ -90,11 +89,11 @@ public class AvailabilityBottomSheet extends BottomSheetDialogFragment {
 
         cardMorning.setOnClickListener(v -> {
             morningOn = !morningOn;
-            applyPeriodStyle(cardMorning, morningOn, true);
+            applyPeriodStyle(cardMorning, morningOn);
         });
         cardAfternoon.setOnClickListener(v -> {
             afternoonOn = !afternoonOn;
-            applyPeriodStyle(cardAfternoon, afternoonOn, false);
+            applyPeriodStyle(cardAfternoon, afternoonOn);
         });
 
         loadSelectionForDate(selectedDate);
@@ -145,7 +144,7 @@ public class AvailabilityBottomSheet extends BottomSheetDialogFragment {
             chip.setTextColor(Color.WHITE);
         } else {
             chip.setBackgroundResource(R.drawable.bg_chip_date_unselected);
-            chip.setTextColor(Color.parseColor("#2A4A6B"));
+            chip.setTextColor(Color.parseColor("#2D2D2D"));
         }
     }
 
@@ -155,30 +154,19 @@ public class AvailabilityBottomSheet extends BottomSheetDialogFragment {
                 .addOnSuccessListener(doc -> {
                     morningOn = doc.exists() && Boolean.TRUE.equals(doc.getBoolean("morning"));
                     afternoonOn = doc.exists() && Boolean.TRUE.equals(doc.getBoolean("afternoon"));
-                    applyPeriodStyle(cardMorning, morningOn, true);
-                    applyPeriodStyle(cardAfternoon, afternoonOn, false);
+                    applyPeriodStyle(cardMorning, morningOn);
+                    applyPeriodStyle(cardAfternoon, afternoonOn);
                 });
     }
 
-    private void applyPeriodStyle(MaterialCardView card, boolean on, boolean morning) {
-        if (on) {
-            card.setCardBackgroundColor(Color.parseColor("#5BA3D9"));
-            card.setStrokeWidth(0);
-            setPeriodTextColors(card, Color.WHITE);
-        } else {
-            card.setCardBackgroundColor(Color.WHITE);
-            card.setStrokeWidth((int) (1 * getResources().getDisplayMetrics().density));
-            card.setStrokeColor(Color.parseColor("#CCCCCC"));
-            setPeriodTextColors(card, Color.parseColor("#888888"));
-        }
-    }
-
-    private void setPeriodTextColors(MaterialCardView card, int color) {
-        ViewGroup root = (ViewGroup) card.getChildAt(0);
+    private void applyPeriodStyle(View card, boolean on) {
+        card.setBackgroundResource(on ? R.drawable.bg_period_slot_on : R.drawable.bg_period_slot_off);
+        int fg = on ? Color.WHITE : Color.parseColor("#8A8680");
+        ViewGroup root = (ViewGroup) ((ViewGroup) card).getChildAt(0);
         for (int i = 0; i < root.getChildCount(); i++) {
             View child = root.getChildAt(i);
             if (child instanceof TextView) {
-                ((TextView) child).setTextColor(color);
+                ((TextView) child).setTextColor(fg);
             }
         }
     }
@@ -244,7 +232,7 @@ public class AvailabilityBottomSheet extends BottomSheetDialogFragment {
         tv.setLayoutParams(new LinearLayout.LayoutParams(0,
                 LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
         tv.setText(label);
-        tv.setTextColor(Color.parseColor("#2A4A6B"));
+        tv.setTextColor(Color.parseColor("#2D2D2D"));
         tv.setTextSize(13);
 
         TextView del = new TextView(requireContext());

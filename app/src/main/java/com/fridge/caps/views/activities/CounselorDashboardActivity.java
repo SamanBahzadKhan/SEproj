@@ -1,5 +1,11 @@
 package com.fridge.caps.views.activities;
 
+/**
+ * CounselorDashboardActivity.java
+ * Counselor home screen displaying weekly availability grid, pending appointment requests, and confirmed sessions.
+ * Shows morning/afternoon availability for each day and appointment management options.
+ * View in the MVC pattern.
+ */
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -136,10 +142,13 @@ public class CounselorDashboardActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.navHome).setOnClickListener(v -> { });
-        findViewById(R.id.navCounsel).setOnClickListener(v ->
-                startActivity(new Intent(this, CounselorListActivity.class)));
+        findViewById(R.id.navCounsel).setOnClickListener(v -> {
+            if (counselorUid == null) return;
+            AvailabilityBottomSheet.newInstance(counselorUid)
+                    .show(getSupportFragmentManager(), "availability_sheet");
+        });
         findViewById(R.id.navAppts).setOnClickListener(v ->
-                startActivity(new Intent(this, AppointmentsActivity.class)));
+                startActivity(new Intent(this, CounselorAppointmentsActivity.class)));
         findViewById(R.id.navAlerts).setOnClickListener(v ->
                 startActivity(new Intent(this, NotificationsActivity.class)));
         findViewById(R.id.navProfile).setOnClickListener(v -> openOwnProfile());
@@ -511,7 +520,7 @@ public class CounselorDashboardActivity extends AppCompatActivity {
                 .addOnSuccessListener(doc -> {
                     if (doc.exists() && doc.getString("name") != null) {
                         counselorNameCache = doc.getString("name");
-                        tvWelcome.setText("Good Morning,\nDr. " + counselorNameCache);
+                        tvWelcome.setText("Dr. " + counselorNameCache);
                     }
                 });
     }

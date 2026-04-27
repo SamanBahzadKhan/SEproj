@@ -1,11 +1,16 @@
 package com.fridge.caps.views.activities;
 
+/**
+ * CounselorProfileActivity.java
+ * Displays detailed counselor profile with ratings, reviews, and booking options.
+ * Shows counselor specialization, bio, feedback history, and allows students to book appointments.
+ * View in the MVC pattern.
+ */
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,15 +45,16 @@ public class CounselorProfileActivity extends AppCompatActivity {
     public static final String EXTRA_COUNSELOR_ID   = "counselor_id";
     public static final String EXTRA_COUNSELOR_NAME = "counselor_name";
 
-    private ImageButton btnEditProfile;
+    private View btnEditProfile;
     private com.google.android.material.button.MaterialButton btnBookAppointment;
-    private com.google.android.material.button.MaterialButton btnSignOut;
+    private View btnSignOut;
     private SwitchCompat switchAccepting;
     private View cardOwnProfile;
     private android.widget.ProgressBar progressBar;
     private TextView tvName, tvSpecialization, tvBio, tvAvailability, tvEmail;
     private TextView tvRatingValue, tvRatingCount;
     private TextView tvNoReviews;
+    private TextView tvAvatarInitials;
     private RecyclerView rvReviews;
 
     private ImageView[] starAvg;
@@ -95,6 +101,7 @@ public class CounselorProfileActivity extends AppCompatActivity {
         tvRatingValue = findViewById(R.id.tvRatingValue);
         tvRatingCount = findViewById(R.id.tvRatingCount);
         tvNoReviews = findViewById(R.id.tvNoReviews);
+        tvAvatarInitials = findViewById(R.id.tvAvatarInitials);
         rvReviews = findViewById(R.id.rvReviews);
         progressBar = findViewById(R.id.progressBar);
         cardOwnProfile = findViewById(R.id.cardOwnProfile);
@@ -116,7 +123,7 @@ public class CounselorProfileActivity extends AppCompatActivity {
         rvReviews.setAdapter(reviewsAdapter);
 
         if (nameExtra != null && !nameExtra.isEmpty()) {
-            tvName.setText(nameExtra);
+            tvName.setText(withDrPrefix(nameExtra));
         }
 
         if (getSupportActionBar() != null) {
@@ -194,7 +201,10 @@ public class CounselorProfileActivity extends AppCompatActivity {
     private void applyCounselorDoc(DocumentSnapshot snap, Counselor counselor) {
         if (counselor == null) return;
         loadedCounselorName = counselor.getName();
-        tvName.setText(counselor.getName());
+        tvName.setText(withDrPrefix(counselor.getName()));
+        if (tvAvatarInitials != null) {
+            tvAvatarInitials.setText(initialsOf(counselor.getName()));
+        }
         tvSpecialization.setText(counselor.getSpecialization());
         tvBio.setText(counselor.getBio());
         tvEmail.setText(counselor.getEmail());
@@ -315,5 +325,24 @@ public class CounselorProfileActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         finish();
         return true;
+    }
+
+    private String withDrPrefix(String name) {
+        if (name == null) return "Dr.";
+        String trimmed = name.trim();
+        if (trimmed.toLowerCase(java.util.Locale.US).startsWith("dr.")) {
+            return trimmed;
+        }
+        return "Dr. " + trimmed;
+    }
+
+    private String initialsOf(String name) {
+        if (name == null || name.trim().isEmpty()) return "DR";
+        String clean = name.trim().replaceFirst("(?i)^dr\\.\\s*", "");
+        String[] parts = clean.split("\\s+");
+        if (parts.length == 1) return parts[0].substring(0, 1).toUpperCase(java.util.Locale.US);
+        String first = parts[0].substring(0, 1).toUpperCase(java.util.Locale.US);
+        String last = parts[parts.length - 1].substring(0, 1).toUpperCase(java.util.Locale.US);
+        return first + last;
     }
 }

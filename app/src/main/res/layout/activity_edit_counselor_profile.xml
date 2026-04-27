@@ -1,80 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DAEEFF"
-    android:orientation="vertical">
+    android:background="@color/caps_palette_bg">
 
     <LinearLayout
+        android:id="@+id/topBar"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="#5BA3D9"
+        android:layout_height="62dp"
+        android:background="@color/caps_palette_text_dark"
         android:gravity="center_vertical"
-        android:paddingHorizontal="8dp">
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp">
 
         <TextView
             android:id="@+id/btnBack"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:gravity="center"
-            android:paddingHorizontal="12dp"
             android:text="‹"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/caps_palette_white"
             android:textSize="28sp" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:fontFamily="sans-serif-black"
             android:gravity="center"
             android:text="Edit Profile"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textColor="@color/caps_palette_white"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/btnSaveToolbar"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:gravity="center"
-            android:paddingHorizontal="12dp"
             android:text="SAVE"
-            android:textColor="#FFFFFF"
-            android:textSize="15sp"
-            android:textStyle="bold" />
+            android:textColor="@color/caps_palette_white"
+            android:textSize="12sp"
+            android:fontFamily="sans-serif-black" />
     </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:layout_below="@id/topBar"
         android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="20dp">
 
             <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="24dp">
+                android:layout_marginTop="24dp">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/avatarImage"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:src="@drawable/circle_blue_bg" />
+                <FrameLayout
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@drawable/bg_offset_avatar_80">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/avatarImage"
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/circle_blue_bg" />
+                </FrameLayout>
 
                 <ProgressBar
                     android:id="@+id/uploadProgressBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:layout_gravity="center"
                     android:visibility="gone" />
 
@@ -83,206 +88,82 @@
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_gravity="bottom|end"
-                    android:background="@drawable/bg_circle_camera"
+                    android:background="@drawable/bg_offset_circle_28_white"
                     android:clickable="true"
-                    android:focusable="true">
+                    android:focusable="true"
+                    android:stateListAnimator="@animator/press_down_button">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="📷"
-                        android:textSize="14sp" />
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_gravity="center"
+                        android:src="@android:drawable/ic_menu_camera"
+                        android:tint="@color/caps_palette_neutral_dark" />
                 </FrameLayout>
             </FrameLayout>
 
-            <com.google.android.material.card.MaterialCardView
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bg_offset_row_16"
+                android:padding="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Full Name"
-                        android:textColor="#888888"
-                        android:textSize="12sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Name" android:textColor="@color/caps_palette_grey_warm" android:textSize="12sp" />
+                    <EditText android:id="@+id/etName" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@android:color/transparent" android:inputType="textPersonName" android:textColor="@color/caps_palette_neutral_dark" android:textSize="15sp" android:fontFamily="sans-serif-black" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/caps_palette_bg" />
 
-                    <EditText
-                        android:id="@+id/etName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@android:color/white"
-                        android:hint="Name"
-                        android:inputType="textPersonName"
-                        android:paddingVertical="8dp"
-                        android:textColor="#2A4A6B"
-                        android:textColorHint="#9E9E9E" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Phone" android:textColor="@color/caps_palette_grey_warm" android:textSize="12sp" />
+                    <EditText android:id="@+id/etPhone" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@android:color/transparent" android:inputType="phone" android:textColor="@color/caps_palette_neutral_dark" android:textSize="15sp" android:fontFamily="sans-serif-black" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/caps_palette_bg" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginBottom="12dp"
-                        android:background="#E0E0E0" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Department" android:textColor="@color/caps_palette_grey_warm" android:textSize="12sp" />
+                    <EditText android:id="@+id/etDepartment" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@android:color/transparent" android:inputType="text" android:textColor="@color/caps_palette_neutral_dark" android:textSize="15sp" android:fontFamily="sans-serif-black" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/caps_palette_bg" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Phone Number"
-                        android:textColor="#888888"
-                        android:textSize="12sp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Specialization" android:textColor="@color/caps_palette_grey_warm" android:textSize="12sp" />
+                    <EditText android:id="@+id/etSpecialization" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@android:color/transparent" android:inputType="text" android:textColor="@color/caps_palette_neutral_dark" android:textSize="15sp" android:fontFamily="sans-serif-black" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/caps_palette_bg" />
 
-                    <EditText
-                        android:id="@+id/etPhone"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@android:color/white"
-                        android:hint="Phone"
-                        android:inputType="phone"
-                        android:paddingVertical="8dp"
-                        android:textColor="#2A4A6B"
-                        android:textColorHint="#9E9E9E" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginBottom="12dp"
-                        android:background="#E0E0E0" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Specialization"
-                        android:textColor="#888888"
-                        android:textSize="12sp" />
-
-                    <EditText
-                        android:id="@+id/etSpecialization"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@android:color/white"
-                        android:hint="Specialization"
-                        android:inputType="text"
-                        android:paddingVertical="8dp"
-                        android:textColor="#2A4A6B"
-                        android:textColorHint="#9E9E9E" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginBottom="12dp"
-                        android:background="#E0E0E0" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Department"
-                        android:textColor="#888888"
-                        android:textSize="12sp" />
-
-                    <EditText
-                        android:id="@+id/etDepartment"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@android:color/white"
-                        android:hint="Department"
-                        android:inputType="text"
-                        android:paddingVertical="8dp"
-                        android:textColor="#2A4A6B"
-                        android:textColorHint="#9E9E9E" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginBottom="12dp"
-                        android:background="#E0E0E0" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Bio / About"
-                        android:textColor="#888888"
-                        android:textSize="12sp" />
-
-                    <EditText
-                        android:id="@+id/etBio"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@android:color/white"
-                        android:gravity="top|start"
-                        android:hint="Tell students about yourself..."
-                        android:inputType="textMultiLine"
-                        android:minLines="4"
-                        android:paddingVertical="8dp"
-                        android:textColor="#2A4A6B"
-                        android:textColorHint="#9E9E9E" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="12dp"
-                        android:background="#E0E0E0" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="About / Bio" android:textColor="@color/caps_palette_grey_warm" android:textSize="12sp" />
+                    <EditText android:id="@+id/etBio" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@android:color/transparent" android:gravity="top|start" android:inputType="textMultiLine" android:minLines="2" android:textColor="@color/caps_palette_neutral_dark" android:textSize="15sp" android:fontFamily="sans-serif-black" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/caps_palette_bg" />
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="Accepting new clients"
-                            android:textColor="#2A4A6B"
-                            android:textSize="15sp" />
+                            android:layout_weight="1"
+                            android:fontFamily="sans-serif-black"
+                            android:text="Accepting New Clients"
+                            android:textColor="@color/caps_palette_neutral_dark"
+                            android:textSize="14sp" />
 
-                        <TextView
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switchAcceptingClients"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:text="Students can book appointments with you when enabled"
-                            android:textColor="#888888"
-                            android:textSize="12sp" />
+                            android:layout_height="wrap_content" />
                     </LinearLayout>
-
-                    <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/switchAcceptingClients"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            </FrameLayout>
         </LinearLayout>
     </ScrollView>
 
     <ProgressBar
         android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_centerInParent="true"
         android:visibility="gone" />
-</LinearLayout>
+</RelativeLayout>

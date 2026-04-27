@@ -3,6 +3,8 @@ package com.fridge.caps.views.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -10,18 +12,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.fridge.caps.R;
 import com.fridge.caps.controllers.AuthController;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
 
 /**
  * Self-service counsellor sign-up; lands on {@link CounselorDashboardActivity}.
  */
 public class CounselorRegisterActivity extends AppCompatActivity {
 
-    private TextInputEditText etName, etEmail, etPassword, etPasswordConfirm,
-            etSpecialization, etDepartment, etPhone, etBio;
-    private MaterialButton    btnRegister;
-    private ProgressBar       progressBar;
+    private EditText      etName, etEmail, etPassword, etSpecialization, etDepartment, etPhone, etBio;
+    private Button        btnRegister;
+    private ProgressBar   progressBar;
 
     private AuthController authController;
 
@@ -32,16 +32,15 @@ public class CounselorRegisterActivity extends AppCompatActivity {
 
         authController = new AuthController();
 
-        etName            = findViewById(R.id.etName);
-        etEmail           = findViewById(R.id.etEmail);
-        etPassword        = findViewById(R.id.etPassword);
-        etPasswordConfirm = findViewById(R.id.etPasswordConfirm);
-        etSpecialization  = findViewById(R.id.etSpecialization);
-        etDepartment      = findViewById(R.id.etDepartment);
-        etPhone           = findViewById(R.id.etPhone);
-        etBio             = findViewById(R.id.etBio);
-        btnRegister       = findViewById(R.id.btnRegister);
-        progressBar       = findViewById(R.id.progressBar);
+        etName           = findViewById(R.id.etName);
+        etEmail          = findViewById(R.id.etEmail);
+        etPassword       = findViewById(R.id.etPassword);
+        etSpecialization = findViewById(R.id.etSpecialization);
+        etDepartment     = findViewById(R.id.etDepartment);
+        etPhone          = findViewById(R.id.etPhone);
+        etBio            = findViewById(R.id.etBio);
+        btnRegister      = findViewById(R.id.btnRegister);
+        progressBar      = findViewById(R.id.progressBar);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -55,7 +54,6 @@ public class CounselorRegisterActivity extends AppCompatActivity {
         String name = text(etName);
         String email = text(etEmail);
         String p1 = text(etPassword);
-        String p2 = text(etPasswordConfirm);
         String spec = text(etSpecialization);
         String dept = text(etDepartment);
         String phone = text(etPhone);
@@ -64,10 +62,6 @@ public class CounselorRegisterActivity extends AppCompatActivity {
         if (name.isEmpty() || email.isEmpty() || p1.isEmpty() || spec.isEmpty()
                 || dept.isEmpty() || phone.isEmpty() || bio.isEmpty()) {
             Toast.makeText(this, "Please fill all fields.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (!p1.equals(p2)) {
-            Toast.makeText(this, "Passwords do not match.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -79,11 +73,12 @@ public class CounselorRegisterActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess() {
                         progressBar.setVisibility(View.GONE);
-                        Intent i = new Intent(CounselorRegisterActivity.this,
-                                CounselorDashboardActivity.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(i);
+                        FirebaseAuth.getInstance().signOut();
+                        Toast.makeText(CounselorRegisterActivity.this,
+                                "Signup submitted. Wait for admin approval.", Toast.LENGTH_LONG).show();
+                        Intent i = new Intent(CounselorRegisterActivity.this, LoginActivity.class);
                         finish();
+                        startActivity(i);
                     }
 
                     @Override
@@ -96,7 +91,7 @@ public class CounselorRegisterActivity extends AppCompatActivity {
                 });
     }
 
-    private static String text(TextInputEditText et) {
+    private static String text(EditText et) {
         return et.getText() != null ? et.getText().toString().trim() : "";
     }
 

@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">CAPs</string>
+    <string name="cd_back">Back</string>
+    <string name="cd_confirm_request">Confirm appointment request</string>
+    <string name="cd_decline_request">Decline appointment request</string>
+    <string name="report_user_menu">Report</string>
+    <string name="report_to_admin">Report to admin</string>
+    <string name="report_student_unavailable">Student info unavailable for this slot.</string>
 </resources>

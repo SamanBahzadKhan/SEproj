@@ -1,5 +1,11 @@
 package com.fridge.caps.views.activities;
 
+/**
+ * BookAppointmentActivity.java
+ * Appointment booking interface for students to select date and time from available slots.
+ * Displays available time slots in a grid, sends booking request notification, and manages confirmations.
+ * View in the MVC pattern.
+ */
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -181,7 +187,7 @@ public class BookAppointmentActivity extends AppCompatActivity {
             chip.setTextColor(Color.WHITE);
         } else {
             chip.setBackgroundResource(R.drawable.bg_chip_date_unselected);
-            chip.setTextColor(Color.parseColor("#2A4A6B"));
+            chip.setTextColor(Color.parseColor("#2D2D2D"));
         }
     }
 
@@ -245,14 +251,15 @@ public class BookAppointmentActivity extends AppCompatActivity {
     private void stylePeriodCard(MaterialCardView card, boolean on) {
         TextView tv = (TextView) card.getChildAt(0);
         if (on) {
-            card.setCardBackgroundColor(Color.parseColor("#5BA3D9"));
-            card.setStrokeWidth(0);
-            tv.setTextColor(Color.WHITE);
+            card.setCardBackgroundColor(Color.parseColor("#CEAFA6"));
+            card.setStrokeWidth((int) (2 * getResources().getDisplayMetrics().density));
+            card.setStrokeColor(Color.parseColor("#2D2D2D"));
+            tv.setTextColor(Color.parseColor("#2D2D2D"));
         } else {
             card.setCardBackgroundColor(Color.WHITE);
-            card.setStrokeWidth((int) (1 * getResources().getDisplayMetrics().density));
-            card.setStrokeColor(Color.parseColor("#CCCCCC"));
-            tv.setTextColor(Color.parseColor("#2A4A6B"));
+            card.setStrokeWidth((int) (2 * getResources().getDisplayMetrics().density));
+            card.setStrokeColor(Color.parseColor("#2D2D2D"));
+            tv.setTextColor(Color.parseColor("#2D2D2D"));
         }
     }
 
@@ -323,13 +330,13 @@ public class BookAppointmentActivity extends AppCompatActivity {
                 b.setClickable(false);
             } else {
                 b.setBackgroundResource(R.drawable.bg_chip_date_unselected);
-                b.setTextColor(Color.parseColor("#2A4A6B"));
+                b.setTextColor(Color.parseColor("#2D2D2D"));
                 b.setClickable(true);
                 final String timeF = time;
                 b.setOnClickListener(v -> {
                     if (selectedTimeView != null) {
                         selectedTimeView.setBackgroundResource(R.drawable.bg_chip_date_unselected);
-                        selectedTimeView.setTextColor(Color.parseColor("#2A4A6B"));
+                        selectedTimeView.setTextColor(Color.parseColor("#2D2D2D"));
                     }
                     selectedTime = timeF;
                     selectedTimeView = b;

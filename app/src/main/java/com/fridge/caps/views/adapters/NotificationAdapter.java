@@ -1,9 +1,9 @@
 package com.fridge.caps.views.adapters;
 
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -11,111 +11,154 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fridge.caps.R;
 import com.fridge.caps.models.Notification;
-import com.fridge.caps.models.NotificationType;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Adapter for the notifications list.
- */
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.VH> {
+    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_ITEM = 1;
 
     public interface OnNotificationClickListener {
         void onNotificationClick(Notification n);
     }
 
-    private final List<Notification> items;
+    private final List<Row> rows;
     private final OnNotificationClickListener listener;
 
     public NotificationAdapter(List<Notification> items, OnNotificationClickListener listener) {
-        this.items    = items;
+        this.rows = buildRows(items);
         this.listener = listener;
     }
 
     @NonNull
     @Override
     public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_notification, parent, false);
-        return new VH(v);
+        int layout = viewType == TYPE_HEADER
+                ? R.layout.item_notification_header
+                : R.layout.item_notification;
+        return new VH(LayoutInflater.from(parent.getContext()).inflate(layout, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull VH h, int position) {
-        Notification n = items.get(position);
+        Row row = rows.get(position);
+        if (row.isHeader) {
+            h.tvHeader.setText(row.headerLabel);
+            return;
+        }
+
+        Notification n = row.notification;
         h.tvTitle.setText(n.getTitle() != null ? n.getTitle() : "");
         h.tvMessage.setText(n.getMessage() != null ? n.getMessage() : "");
         h.tvTime.setText(relativeTime(n));
-
-        int bar = Color.parseColor("#5BA3D9");
-        String icon = "🔔";
         String tk = n.getTypeKey();
-        if (tk != null && !tk.isEmpty()) {
+        int iconRes = android.R.drawable.ic_popup_reminder;
+        int iconBg = R.drawable.bg_offset_notification_icon_sage;
+        int cardBg = R.drawable.bg_offset_notification_card_bluegrey;
+        int iconTint = 0xFF2D2D2D;
+        if (tk != null) {
             switch (tk) {
-                case "CONFIRMATION":
-                case "NEW_BOOKING":
-                    bar = Color.parseColor("#5BA3D9");
-                    icon = "✓";
-                    break;
-                case "PENDING":
-                    bar = Color.parseColor("#FFA000");
-                    icon = "⏳";
-                    break;
                 case "REMINDER":
-                    bar = Color.parseColor("#FFA000");
-                    icon = "⏰";
-                    break;
-                case "COMPLETED":
-                    bar = Color.parseColor("#4CAF50");
-                    icon = "✓";
+                case "PENDING":
+                    iconRes = android.R.drawable.ic_lock_idle_alarm;
+                    iconBg = R.drawable.bg_offset_notification_icon_peach;
+                    cardBg = R.drawable.bg_offset_notification_card_peach;
                     break;
                 case "CANCELLED":
                 case "CANCELLATION":
-                    bar = Color.parseColor("#F44336");
-                    icon = "✕";
+                case "NO_SHOW":
+                case "MISSED":
+                    iconRes = android.R.drawable.ic_delete;
+                    iconBg = R.drawable.bg_offset_notification_icon_rose;
+                    cardBg = R.drawable.bg_offset_notification_card_rose;
                     break;
-                case "RESCHEDULE":
-                    bar = Color.parseColor("#4CAF50");
-                    icon = "↻";
+                case "NEW_REPORT":
+                    iconRes = android.R.drawable.ic_dialog_alert;
+                    iconBg = R.drawable.bg_offset_notification_icon_bluegray;
+                    cardBg = R.drawable.bg_offset_notification_card_bluegrey;
                     break;
-                case "FEEDBACK":
-                    bar = Color.parseColor("#FFC107");
-                    icon = "⭐";
+                case "COMPLETED":
+                    iconRes = android.R.drawable.checkbox_on_background;
+                    iconBg = R.drawable.bg_offset_notification_icon_sage;
+                    cardBg = R.drawable.bg_offset_notification_card_sage;
+                    iconTint = 0xFFFFFFFF;
                     break;
+                case "CONFIRMATION":
+                case "NEW_BOOKING":
                 default:
+                    iconRes = android.R.drawable.checkbox_on_background;
+                    iconBg = R.drawable.bg_offset_notification_icon_sage;
+                    cardBg = R.drawable.bg_offset_notification_card_bluegrey;
+                    iconTint = 0xFFFFFFFF;
                     break;
-            }
-        } else {
-            NotificationType t = n.getType();
-            if (t != null) {
-                switch (t) {
-                    case CONFIRMATION:
-                        bar = Color.parseColor("#5BA3D9");
-                        break;
-                    case REMINDER:
-                        bar = Color.parseColor("#FFA000");
-                        break;
-                    case CANCELLATION:
-                        bar = Color.parseColor("#F44336");
-                        break;
-                    case RESCHEDULE:
-                        bar = Color.parseColor("#4CAF50");
-                        break;
-                    default:
-                        break;
-                }
             }
         }
-        h.barColor.setBackgroundColor(bar);
-        h.tvIcon.setText(icon);
-
-        int bg = n.isRead() ? Color.WHITE : Color.parseColor("#EBF5FF");
-        h.cardRoot.setCardBackgroundColor(bg);
+        h.cardRoot.setBackgroundResource(cardBg);
+        h.iconCircle.setBackgroundResource(iconBg);
+        h.ivIcon.setImageResource(iconRes);
+        h.ivIcon.setColorFilter(iconTint);
 
         h.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onNotificationClick(n);
         });
+    }
+
+    @Override
+    public int getItemCount() { return rows.size(); }
+
+    @Override
+    public int getItemViewType(int position) {
+        return rows.get(position).isHeader ? TYPE_HEADER : TYPE_ITEM;
+    }
+
+    private static List<Row> buildRows(List<Notification> src) {
+        List<Row> out = new ArrayList<>();
+        boolean hasToday = false;
+        boolean hasYesterday = false;
+        boolean hasEarlier = false;
+        for (Notification n : src) {
+            if (isToday(n.getTimestampMillis())) {
+                if (!hasToday) {
+                    out.add(Row.header("TODAY"));
+                    hasToday = true;
+                }
+                out.add(Row.item(n));
+            } else if (isYesterday(n.getTimestampMillis())) {
+                if (!hasYesterday) {
+                    out.add(Row.header("YESTERDAY"));
+                    hasYesterday = true;
+                }
+                out.add(Row.item(n));
+            } else {
+                if (!hasEarlier) {
+                    out.add(Row.header("EARLIER"));
+                    hasEarlier = true;
+                }
+                out.add(Row.item(n));
+            }
+        }
+        return out;
+    }
+
+    private static boolean isToday(long millis) {
+        if (millis <= 0) return false;
+        String a = new SimpleDateFormat("yyyyMMdd", Locale.US).format(new Date(millis));
+        String b = new SimpleDateFormat("yyyyMMdd", Locale.US).format(new Date());
+        return a.equals(b);
+    }
+
+    private static boolean isYesterday(long millis) {
+        if (millis <= 0) return false;
+        java.util.Calendar c = java.util.Calendar.getInstance();
+        c.add(java.util.Calendar.DAY_OF_YEAR, -1);
+        String y = new SimpleDateFormat("yyyyMMdd", Locale.US).format(c.getTime());
+        String a = new SimpleDateFormat("yyyyMMdd", Locale.US).format(new Date(millis));
+        return y.equals(a);
     }
 
     private static String relativeTime(Notification n) {
@@ -134,24 +177,36 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         return days + " days ago";
     }
 
-    @Override
-    public int getItemCount() {
-        return items.size();
-    }
-
     static class VH extends RecyclerView.ViewHolder {
-        final View barColor;
-        final TextView tvIcon, tvTitle, tvMessage, tvTime;
-        final com.google.android.material.card.MaterialCardView cardRoot;
+        final View cardRoot;
+        final View iconCircle;
+        final ImageView ivIcon;
+        final TextView tvTitle, tvMessage, tvTime, tvHeader;
 
         VH(@NonNull View itemView) {
             super(itemView);
             cardRoot = itemView.findViewById(R.id.cardRoot);
-            barColor = itemView.findViewById(R.id.barColor);
-            tvIcon   = itemView.findViewById(R.id.tvIcon);
-            tvTitle  = itemView.findViewById(R.id.tvTitle);
+            iconCircle = itemView.findViewById(R.id.iconCircle);
+            ivIcon = itemView.findViewById(R.id.ivIcon);
+            tvTitle = itemView.findViewById(R.id.tvTitle);
             tvMessage = itemView.findViewById(R.id.tvMessage);
-            tvTime   = itemView.findViewById(R.id.tvTime);
+            tvTime = itemView.findViewById(R.id.tvTime);
+            tvHeader = itemView.findViewById(R.id.tvHeader);
         }
+    }
+
+    private static class Row {
+        final boolean isHeader;
+        final String headerLabel;
+        final Notification notification;
+
+        private Row(boolean isHeader, String headerLabel, Notification notification) {
+            this.isHeader = isHeader;
+            this.headerLabel = headerLabel;
+            this.notification = notification;
+        }
+
+        static Row header(String label) { return new Row(true, label, null); }
+        static Row item(Notification n) { return new Row(false, null, n); }
     }
 }

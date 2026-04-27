@@ -1,66 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- activity_student_dashboard.xml: Main home screen for students showing appointments and quick actions. -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DAEEFF">
+    android:background="@color/caps_palette_bg">
 
     <LinearLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="#5BA3D9"
+        android:layout_height="62dp"
+        android:background="@color/caps_palette_text_dark"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="CAPs"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingEnd="12dp">
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/topBarBell"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:text="🔔"
+                android:fontFamily="sans-serif-black"
+                android:text="CAPs"
+                android:textColor="@color/caps_palette_white"
                 android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="Counselling Appointment System"
+                android:textColor="@color/caps_palette_blue_light"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/topBarBell"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_offset_circle_40"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:src="@android:drawable/ic_popup_reminder"
+                android:tint="@color/caps_palette_neutral_dark" />
 
             <View
                 android:id="@+id/bellBadge"
                 android:layout_width="8dp"
                 android:layout_height="8dp"
                 android:layout_gravity="end|top"
-                android:background="@android:color/holo_red_dark"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_badge_dot"
                 android:visibility="gone" />
         </FrameLayout>
 
-        <TextView
+        <FrameLayout
             android:id="@+id/topBarSettings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:text="⚙"
-            android:textSize="18sp" />
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_offset_circle_40"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:src="@android:drawable/ic_menu_myplaces"
+                android:tint="@color/caps_palette_neutral_dark" />
+        </FrameLayout>
     </LinearLayout>
+
+    <View
+        android:id="@+id/topDivider"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/caps_palette_neutral_dark"
+        app:layout_constraintTop_toBottomOf="@id/topBar" />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:fillViewport="true"
         app:layout_constraintBottom_toTopOf="@+id/bottomNav"
-        app:layout_constraintTop_toBottomOf="@id/topBar">
+        app:layout_constraintTop_toBottomOf="@id/topDivider">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -69,293 +106,491 @@
             android:paddingBottom="16dp">
 
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:paddingHorizontal="16dp"
+                android:fontFamily="sans-serif"
+                android:text="Welcome back,"
+                android:textColor="@color/caps_palette_grey_warm"
+                android:textSize="14sp" />
+
+            <TextView
                 android:id="@+id/tvWelcome"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="16dp"
-                android:paddingTop="16dp"
-                android:text="Welcome back,"
-                android:textColor="#2A4A6B"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:fontFamily="sans-serif-black"
+                android:text="Username"
+                android:textColor="@color/caps_palette_neutral_dark"
+                android:textSize="38sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="12dp"
-                android:text="UPCOMING"
-                android:textColor="#2A4A6B"
-                android:textSize="11sp"
-                android:textStyle="bold" />
+                android:layout_marginTop="8dp"
+                android:paddingHorizontal="16dp"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="0.08"
+                android:text="UPCOMING APPOINTMENTS"
+                android:textAllCaps="true"
+                android:textColor="@color/caps_palette_neutral_dark"
+                android:textSize="12sp" />
 
             <ProgressBar
                 android:id="@+id/progressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
+                android:indeterminateTint="@color/caps_palette_brown"
                 android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tvNoUpcoming"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:gravity="center"
                 android:padding="16dp"
                 android:text="No upcoming appointments."
-                android:textColor="#888888"
+                android:textColor="@color/caps_palette_grey_warm"
                 android:visibility="gone" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvUpcoming"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:clipToPadding="false"
                 android:nestedScrollingEnabled="false"
-                android:paddingHorizontal="16dp"
-                android:paddingTop="8dp" />
+                android:paddingHorizontal="16dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="12dp"
+                android:paddingHorizontal="16dp"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="0.08"
                 android:text="QUICK ACTIONS"
-                android:textColor="#2A4A6B"
-                android:textSize="11sp"
-                android:textStyle="bold" />
+                android:textAllCaps="true"
+                android:textColor="@color/caps_palette_neutral_dark"
+                android:textSize="12sp" />
 
-            <GridLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:columnCount="2"
-                android:paddingHorizontal="12dp"
-                android:paddingTop="8dp">
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp">
 
-                <com.google.android.material.card.MaterialCardView
+                <FrameLayout
                     android:id="@+id/btnBookAppointment"
                     android:layout_width="0dp"
-                    android:layout_height="100dp"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="4dp"
-                    app:cardBackgroundColor="#E3F2FD"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp">
+                    android:layout_height="120dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_offset_card_bluegray_16"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="10dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
+                        android:orientation="vertical">
+
+                        <FrameLayout
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_offset_circle_40_small">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@android:drawable/ic_input_add"
+                                android:tint="@color/caps_palette_neutral_dark" />
+                        </FrameLayout>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="📅"
-                            android:textSize="28sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="Book\nAppointment"
-                            android:textColor="#2A4A6B"
+                            android:layout_marginTop="10dp"
+                            android:fontFamily="sans-serif-black"
+                            android:text="Book Appointment"
+                            android:textColor="@color/caps_palette_neutral_dark"
                             android:textSize="13sp" />
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                </FrameLayout>
 
-                <com.google.android.material.card.MaterialCardView
+                <FrameLayout
                     android:id="@+id/btnViewProfile"
                     android:layout_width="0dp"
-                    android:layout_height="100dp"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="4dp"
-                    app:cardBackgroundColor="#E8F5E9"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp">
+                    android:layout_height="120dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_offset_card_sage_16"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="10dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
+                        android:orientation="vertical">
+
+                        <FrameLayout
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_offset_circle_40_small">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@android:drawable/ic_menu_myplaces"
+                                android:tint="@color/caps_palette_neutral_dark" />
+                        </FrameLayout>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="👤"
-                            android:textSize="28sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:fontFamily="sans-serif-black"
                             android:text="View Profile"
-                            android:textColor="#2A4A6B"
+                            android:textColor="@color/caps_palette_neutral_dark"
                             android:textSize="13sp" />
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                </FrameLayout>
+            </LinearLayout>
 
-                <com.google.android.material.card.MaterialCardView
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp">
+
+                <FrameLayout
                     android:id="@+id/btnNotifications"
                     android:layout_width="0dp"
-                    android:layout_height="100dp"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="4dp"
-                    app:cardBackgroundColor="#FFF9C4"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp">
+                    android:layout_height="120dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_offset_card_rose_16"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="10dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
+                        android:orientation="vertical">
+
+                        <FrameLayout
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_offset_circle_40_small">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@android:drawable/ic_popup_reminder"
+                                android:tint="@color/caps_palette_neutral_dark" />
+                        </FrameLayout>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="🔔"
-                            android:textSize="28sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:fontFamily="sans-serif-black"
                             android:text="Notifications"
-                            android:textColor="#2A4A6B"
+                            android:textColor="@color/caps_palette_neutral_dark"
                             android:textSize="13sp" />
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                </FrameLayout>
 
-                <com.google.android.material.card.MaterialCardView
+                <FrameLayout
                     android:id="@+id/btnHistory"
                     android:layout_width="0dp"
-                    android:layout_height="100dp"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="4dp"
-                    app:cardBackgroundColor="#F3E5F5"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp">
+                    android:layout_height="120dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_offset_card_peach_16"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="10dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="8dp">
+                        android:orientation="vertical">
+
+                        <FrameLayout
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_offset_circle_40_small">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@android:drawable/ic_menu_agenda"
+                                android:tint="@color/caps_palette_neutral_dark" />
+                        </FrameLayout>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="📁"
-                            android:textSize="28sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:fontFamily="sans-serif-black"
                             android:text="History"
-                            android:textColor="#2A4A6B"
+                            android:textColor="@color/caps_palette_neutral_dark"
                             android:textSize="13sp" />
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-            </GridLayout>
+                </FrameLayout>
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="12dp"
+                android:paddingHorizontal="16dp"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="0.08"
                 android:text="PAST APPOINTMENTS"
-                android:textColor="#2A4A6B"
-                android:textSize="11sp"
-                android:textStyle="bold" />
+                android:textAllCaps="true"
+                android:textColor="@color/caps_palette_neutral_dark"
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/tvNoPast"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:gravity="center"
                 android:padding="12dp"
                 android:text="No past appointments."
-                android:textColor="#888888"
+                android:textColor="@color/caps_palette_grey_warm"
                 android:visibility="gone" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvPast"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:clipToPadding="false"
                 android:nestedScrollingEnabled="false"
+                android:paddingHorizontal="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:paddingHorizontal="16dp"
-                android:paddingTop="8dp" />
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="0.08"
+                android:text="EXTRA SUPPORT"
+                android:textAllCaps="true"
+                android:textColor="@color/caps_palette_neutral_dark"
+                android:textSize="12sp" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="48dp"
+                android:background="@drawable/bg_offset_pill_bluegray">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:fontFamily="sans-serif-black"
+                    android:text="Journal Entries"
+                    android:textColor="@color/caps_palette_neutral_dark"
+                    android:textSize="16sp" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="48dp"
+                android:background="@drawable/bg_offset_pill_rose">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:fontFamily="sans-serif-black"
+                    android:text="Session Notes"
+                    android:textColor="@color/caps_palette_neutral_dark"
+                    android:textSize="16sp" />
+            </FrameLayout>
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="#FFFFFF"
-        android:elevation="8dp"
-        android:gravity="center"
+        android:layout_height="82dp"
+        android:background="@color/caps_palette_bg"
         android:orientation="horizontal"
+        android:paddingTop="4dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_gravity="top"
+            android:background="@color/caps_palette_neutral_dark" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/navRow"
+        android:layout_width="match_parent"
+        android:layout_height="74dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingHorizontal="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/bottomNav"
+        app:layout_constraintTop_toTopOf="@id/bottomNav">
+
+        <LinearLayout
             android:id="@+id/navHome"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/selectableItemBackground"
             android:gravity="center"
-            android:text="Home"
-            android:textColor="#5BA3D9"
-            android:textSize="11sp"
-            android:textStyle="bold" />
+            android:orientation="vertical">
 
-        <TextView
+            <FrameLayout
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/bg_offset_home_icon">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center"
+                    android:src="@android:drawable/ic_menu_view"
+                    android:tint="@color/caps_palette_neutral_dark" />
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="sans-serif-black"
+                android:text="Home"
+                android:textColor="@color/caps_palette_neutral_dark"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/navCounsel"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/selectableItemBackground"
             android:gravity="center"
-            android:text="Counsel"
-            android:textColor="#888888"
-            android:textSize="11sp" />
+            android:orientation="vertical">
 
-        <TextView
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@android:drawable/ic_menu_my_calendar"
+                android:tint="@color/caps_palette_grey_warm" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="sans-serif"
+                android:text="Schedule"
+                android:textColor="@color/caps_palette_grey_warm"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/navAppts"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/selectableItemBackground"
             android:gravity="center"
-            android:text="Appts"
-            android:textColor="#888888"
-            android:textSize="11sp" />
+            android:orientation="vertical">
 
-        <TextView
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@android:drawable/ic_popup_reminder"
+                android:tint="@color/caps_palette_grey_warm" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="sans-serif"
+                android:text="Appointments"
+                android:textColor="@color/caps_palette_grey_warm"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/navAlerts"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/selectableItemBackground"
             android:gravity="center"
-            android:text="Alerts"
-            android:textColor="#888888"
-            android:textSize="11sp" />
+            android:orientation="vertical">
 
-        <TextView
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@android:drawable/ic_menu_myplaces"
+                android:tint="@color/caps_palette_grey_warm" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="sans-serif"
+                android:text="Alerts"
+                android:textColor="@color/caps_palette_grey_warm"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/navProfile"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="?attr/selectableItemBackground"
             android:gravity="center"
-            android:text="Profile"
-            android:textColor="#888888"
-            android:textSize="11sp" />
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@android:drawable/ic_menu_myplaces"
+                android:tint="@color/caps_palette_grey_warm" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="sans-serif"
+                android:text="Profile"
+                android:textColor="@color/caps_palette_grey_warm"
+                android:textSize="11sp" />
+        </LinearLayout>
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

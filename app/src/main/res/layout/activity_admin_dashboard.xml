@@ -1,182 +1,216 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DAEEFF">
+    android:background="@color/caps_palette_bg">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="#5BA3D9"
-            android:paddingHorizontal="16dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="Admin Panel"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:text="⚙"
-                android:textSize="20sp" />
-        </RelativeLayout>
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone" />
-
-        <GridLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:padding="12dp">
+            android:orientation="vertical">
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_columnWeight="1"
-                android:layout_margin="4dp"
-                app:cardBackgroundColor="#E3F2FD"
-                app:cardCornerRadius="12dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="68dp"
+                android:background="@color/caps_palette_text_dark"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-black"
+                        android:text="CAPs"
+                        android:textColor="@color/caps_palette_white"
+                        android:textSize="17sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif"
+                        android:text="Counselling Appointment System"
+                    android:textColor="@color/caps_palette_blue_light"
+                    android:textSize="11sp" />
+                </LinearLayout>
+
+                <FrameLayout
+                    android:id="@+id/topBarBell"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_offset_circle_40_bell_admin"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:stateListAnimator="@animator/press_down_button">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:src="@android:drawable/ic_popup_reminder"
+                        android:tint="@color/caps_palette_text_dark" />
+
+                    <TextView
+                        android:id="@+id/adminBellBadge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end|top"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="2dp"
+                        android:background="@drawable/bg_badge_dot"
+                        android:fontFamily="sans-serif-black"
+                        android:gravity="center"
+                        android:minWidth="18dp"
+                        android:minHeight="18dp"
+                        android:paddingHorizontal="4dp"
+                        android:textColor="@color/caps_palette_white"
+                        android:textSize="10sp"
+                        android:visibility="gone" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="14dp"
+                android:fontFamily="sans-serif-black"
+                android:text="Admin Overview"
+                android:textColor="@color/caps_palette_neutral_dark"
+                android:textSize="34sp" />
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:paddingHorizontal="10dp"
+                android:paddingTop="8dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="132dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/bg_offset_card_bluegray_16"
                     android:gravity="center"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="📅"
+                        android:text="🗓"
+                        android:textColor="@color/caps_palette_neutral_dark"
                         android:textSize="28sp" />
 
                     <TextView
                         android:id="@+id/tvTotalAppts"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-black"
                         android:text="0"
-                        android:textColor="#2A4A6B"
-                        android:textSize="22sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/caps_palette_neutral_dark"
+                        android:textSize="44sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Appointments"
-                        android:textSize="11sp" />
+                        android:fontFamily="sans-serif"
+                        android:text="Total Appointments"
+                        android:textColor="@color/caps_palette_grey_warm"
+                        android:textSize="12sp" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardCounselors"
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_columnWeight="1"
-                android:layout_margin="4dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:cardBackgroundColor="#E8F5E9"
-                app:cardCornerRadius="12dp">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:id="@+id/cardCounselors"
+                    android:layout_width="0dp"
+                    android:layout_height="132dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/bg_offset_card_sage_16"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:gravity="center"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="👤"
+                        android:text="⚯"
+                        android:textColor="@color/caps_palette_neutral_dark"
                         android:textSize="28sp" />
 
                     <TextView
                         android:id="@+id/tvTotalCounselors"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-black"
                         android:text="0"
-                        android:textColor="#2A4A6B"
-                        android:textSize="22sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/caps_palette_neutral_dark"
+                        android:textSize="44sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Counsellors"
-                        android:textSize="11sp" />
+                        android:fontFamily="sans-serif"
+                        android:text="Active Counselors"
+                        android:textColor="@color/caps_palette_grey_warm"
+                        android:textSize="12sp" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardStudents"
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_columnWeight="1"
-                android:layout_margin="4dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:cardBackgroundColor="#FFF9C4"
-                app:cardCornerRadius="12dp">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:id="@+id/cardStudents"
+                    android:layout_width="0dp"
+                    android:layout_height="132dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/bg_offset_card_peach_16"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:gravity="center"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="👥"
+                        android:text="◔"
+                        android:textColor="@color/caps_palette_neutral_dark"
                         android:textSize="28sp" />
 
                     <TextView
                         android:id="@+id/tvTotalStudents"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-black"
                         android:text="0"
-                        android:textColor="#2A4A6B"
-                        android:textSize="22sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/caps_palette_neutral_dark"
+                        android:textSize="44sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Students"
-                        android:textSize="11sp" />
+                        android:fontFamily="sans-serif"
+                        android:text="Registered Students"
+                        android:textColor="@color/caps_palette_grey_warm"
+                        android:textSize="12sp" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_columnWeight="1"
-                android:layout_margin="4dp"
-                app:cardBackgroundColor="#FCE4EC"
-                app:cardCornerRadius="12dp">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_height="132dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    android:background="@drawable/bg_offset_card_rose_16"
                     android:gravity="center"
                     android:orientation="vertical">
 
@@ -184,78 +218,165 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="⚠"
+                        android:textColor="@color/caps_palette_neutral_dark"
                         android:textSize="28sp" />
 
                     <TextView
-                        android:id="@+id/tvNoShows"
+                        android:id="@+id/tvReportsCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-black"
                         android:text="0"
-                        android:textColor="#2A4A6B"
-                        android:textSize="22sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/caps_palette_neutral_dark"
+                        android:textSize="44sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="No-shows"
-                        android:textSize="11sp" />
+                        android:fontFamily="sans-serif"
+                        android:text="Reports"
+                        android:textColor="@color/caps_palette_grey_warm"
+                        android:textSize="12sp" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-        </GridLayout>
+            </GridLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:text="ALL APPOINTMENTS"
-            android:textColor="#2A4A6B"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="12dp"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="0.08"
+                android:text="Pending Counselor Signups"
+                android:textAllCaps="true"
+                android:textColor="@color/caps_palette_neutral_dark"
+                android:textSize="14sp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvAppointments"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            android:paddingHorizontal="12dp" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPendingSignups"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"
+                android:paddingHorizontal="10dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="12dp"
-            android:text="MANAGE COUNSELLORS"
-            android:textColor="#2A4A6B"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tvNoSignups"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="8dp"
+                android:paddingHorizontal="12dp"
+                android:text="No pending counselor signups"
+                android:textColor="@color/caps_palette_grey_warm"
+                android:textSize="16sp"
+                android:visibility="gone" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvCounselors"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            android:paddingHorizontal="12dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="12dp"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="0.08"
+                android:text="All Reported Users"
+                android:textAllCaps="true"
+                android:textColor="@color/caps_palette_neutral_dark"
+                android:textSize="14sp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnAddCounselor"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:backgroundTint="#5BA3D9"
-            android:text="+ Add New Counsellor"
-            android:textColor="#FFFFFF"
-            app:cornerRadius="8dp" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAppointments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"
+                android:paddingHorizontal="10dp"
+                android:paddingBottom="6dp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSignOut"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="24dp"
-            android:backgroundTint="#F44336"
-            android:text="Sign out"
-            android:textColor="#FFFFFF"
-            app:cornerRadius="8dp" />
-    </LinearLayout>
-</ScrollView>
+            <TextView
+                android:id="@+id/tvNoReports"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="8dp"
+                android:paddingHorizontal="12dp"
+                android:text="No reported users"
+                android:textColor="@color/caps_palette_grey_warm"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="0.08"
+                android:text="Manage Counselors"
+                android:textAllCaps="true"
+                android:textColor="@color/caps_palette_neutral_dark"
+                android:textSize="14sp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvCounselors"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"
+                android:paddingHorizontal="10dp" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginHorizontal="20dp"
+                android:background="@drawable/bg_offset_button_brown_12"
+                android:stateListAnimator="@animator/press_down_button">
+
+                <Button
+                    android:id="@+id/btnAddCounselor"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="sans-serif-black"
+                    android:stateListAnimator="@animator/press_down_button"
+                    android:text="+ Add New Counselor"
+                    android:textAllCaps="false"
+                    android:textColor="@color/caps_palette_white"
+                    android:textSize="17sp" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/bg_offset_button_white_12"
+                android:stateListAnimator="@animator/press_down_button">
+
+                <Button
+                    android:id="@+id/btnSignOut"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="sans-serif-black"
+                    android:stateListAnimator="@animator/press_down_button"
+                    android:text="Sign out"
+                    android:textColor="@color/caps_palette_neutral_dark"
+                    android:textSize="16sp" />
+            </FrameLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/caps_palette_brown"
+        android:visibility="gone" />
+</FrameLayout>

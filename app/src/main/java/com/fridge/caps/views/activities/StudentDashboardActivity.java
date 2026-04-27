@@ -1,5 +1,11 @@
 package com.fridge.caps.views.activities;
 
+/**
+ * StudentDashboardActivity.java
+ * Main home screen for logged-in students showing upcoming appointments and quick navigation options.
+ * Displays upcoming and past appointment lists with action buttons for booking, profile, and notifications.
+ * View in the MVC pattern.
+ */
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -90,7 +96,7 @@ public class StudentDashboardActivity extends AppCompatActivity {
         findViewById(R.id.btnNotifications).setOnClickListener(v ->
                 startActivity(new Intent(this, NotificationsActivity.class)));
         findViewById(R.id.btnHistory).setOnClickListener(v ->
-                startActivity(new Intent(this, AppointmentsActivity.class)));
+                Toast.makeText(this, "History is shown below on this screen.", Toast.LENGTH_SHORT).show());
 
         // Bottom nav
         findViewById(R.id.navHome).setOnClickListener(v -> { /* already here */ });

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- AndroidManifest.xml: Application manifest defining app metadata, permissions, activities, services, and intent filters. -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -20,7 +21,8 @@
 
         <activity
             android:name=".views.activities.SplashActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.CAPs.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -42,7 +44,11 @@
         <activity android:name=".views.activities.ProfileActivity" />
         <activity android:name=".views.activities.EditProfileActivity" />
         <activity android:name=".views.activities.EditCounselorProfileActivity" />
+        <activity android:name=".views.activities.CounselorAppointmentsActivity" />
         <activity android:name=".views.activities.NotificationsActivity" />
+        <activity android:name=".views.activities.ReportUserActivity" />
+        <activity android:name=".views.activities.ReportDetailActivity" />
+        <activity android:name=".views.activities.PendingCounselorSignupDetailActivity" />
         <activity android:name=".views.activities.AppointmentsActivity" />
         <activity android:name=".views.activities.FeedbackActivity" />
         <activity android:name=".views.activities.AvailabilityActivity" />

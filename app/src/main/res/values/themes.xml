@@ -1,9 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- themes.xml: Theme style definitions including colors, text styles, and component appearances. -->
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.CAPs" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:windowBackground">@color/caps_palette_bg</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowFrame">@null</item>
     </style>
 
     <style name="Theme.CAPs" parent="Base.Theme.CAPs" />
+
+    <style name="Theme.CAPs.Splash" parent="Theme.CAPs">
+        <item name="android:windowBackground">@color/caps_palette_bg</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowFrame">@null</item>
+    </style>
 </resources>

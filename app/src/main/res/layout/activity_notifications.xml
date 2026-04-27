@@ -2,24 +2,75 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DAEEFF"
+    android:background="@color/caps_palette_bg"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tvMarkAll"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="62dp"
+        android:background="@color/caps_palette_text_dark"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="12dp">
+
+        <TextView
+            android:id="@+id/btnBack"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:gravity="center"
+            android:text="←"
+            android:textColor="@color/caps_palette_white"
+            android:textSize="20sp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-black"
+            android:text="Notifications"
+            android:textColor="@color/caps_palette_white"
+            android:textSize="18sp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="end"
-        android:padding="12dp"
-        android:text="Mark all read"
-        android:textColor="#5BA3D9"
-        android:textSize="14sp" />
+        android:paddingHorizontal="16dp"
+        android:paddingTop="8dp">
+
+        <FrameLayout
+            android:id="@+id/tvMarkAll"
+            android:layout_width="132dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_offset_markall_pill">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="sans-serif-black"
+                android:gravity="center"
+                android:text="Mark all read"
+                android:textColor="@color/caps_palette_neutral_dark"
+                android:textSize="13sp" />
+        </FrameLayout>
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:indeterminateTint="@color/caps_palette_blue_grey"
         android:visibility="gone" />
 
     <TextView
@@ -29,12 +80,15 @@
         android:gravity="center"
         android:padding="24dp"
         android:text="No notifications yet."
-        android:textColor="#888888"
+        android:textColor="@color/caps_palette_grey_warm"
+        android:textSize="16sp"
         android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingHorizontal="12dp" />
+        android:paddingHorizontal="0dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="12dp" />
 </LinearLayout>

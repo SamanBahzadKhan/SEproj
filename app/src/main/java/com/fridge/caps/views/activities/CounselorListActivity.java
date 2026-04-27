@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,22 +26,32 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
- * CounselorListActivity — browse counsellors.
+ * Student: active counsellors. Admin: all counsellor profiles (including inactive).
  */
 public class CounselorListActivity extends AppCompatActivity {
+
+    public static final String EXTRA_ADMIN_COUNSELOR_LIST = "admin_counselor_list";
 
     private RecyclerView recyclerView;
     private ProgressBar  progressBar;
     private TextView     tvEmpty;
     private EditText     etSearch;
+    private TextView     tvTitle;
 
     private CounselorController counselorController;
     private List<Counselor> allCounselors = new ArrayList<>();
+    private boolean adminListMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_counselor_list);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
+
+        adminListMode = getIntent().getBooleanExtra(EXTRA_ADMIN_COUNSELOR_LIST, false);
 
         counselorController = new CounselorController();
 
@@ -48,20 +59,23 @@ public class CounselorListActivity extends AppCompatActivity {
         progressBar  = findViewById(R.id.progressBar);
         tvEmpty      = findViewById(R.id.tvEmpty);
         etSearch     = findViewById(R.id.etSearch);
+        tvTitle      = findViewById(R.id.tvCounselorListTitle);
+        ImageButton back = findViewById(R.id.topBarBack);
+        back.setOnClickListener(v -> finish());
+
+        tvTitle.setText(adminListMode ? "Active Counsellors" : "Find a Counsellor");
+        if (!adminListMode) {
+            etSearch.setHint("Search counsellors...");
+        }
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Counsellors");
-        }
-
         etSearch.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
                 applyFilter(s != null ? s.toString() : "");
             }
-            @Override public void afterTextChanged(Editable s) {}
+            @Override public void afterTextChanged(Editable s) { }
         });
 
         loadCounselors();
@@ -70,11 +84,11 @@ public class CounselorListActivity extends AppCompatActivity {
     private void loadCounselors() {
         progressBar.setVisibility(View.VISIBLE);
 
-        counselorController.getAllCounselors(new CounselorController.CounselorListCallback() {
+        CounselorController.CounselorListCallback cb = new CounselorController.CounselorListCallback() {
             @Override
             public void onSuccess(List<Counselor> counselors) {
                 progressBar.setVisibility(View.GONE);
-                allCounselors = counselors;
+                allCounselors = counselors != null ? counselors : new ArrayList<>();
                 applyFilter(etSearch.getText().toString());
             }
 
@@ -85,7 +99,13 @@ public class CounselorListActivity extends AppCompatActivity {
                         "Failed to load counselors: " + errorMessage,
                         Toast.LENGTH_SHORT).show();
             }
-        });
+        };
+
+        if (adminListMode) {
+            counselorController.getAllCounselorsForAdmin(cb);
+        } else {
+            counselorController.getAllCounselors(cb);
+        }
     }
 
     private void applyFilter(String query) {
@@ -106,10 +126,8 @@ public class CounselorListActivity extends AppCompatActivity {
         } else {
             tvEmpty.setVisibility(View.GONE);
             recyclerView.setAdapter(new CounselorAdapter(filtered, counselor -> {
-                Intent i = new Intent(CounselorListActivity.this,
-                        CounselorProfileActivity.class);
-                i.putExtra(CounselorProfileActivity.EXTRA_COUNSELOR_ID,
-                        counselor.getUserId());
+                Intent i = new Intent(CounselorListActivity.this, CounselorProfileActivity.class);
+                i.putExtra(CounselorProfileActivity.EXTRA_COUNSELOR_ID, counselor.getUserId());
                 i.putExtra("counselorId", counselor.getUserId());
                 if (counselor.getName() != null) {
                     i.putExtra(CounselorProfileActivity.EXTRA_COUNSELOR_NAME, counselor.getName());
@@ -117,11 +135,5 @@ public class CounselorListActivity extends AppCompatActivity {
                 startActivity(i);
             }));
         }
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        finish();
-        return true;
     }
 }

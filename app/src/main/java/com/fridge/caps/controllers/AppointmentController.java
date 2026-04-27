@@ -1,5 +1,11 @@
 package com.fridge.caps.controllers;
 
+/**
+ * AppointmentController.java
+ * Manages appointment booking lifecycle using timeslots collection as single source of truth.
+ * Handles creation, confirmation, cancellation, and completion of appointments.
+ * Controller in the MVC pattern.
+ */
 import android.util.Log;
 
 import com.fridge.caps.models.Appointment;

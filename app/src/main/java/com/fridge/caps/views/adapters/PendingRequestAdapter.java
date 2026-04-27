@@ -1,7 +1,11 @@
 package com.fridge.caps.views.adapters;
 
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
+/**
+ * PendingRequestAdapter.java
+ * RecyclerView adapter for displaying pending appointment requests with approve/decline actions.
+ * Shows pending requests with appointment details and counselor action buttons.
+ * View in the MVC pattern.
+ */
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,32 +53,25 @@ public class PendingRequestAdapter extends RecyclerView.Adapter<PendingRequestAd
     public void onBindViewHolder(@NonNull VH h, int position) {
         Appointment a = items.get(position);
         h.tvStudentName.setText(a.getStudentName() != null ? a.getStudentName() : "Student");
-        String line = formatWhen(a);
-        h.tvDateTime.setText(line);
-        String type = a.getType() != null ? a.getType() : "—";
+        h.tvDateTime.setText(formatTimeCaption(a));
+        String type = a.getType() != null && !a.getType().isEmpty() ? a.getType() : "In-Person";
         h.tvType.setText(type);
-        styleChip(h.tvType, Color.parseColor("#5BA3D9"));
 
         h.btnConfirm.setOnClickListener(v -> action.onConfirm(a));
         h.btnDecline.setOnClickListener(v -> action.onDecline(a));
     }
 
-    private static String formatWhen(Appointment a) {
-        String time = a.getTimeDisplay() != null ? a.getTimeDisplay() : "";
+    /** Top caption: time like mockup; falls back to date + time if time missing. */
+    private static String formatTimeCaption(Appointment a) {
+        String time = a.getTimeDisplay() != null ? a.getTimeDisplay().trim() : "";
         Timestamp ts = a.getDate();
-        if (ts != null) {
-            String day = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.getDefault()).format(ts.toDate());
-            return day + (time.isEmpty() ? "" : " · " + time);
+        if (!time.isEmpty()) {
+            return time;
         }
-        return time.isEmpty() ? "—" : time;
-    }
-
-    private static void styleChip(TextView chip, int bgColor) {
-        GradientDrawable d = new GradientDrawable();
-        d.setCornerRadius(24f);
-        d.setColor(bgColor);
-        chip.setBackground(d);
-        chip.setTextColor(Color.WHITE);
+        if (ts != null) {
+            return new SimpleDateFormat("EEE, MMM d, yyyy", Locale.getDefault()).format(ts.toDate());
+        }
+        return "—";
     }
 
     @Override

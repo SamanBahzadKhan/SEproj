@@ -1,5 +1,10 @@
 package com.fridge.caps;
 
+/**
+ * StudentDashboardTest.java
+ * Instrumented test for StudentDashboardActivity main dashboard and quick actions.
+ * Tests appointment list display, navigation to other features, and UI interactions.
+ */
 import android.content.Intent;
 
 import androidx.test.core.app.ActivityScenario;
@@ -79,9 +84,9 @@ public class StudentDashboardTest {
     }
 
     @Test
-    public void testHistoryButtonNavigates() {
+    public void testBottomNavAppointmentsNavigates() {
         try (ActivityScenario<StudentDashboardActivity> ignored = ActivityScenario.launch(testIntent())) {
-            onView(withId(R.id.btnHistory)).perform(click());
+            onView(withId(R.id.navAppts)).perform(click());
             intended(hasComponent(AppointmentsActivity.class.getName()));
         }
     }

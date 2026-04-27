@@ -4,8 +4,9 @@ import com.google.firebase.Timestamp;
 
 /**
  * Appointment.java
- * Represents a counseling appointment between a student and counselor.
- * Maps to the Firestore "appointments" collection.
+ * Represents a counseling appointment between student and counselor with status tracking.
+ * Stores appointment details (date, time, participants, status) and maps to Firestore "appointments" collection.
+ * Tracks appointment lifecycle through PENDING → CONFIRMED → COMPLETED/CANCELLED states.
  */
 public class Appointment {
 

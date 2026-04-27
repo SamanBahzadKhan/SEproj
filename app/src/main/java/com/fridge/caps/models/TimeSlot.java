@@ -4,7 +4,10 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 /**
- * Maps to Firestore "timeslots" — the single source of truth for bookings.
+ * TimeSlot.java
+ * Represents an available appointment time slot created by counselors for booking.
+ * Single source of truth for availability. Maps to Firestore "timeslots" collection.
+ * Tracks booking status, participant details, and appointment notifications.
  */
 public class TimeSlot {
 

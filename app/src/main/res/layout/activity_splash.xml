@@ -1,46 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- activity_splash.xml: Splash screen shown on app startup for authentication routing. -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:background="#DAEEFF">
+    android:background="@color/caps_palette_bg">
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="💙"
-        android:textSize="64sp" />
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/teamCredit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.48">
+
+        <FrameLayout
+            android:layout_width="126dp"
+            android:layout_height="126dp">
+
+            <View
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:background="@drawable/splash_logo_shadow_circle"
+                android:translationX="6dp"
+                android:translationY="6dp" />
+
+            <FrameLayout
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:background="@drawable/splash_logo_main_circle">
+
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_splash_heart_filled"
+                    android:tint="@color/caps_palette_white"
+                    app:srcCompat="@drawable/ic_splash_heart_filled" />
+            </FrameLayout>
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:fontFamily="sans-serif-black"
+            android:text="CAPs"
+            android:textColor="@color/caps_palette_neutral_dark"
+            android:textSize="36sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif"
+            android:text="Your Trusty Counselling Companion"
+            android:textColor="@color/caps_palette_grey_warm"
+            android:textSize="16sp" />
+    </LinearLayout>
 
     <TextView
+        android:id="@+id/teamCredit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="CAPs"
-        android:textColor="#2A4A6B"
-        android:textSize="36sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Your Trusty Counselling Companion"
-        android:textColor="#5BA3D9"
-        android:textSize="14sp" />
+        android:layout_marginBottom="32dp"
+        android:fontFamily="sans-serif"
+        android:text="CS360 · Team Fridge"
+        android:textColor="@color/caps_palette_grey_warm"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:indeterminateTint="#5BA3D9" />
+        android:id="@+id/splashBuffer"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_marginBottom="76dp"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/caps_palette_brown"
+        app:layout_constraintBottom_toTopOf="@id/teamCredit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:text="CS360 · Team Fridge"
-        android:textColor="#7AB8E8"
-        android:textSize="11sp" />
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

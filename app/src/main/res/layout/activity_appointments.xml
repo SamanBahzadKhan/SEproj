@@ -1,24 +1,177 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DAEEFF"
+    android:background="@color/caps_palette_bg"
     android:orientation="vertical">
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayout"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="62dp"
+        android:background="@color/caps_palette_text_dark"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="8dp">
+
+        <ImageButton
+            android:id="@+id/topBarBack"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_offset_circle_40_bell_admin"
+            android:contentDescription="@string/cd_back"
+            android:padding="10dp"
+            android:src="@android:drawable/ic_media_previous"
+            android:tint="@color/caps_palette_white" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-black"
+            android:gravity="center"
+            android:text="My Appointments"
+            android:textColor="@color/caps_palette_white"
+            android:textSize="18sp" />
+
+        <View
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/tabRow"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/tabUpcomingWrap"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tabUpcoming"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="sans-serif-black"
+                android:gravity="center"
+                android:text="Upcoming"
+                android:textColor="@color/caps_palette_neutral_dark"
+                android:textSize="15sp" />
+
+            <View
+                android:id="@+id/underlineUpcoming"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_gravity="bottom"
+                android:background="@color/caps_palette_neutral_dark"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/tabPastWrap"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tabPast"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:text="Past"
+                android:textColor="@color/caps_palette_grey_warm"
+                android:textSize="15sp" />
+
+            <View
+                android:id="@+id/underlinePast"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_gravity="bottom"
+                android:background="@color/caps_palette_neutral_dark"
+                android:visibility="gone" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <HorizontalScrollView
+        android:id="@+id/chipScroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
-        app:tabIndicatorColor="#5BA3D9"
-        app:tabSelectedTextColor="#5BA3D9" />
+        android:paddingVertical="10dp"
+        android:scrollbars="none"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/chipRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="8dp">
+
+            <TextView
+                android:id="@+id/chipAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_chip_filter_past_selected"
+                android:fontFamily="sans-serif-black"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="8dp"
+                android:text="All"
+                android:textColor="@color/caps_palette_neutral_dark"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/chipCompleted"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_chip_filter_past"
+                android:fontFamily="sans-serif"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="8dp"
+                android:text="Completed"
+                android:textColor="@color/caps_palette_neutral_dark"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/chipCancelled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_chip_filter_past"
+                android:fontFamily="sans-serif"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="8dp"
+                android:text="Cancelled"
+                android:textColor="@color/caps_palette_neutral_dark"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/chipNoShow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_chip_filter_past"
+                android:fontFamily="sans-serif"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="8dp"
+                android:text="No-Show"
+                android:textColor="@color/caps_palette_neutral_dark"
+                android:textSize="13sp" />
+        </LinearLayout>
+    </HorizontalScrollView>
 
     <ProgressBar
         android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:indeterminateTint="@color/caps_palette_blue_grey"
         android:visibility="gone" />
 
     <TextView
@@ -26,15 +179,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:padding="16dp"
+        android:padding="24dp"
         android:text="No appointments."
-        android:textColor="#888888"
+        android:textColor="@color/caps_palette_grey_warm"
+        android:textSize="16sp"
         android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingHorizontal="12dp"
-        android:paddingTop="8dp" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="16dp" />
 </LinearLayout>

@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
@@ -35,10 +36,7 @@ import java.util.Locale;
 /**
  * RecyclerView adapter for appointment lists (student, counsellor, admin).
  */
-public class AppointmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-    private static final int TYPE_STANDARD = 0;
-    private static final int TYPE_COUNSELOR_LIST = 1;
+public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.VH> {
 
     public static final int MODE_STUDENT_UPCOMING = 0;
     public static final int MODE_STUDENT_PAST     = 1;
@@ -55,7 +53,6 @@ public class AppointmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Nullable private final Action onFeedback;
     @Nullable private final Action onComplete;
     @Nullable private final Action onNoShow;
-    @Nullable private final Action onRecordDiagnosis;
 
     public interface Action {
         void run(Appointment a);
@@ -66,8 +63,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                               @Nullable Action onReschedule,
                               @Nullable Action onFeedback,
                               @Nullable Action onComplete,
-                              @Nullable Action onNoShow,
-                              @Nullable Action onRecordDiagnosis) {
+                              @Nullable Action onNoShow) {
         this.items     = items;
         this.mode      = mode;
         this.onCancel  = onCancel;
@@ -75,94 +71,19 @@ public class AppointmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.onFeedback = onFeedback;
         this.onComplete = onComplete;
         this.onNoShow   = onNoShow;
-        this.onRecordDiagnosis = onRecordDiagnosis;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return mode == MODE_COUNSELOR_APPOINTMENT_LIST ? TYPE_COUNSELOR_LIST : TYPE_STANDARD;
     }
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == TYPE_COUNSELOR_LIST) {
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_counselor_appointment, parent, false);
-            return new CounselorListVH(v);
-        }
+    public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_appointment, parent, false);
-        return new StandardVH(v);
+        return new VH(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull VH h, int position) {
         Appointment a = items.get(position);
-        if (holder instanceof CounselorListVH) {
-            bindCounselorList((CounselorListVH) holder, a);
-        } else if (holder instanceof StandardVH) {
-            bindStandard((StandardVH) holder, a);
-        }
-    }
-
-    private void bindCounselorList(CounselorListVH h, Appointment a) {
-        String stud = a.getStudentName() != null && !a.getStudentName().isEmpty()
-                ? a.getStudentName() : "Student";
-        h.tvStudentName.setText(stud);
-        h.tvDateTimeLine.setText(formatDateTime(a));
-
-        String typeOnly = a.getType() != null && !a.getType().isEmpty() ? a.getType() : "In-Person";
-        h.tvTypeChip.setText(typeOnly);
-
-        counselListStatusChip(h.tvStatusBadge, a);
-
-        AppointmentStatus st = a.getStatus() != null ? a.getStatus() : AppointmentStatus.PENDING;
-        boolean completed = st == AppointmentStatus.COMPLETED;
-        h.btnRecordDiagnosis.setVisibility(completed ? View.VISIBLE : View.GONE);
-        h.btnRecordDiagnosis.setOnClickListener(v -> {
-            if (onRecordDiagnosis != null) {
-                onRecordDiagnosis.run(a);
-            }
-        });
-
-        h.tvOverflow.setVisibility(View.VISIBLE);
-        h.tvOverflow.setOnClickListener(v -> showOverflowMenu(v, a));
-    }
-
-    private static void counselListStatusChip(TextView chip, Appointment a) {
-        AppointmentStatus st = a.getStatus() != null ? a.getStatus() : AppointmentStatus.PENDING;
-        chip.setVisibility(View.VISIBLE);
-        chip.setTypeface(null, Typeface.BOLD);
-        chip.setTextSize(10f);
-        chip.setTextColor(Color.WHITE);
-        if (st == AppointmentStatus.PENDING || st == AppointmentStatus.CONFIRMED) {
-            chip.setText("BOOKED");
-            chip.setBackground(ContextCompat.getDrawable(chip.getContext(), R.drawable.bg_counselor_list_badge_booked));
-            return;
-        }
-        if (st == AppointmentStatus.COMPLETED) {
-            chip.setText("COMPLETED");
-            chip.setBackground(ContextCompat.getDrawable(chip.getContext(), R.drawable.bg_status_completed));
-            return;
-        }
-        if (st == AppointmentStatus.CANCELLED) {
-            chip.setText("CANCELLED");
-            chip.setBackground(ContextCompat.getDrawable(chip.getContext(), R.drawable.bg_status_cancelled));
-            chip.setTextColor(Color.WHITE);
-            return;
-        }
-        if (st == AppointmentStatus.NO_SHOW) {
-            chip.setText("NO-SHOW");
-            chip.setBackground(ContextCompat.getDrawable(chip.getContext(), R.drawable.bg_status_noshow));
-            chip.setTextColor(Color.WHITE);
-            return;
-        }
-        chip.setText("BOOKED");
-        chip.setBackground(ContextCompat.getDrawable(chip.getContext(), R.drawable.bg_counselor_list_badge_booked));
-    }
-
-    private void bindStandard(StandardVH h, Appointment a) {
         AppointmentStatus st = a.getStatus() != null ? a.getStatus() : AppointmentStatus.PENDING;
 
         h.tvPrimaryName.setTypeface(null, Typeface.NORMAL);
@@ -257,6 +178,26 @@ public class AppointmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 });
                 break;
 
+            case MODE_COUNSELOR_APPOINTMENT_LIST: {
+                String stud = a.getStudentName() != null && !a.getStudentName().isEmpty()
+                        ? a.getStudentName() : "Student";
+                h.tvPrimaryName.setText(stud);
+                h.tvPrimaryName.setTextColor(Color.parseColor("#1E2F3F"));
+                h.tvPrimaryName.setTypeface(null, Typeface.BOLD);
+                h.tvDateTime.setVisibility(View.GONE);
+                h.tvSecondaryLine.setVisibility(View.VISIBLE);
+                h.tvSecondaryLine.setText(formatDateTime(a));
+                h.tvSecondaryLine.setTextColor(Color.parseColor("#8A8680"));
+                String typeOnly = a.getType() != null && !a.getType().isEmpty() ? a.getType() : "—";
+                h.tvType.setText(typeOnly);
+                listModeStatusChip(h.tvStatusChip, a);
+                h.tvDurationChip.setVisibility(View.GONE);
+                h.rowStudentActions.setVisibility(View.GONE);
+                h.rowCounselorActions.setVisibility(View.GONE);
+                h.btnFeedback.setVisibility(View.GONE);
+                break;
+            }
+
             case MODE_ADMIN:
             default:
                 h.tvPrimaryName.setText(a.getStudentName() != null ? a.getStudentName() : "Student");
@@ -272,7 +213,8 @@ public class AppointmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (h.tvOverflow != null) {
             boolean showOverflow = mode == MODE_STUDENT_UPCOMING
                     || mode == MODE_STUDENT_PAST
-                    || mode == MODE_COUNSELOR;
+                    || mode == MODE_COUNSELOR
+                    || mode == MODE_COUNSELOR_APPOINTMENT_LIST;
             h.tvOverflow.setVisibility(showOverflow ? View.VISIBLE : View.GONE);
             if (showOverflow) {
                 h.tvOverflow.setOnClickListener(v -> showOverflowMenu(v, a));
@@ -336,6 +278,25 @@ public class AppointmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (st == AppointmentStatus.CANCELLED) return Color.parseColor("#F44336");
         if (st == AppointmentStatus.NO_SHOW) return Color.parseColor("#9E9E9E");
         return Color.parseColor("#4CAF50");
+    }
+
+    private static void setStatusUi(TextView chip, AppointmentStatus st) {
+        chip.setVisibility(View.VISIBLE);
+        chip.setText(statusLabel(st));
+        styleChip(chip, colorForStatus(st));
+    }
+
+    private static void listModeStatusChip(TextView chip, Appointment a) {
+        AppointmentStatus st = a.getStatus() != null ? a.getStatus() : AppointmentStatus.PENDING;
+        chip.setVisibility(View.VISIBLE);
+        chip.setTypeface(null, Typeface.BOLD);
+        if (st == AppointmentStatus.PENDING || st == AppointmentStatus.CONFIRMED) {
+            chip.setText("BOOKED");
+            chip.setBackground(ContextCompat.getDrawable(chip.getContext(), R.drawable.bg_status_booked));
+            chip.setTextColor(Color.WHITE);
+            return;
+        }
+        setPastStatusUi(chip, a);
     }
 
     private static void setPastStatusUi(TextView chip, Appointment appt) {
@@ -413,33 +374,14 @@ public class AppointmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         return items.size();
     }
 
-    static class CounselorListVH extends RecyclerView.ViewHolder {
-        final TextView tvStudentName;
-        final TextView tvDateTimeLine;
-        final TextView tvTypeChip;
-        final TextView tvStatusBadge;
-        final TextView tvOverflow;
-        final TextView btnRecordDiagnosis;
-
-        CounselorListVH(@NonNull View itemView) {
-            super(itemView);
-            tvStudentName = itemView.findViewById(R.id.tvStudentName);
-            tvDateTimeLine = itemView.findViewById(R.id.tvDateTimeLine);
-            tvTypeChip = itemView.findViewById(R.id.tvTypeChip);
-            tvStatusBadge = itemView.findViewById(R.id.tvStatusBadge);
-            tvOverflow = itemView.findViewById(R.id.tvOverflow);
-            btnRecordDiagnosis = itemView.findViewById(R.id.btnRecordDiagnosis);
-        }
-    }
-
-    static class StandardVH extends RecyclerView.ViewHolder {
+    static class VH extends RecyclerView.ViewHolder {
         final TextView tvPrimaryName, tvSecondaryLine, tvStatusChip, tvDateTime, tvType, tvDurationChip;
         final TextView tvOverflow;
         final View rowStudentActions, rowCounselorActions;
         final View btnReschedule, btnCancelStudent, btnFeedback;
         final View btnComplete, btnNoShow, btnCancelCounselor;
 
-        StandardVH(@NonNull View itemView) {
+        VH(@NonNull View itemView) {
             super(itemView);
             tvPrimaryName   = itemView.findViewById(R.id.tvPrimaryName);
             tvSecondaryLine = itemView.findViewById(R.id.tvSecondaryLine);

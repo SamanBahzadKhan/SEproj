@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/caps_brut_cream_bg"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/caps_journal_topbar"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="12dp">
+
+        <FrameLayout
+            android:id="@+id/btnEditBack"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_journal_back_circle"
+            android:clickable="true"
+            android:focusable="true"
+            android:stateListAnimator="@animator/press_down_button">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/cd_back"
+                android:src="@drawable/ic_arrow_back_navy" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tvEditScreenTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-black"
+            android:gravity="center"
+            android:text="New entry"
+            android:textColor="@color/caps_palette_white"
+            android:textSize="18sp" />
+
+        <View
+            android:layout_width="36dp"
+            android:layout_height="36dp" />
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="0.06"
+                android:text="TITLE"
+                android:textAllCaps="true"
+                android:textColor="@color/caps_brut_navy"
+                android:textSize="11sp" />
+
+            <EditText
+                android:id="@+id/etJournalTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_brut_tag"
+                android:fontFamily="sans-serif"
+                android:hint="How was your day?"
+                android:inputType="textCapSentences"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="12dp"
+                android:textColor="@color/caps_brut_navy"
+                android:textColorHint="@color/caps_brut_blue_gray"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="0.06"
+                android:text="MOOD"
+                android:textAllCaps="true"
+                android:textColor="@color/caps_brut_navy"
+                android:textSize="11sp" />
+
+            <LinearLayout
+                android:id="@+id/rowMood"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/chipMoodHappy"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_brut_tag"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="sans-serif-black"
+                    android:gravity="center"
+                    android:text="😊 Happy"
+                    android:textColor="@color/caps_brut_navy"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/chipMoodNeutral"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_brut_tag"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="sans-serif-black"
+                    android:gravity="center"
+                    android:text="😐 Neutral"
+                    android:textColor="@color/caps_brut_navy"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/chipMoodSad"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_brut_tag"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="sans-serif-black"
+                    android:gravity="center"
+                    android:text="😔 Sad"
+                    android:textColor="@color/caps_brut_navy"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="0.06"
+                android:text="ENTRY"
+                android:textAllCaps="true"
+                android:textColor="@color/caps_brut_navy"
+                android:textSize="11sp" />
+
+            <EditText
+                android:id="@+id/etJournalBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_brut_tag"
+                android:fontFamily="sans-serif"
+                android:gravity="top|start"
+                android:hint="Write freely…"
+                android:inputType="textMultiLine|textCapSentences"
+                android:minLines="8"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="12dp"
+                android:textColor="@color/caps_brut_navy"
+                android:textColorHint="@color/caps_brut_blue_gray"
+                android:textSize="15sp" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/bg_brut_btn_done_sage">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSaveJournal"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_gravity="top|start"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="sans-serif-black"
+                    android:stateListAnimator="@animator/press_down_button"
+                    android:text="Save"
+                    android:textAllCaps="true"
+                    android:textColor="@color/caps_palette_white"
+                    android:textSize="16sp"
+                    app:backgroundTint="@android:color/transparent"
+                    app:cornerRadius="0dp"
+                    app:strokeWidth="0dp" />
+            </FrameLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

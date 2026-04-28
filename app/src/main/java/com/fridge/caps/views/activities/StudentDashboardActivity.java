@@ -91,8 +91,10 @@ public class StudentDashboardActivity extends AppCompatActivity {
         // Quick action buttons
         findViewById(R.id.btnBookAppointment).setOnClickListener(v ->
                 startActivity(new Intent(this, CounselorListActivity.class)));
-        findViewById(R.id.btnViewProfile).setOnClickListener(v ->
-                startActivity(new Intent(this, ProfileActivity.class)));
+        findViewById(R.id.btnJournal).setOnClickListener(v ->
+                startActivity(new Intent(this, MyJournalActivity.class)));
+        findViewById(R.id.btnJournalEntriesList).setOnClickListener(v ->
+                startActivity(new Intent(this, JournalEntriesListActivity.class)));
         findViewById(R.id.btnNotifications).setOnClickListener(v ->
                 startActivity(new Intent(this, NotificationsActivity.class)));
         findViewById(R.id.btnHistory).setOnClickListener(v ->

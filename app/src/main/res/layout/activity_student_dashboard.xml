@@ -231,7 +231,7 @@
                 </FrameLayout>
 
                 <FrameLayout
-                    android:id="@+id/btnViewProfile"
+                    android:id="@+id/btnJournal"
                     android:layout_width="0dp"
                     android:layout_height="120dp"
                     android:layout_marginStart="8dp"
@@ -257,7 +257,7 @@
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:layout_gravity="center"
-                                android:src="@android:drawable/ic_menu_myplaces"
+                                android:src="@android:drawable/ic_menu_edit"
                                 android:tint="@color/caps_palette_neutral_dark" />
                         </FrameLayout>
 
@@ -266,7 +266,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:fontFamily="sans-serif-black"
-                            android:text="View Profile"
+                            android:text="Journal"
                             android:textColor="@color/caps_palette_neutral_dark"
                             android:textSize="13sp" />
                     </LinearLayout>
@@ -410,6 +410,7 @@
                 android:textSize="12sp" />
 
             <FrameLayout
+                android:id="@+id/btnJournalEntriesList"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="10dp"

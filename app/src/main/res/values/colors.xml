@@ -41,4 +41,11 @@
     <color name="caps_brut_reschedule_brown">#8B5E3C</color>
     <color name="caps_brut_cancel_fill">#EBEBEB</color>
     <color name="caps_brut_tag_fill">#F0EEEB</color>
+
+    <!-- My Journal (neo-brutalist mockup) -->
+    <color name="caps_journal_topbar">#1B2E3C</color>
+    <color name="caps_journal_stat_blue">#94A3B8</color>
+    <color name="caps_journal_stat_sage">#8BA789</color>
+    <color name="caps_journal_stat_peach">#D7BCAD</color>
+    <color name="caps_journal_btn_new">#436782</color>
 </resources>

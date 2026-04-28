@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="12dp">
+
+    <EditText
+        android:id="@+id/etMedName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_session_input_inner"
+        android:fontFamily="sans-serif"
+        android:hint="Medication Name"
+        android:inputType="textCapWords"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="10dp"
+        android:textColor="@color/caps_brut_navy"
+        android:textColorHint="@color/caps_brut_blue_gray"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/etDosage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_session_input_inner"
+        android:fontFamily="sans-serif"
+        android:hint="Dosage (e.g., 10mg twice daily)"
+        android:inputType="text"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="10dp"
+        android:textColor="@color/caps_brut_navy"
+        android:textColorHint="@color/caps_brut_blue_gray"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/etMedInstructions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_session_input_inner"
+        android:fontFamily="sans-serif"
+        android:gravity="top|start"
+        android:hint="Additional instructions…"
+        android:inputType="textMultiLine|textCapSentences"
+        android:minLines="2"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="10dp"
+        android:textColor="@color/caps_brut_navy"
+        android:textColorHint="@color/caps_brut_blue_gray"
+        android:textSize="14sp" />
+</LinearLayout>

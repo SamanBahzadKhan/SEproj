@@ -48,4 +48,12 @@
     <color name="caps_journal_stat_sage">#8BA789</color>
     <color name="caps_journal_stat_peach">#D7BCAD</color>
     <color name="caps_journal_btn_new">#436782</color>
+
+    <!-- Session notes (counselor diagnosis / uploads mockup) -->
+    <color name="caps_session_screen_bg">#F5F2ED</color>
+    <color name="caps_session_topbar">#1D2C34</color>
+    <color name="caps_session_submit_sage">#8DA089</color>
+    <color name="caps_session_add_med">#4A6D81</color>
+    <color name="caps_session_browse_grey">#7A8F9C</color>
+    <color name="caps_session_input_border">#D8D4CC</color>
 </resources>

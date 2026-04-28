@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/caps_session_screen_bg"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/caps_session_topbar"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="12dp">
+
+        <FrameLayout
+            android:id="@+id/btnSessionNotesBack"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_journal_back_circle"
+            android:clickable="true"
+            android:focusable="true"
+            android:stateListAnimator="@animator/press_down_button">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/cd_back"
+                android:src="@drawable/ic_arrow_back_navy" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-black"
+            android:gravity="center"
+            android:text="Session Notes"
+            android:textColor="@color/caps_palette_white"
+            android:textSize="18sp" />
+
+        <View
+            android:layout_width="36dp"
+            android:layout_height="36dp" />
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="24dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_session_brut_card"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:background="@drawable/bg_session_avatar_circle">
+
+                        <ImageView
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:layout_gravity="center"
+                            android:src="@android:drawable/ic_menu_myplaces"
+                            app:tint="@color/caps_palette_white" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvPatientName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-black"
+                            android:textColor="@color/caps_brut_navy"
+                            android:textSize="20sp" />
+
+                        <TextView
+                            android:id="@+id/tvStudentIdLine"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="sans-serif"
+                            android:textColor="@color/caps_brut_blue_gray"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvSessionWhen"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="sans-serif"
+                            android:textColor="@color/caps_brut_blue_gray"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="0.08"
+                android:text="DIAGNOSIS"
+                android:textAllCaps="true"
+                android:textColor="@color/caps_brut_navy"
+                android:textSize="11sp" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_session_brut_card"
+                android:padding="16dp">
+
+                <EditText
+                    android:id="@+id/etDiagnosis"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_session_input_inner"
+                    android:fontFamily="sans-serif"
+                    android:gravity="top|start"
+                    android:hint="Enter diagnosis details…"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:minLines="4"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="10dp"
+                    android:textColor="@color/caps_brut_navy"
+                    android:textColorHint="@color/caps_brut_blue_gray"
+                    android:textSize="15sp" />
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="0.08"
+                android:text="PRESCRIPTION"
+                android:textAllCaps="true"
+                android:textColor="@color/caps_brut_navy"
+                android:textSize="11sp" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_session_brut_card"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/llPrescriptions"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_session_add_med">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAddMedication"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_gravity="top|start"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="sans-serif-black"
+                    android:stateListAnimator="@animator/press_down_button"
+                    android:text="+ Add Another Medication"
+                    android:textAllCaps="false"
+                    android:textColor="@color/caps_palette_white"
+                    android:textSize="15sp"
+                    app:backgroundTint="@android:color/transparent"
+                    app:cornerRadius="0dp"
+                    app:strokeWidth="0dp" />
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="0.08"
+                android:text="UPLOAD DOCUMENTS"
+                android:textAllCaps="true"
+                android:textColor="@color/caps_brut_navy"
+                android:textSize="11sp" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_session_upload_dashed"
+                android:padding="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_journal_mood_ring">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:src="@android:drawable/stat_sys_upload"
+                            app:tint="@color/caps_brut_blue_gray" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="sans-serif-black"
+                        android:text="Upload Files"
+                        android:textColor="@color/caps_brut_navy"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="sans-serif"
+                        android:text="PDF, DOC, or Images"
+                        android:textColor="@color/caps_brut_blue_gray"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/btnBrowseFiles"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:background="@drawable/bg_session_browse_btn"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="sans-serif-black"
+                        android:paddingHorizontal="20dp"
+                        android:paddingVertical="10dp"
+                        android:stateListAnimator="@animator/press_down_button"
+                        android:text="Browse Files"
+                        android:textColor="@color/caps_palette_white"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAttachments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:nestedScrollingEnabled="false" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="0.08"
+                android:text="RECOMMENDATIONS &amp; FEEDBACK"
+                android:textAllCaps="true"
+                android:textColor="@color/caps_brut_navy"
+                android:textSize="11sp" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_session_brut_card_heavy"
+                android:padding="16dp">
+
+                <EditText
+                    android:id="@+id/etRecommendations"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_session_input_inner"
+                    android:fontFamily="sans-serif"
+                    android:gravity="top|start"
+                    android:hint="Share your recommendations and feedback"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:minLines="5"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="10dp"
+                    android:textColor="@color/caps_brut_navy"
+                    android:textColorHint="@color/caps_brut_blue_gray"
+                    android:textSize="15sp" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_session_btn_submit_sage">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSaveSubmit"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_gravity="top|start"
+                        android:background="@android:color/transparent"
+                        android:fontFamily="sans-serif-black"
+                        android:stateListAnimator="@animator/press_down_button"
+                        android:text="Save &amp; Submit"
+                        android:textAllCaps="false"
+                        android:textColor="@color/caps_palette_white"
+                        android:textSize="14sp"
+                        app:backgroundTint="@android:color/transparent"
+                        app:cornerRadius="0dp"
+                        app:strokeWidth="0dp" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_session_btn_draft_white">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSaveDraft"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_gravity="top|start"
+                        android:background="@android:color/transparent"
+                        android:fontFamily="sans-serif-black"
+                        android:stateListAnimator="@animator/press_down_button"
+                        android:text="Save Draft"
+                        android:textAllCaps="false"
+                        android:textColor="@color/caps_brut_navy"
+                        android:textSize="14sp"
+                        app:backgroundTint="@android:color/transparent"
+                        app:cornerRadius="0dp"
+                        app:strokeWidth="0dp" />
+                </FrameLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

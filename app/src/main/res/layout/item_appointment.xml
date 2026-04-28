@@ -167,6 +167,31 @@
             app:strokeColor="#5BA3D9"
             app:strokeWidth="2dp" />
 
+        <FrameLayout
+            android:id="@+id/rowRecordDiagnosis"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_session_add_med"
+            android:visibility="gone">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRecordDiagnosis"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_gravity="top|start"
+                android:background="@android:color/transparent"
+                android:fontFamily="sans-serif-black"
+                android:stateListAnimator="@animator/press_down_button"
+                android:text="Record Diagnosis"
+                android:textAllCaps="false"
+                android:textColor="@color/caps_palette_white"
+                android:textSize="15sp"
+                app:backgroundTint="@android:color/transparent"
+                app:cornerRadius="0dp"
+                app:strokeWidth="0dp" />
+        </FrameLayout>
+
         <LinearLayout
             android:id="@+id/rowCounselorActions"
             android:layout_width="match_parent"

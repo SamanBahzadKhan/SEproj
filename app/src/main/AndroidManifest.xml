@@ -55,6 +55,7 @@
         <activity android:name=".views.activities.MyJournalActivity" />
         <activity android:name=".views.activities.JournalEntriesListActivity" />
         <activity android:name=".views.activities.JournalEditActivity" />
+        <activity android:name=".views.activities.SessionNotesActivity" />
     </application>
 
 </manifest>

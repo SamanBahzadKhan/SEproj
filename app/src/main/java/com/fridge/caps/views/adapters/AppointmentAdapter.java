@@ -55,6 +55,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     @Nullable private final Action onFeedback;
     @Nullable private final Action onComplete;
     @Nullable private final Action onNoShow;
+    @Nullable private final Action onRecordDiagnosis;
 
     public interface Action {
         void run(Appointment a);
@@ -66,6 +67,16 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                               @Nullable Action onFeedback,
                               @Nullable Action onComplete,
                               @Nullable Action onNoShow) {
+        this(items, mode, onCancel, onReschedule, onFeedback, onComplete, onNoShow, null);
+    }
+
+    public AppointmentAdapter(List<Appointment> items, int mode,
+                              @Nullable Action onCancel,
+                              @Nullable Action onReschedule,
+                              @Nullable Action onFeedback,
+                              @Nullable Action onComplete,
+                              @Nullable Action onNoShow,
+                              @Nullable Action onRecordDiagnosis) {
         this.items     = items;
         this.mode      = mode;
         this.itemLayoutRes = mode == MODE_STUDENT_UPCOMING
@@ -76,6 +87,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         this.onFeedback = onFeedback;
         this.onComplete = onComplete;
         this.onNoShow   = onNoShow;
+        this.onRecordDiagnosis = onRecordDiagnosis;
     }
 
     @NonNull
@@ -108,6 +120,9 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                 ? a.getType() : "—";
         h.tvType.setText("Type: " + type);
         h.tvDurationChip.setVisibility(View.VISIBLE);
+        if (h.rowRecordDiagnosis != null) {
+            h.rowRecordDiagnosis.setVisibility(View.GONE);
+        }
 
         switch (mode) {
             case MODE_STUDENT_UPCOMING: {
@@ -218,6 +233,17 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                 h.rowStudentActions.setVisibility(View.GONE);
                 h.rowCounselorActions.setVisibility(View.GONE);
                 h.btnFeedback.setVisibility(View.GONE);
+                boolean showRecord = st == AppointmentStatus.COMPLETED && onRecordDiagnosis != null;
+                if (h.rowRecordDiagnosis != null) {
+                    h.rowRecordDiagnosis.setVisibility(showRecord ? View.VISIBLE : View.GONE);
+                }
+                if (h.btnRecordDiagnosis != null) {
+                    h.btnRecordDiagnosis.setOnClickListener(v -> {
+                        if (onRecordDiagnosis != null) {
+                            onRecordDiagnosis.run(a);
+                        }
+                    });
+                }
                 break;
             }
 
@@ -230,6 +256,9 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                 h.rowStudentActions.setVisibility(View.GONE);
                 h.rowCounselorActions.setVisibility(View.GONE);
                 h.btnFeedback.setVisibility(View.GONE);
+                if (h.rowRecordDiagnosis != null) {
+                    h.rowRecordDiagnosis.setVisibility(View.GONE);
+                }
                 break;
         }
 
@@ -403,6 +432,8 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         final View rowStudentActions, rowCounselorActions;
         final View btnReschedule, btnCancelStudent, btnFeedback;
         final View btnComplete, btnNoShow, btnCancelCounselor;
+        @Nullable final View rowRecordDiagnosis;
+        @Nullable final View btnRecordDiagnosis;
 
         VH(@NonNull View itemView) {
             super(itemView);
@@ -421,6 +452,8 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             btnComplete     = itemView.findViewById(R.id.btnComplete);
             btnNoShow       = itemView.findViewById(R.id.btnNoShow);
             btnCancelCounselor = itemView.findViewById(R.id.btnCancelCounselor);
+            rowRecordDiagnosis = itemView.findViewById(R.id.rowRecordDiagnosis);
+            btnRecordDiagnosis = itemView.findViewById(R.id.btnRecordDiagnosis);
         }
     }
 }

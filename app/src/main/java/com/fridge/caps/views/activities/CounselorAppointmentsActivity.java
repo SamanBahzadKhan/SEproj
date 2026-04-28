@@ -1,5 +1,6 @@
 package com.fridge.caps.views.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -15,13 +16,17 @@ import com.fridge.caps.controllers.AppointmentController;
 import com.fridge.caps.models.Appointment;
 import com.fridge.caps.models.AppointmentStatus;
 import com.fridge.caps.models.TimeSlot;
+import com.fridge.caps.utils.DateUtils;
 import com.fridge.caps.views.adapters.AppointmentAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class CounselorAppointmentsActivity extends AppCompatActivity {
@@ -116,6 +121,27 @@ public class CounselorAppointmentsActivity extends AppCompatActivity {
                 null, null, null, null, null));
         rvPast.setAdapter(new AppointmentAdapter(past,
                 AppointmentAdapter.MODE_COUNSELOR_APPOINTMENT_LIST,
-                null, null, null, null, null));
+                null, null, null, null, null,
+                this::openSessionNotes));
+    }
+
+    private void openSessionNotes(Appointment a) {
+        Intent i = new Intent(this, SessionNotesActivity.class);
+        i.putExtra(SessionNotesActivity.EXTRA_TIME_SLOT_ID, a.getTimeSlotId());
+        i.putExtra(SessionNotesActivity.EXTRA_STUDENT_ID, a.getStudentId());
+        i.putExtra(SessionNotesActivity.EXTRA_STUDENT_NAME,
+                a.getStudentName() != null ? a.getStudentName() : "Student");
+        i.putExtra(SessionNotesActivity.EXTRA_SESSION_DATE_LINE, formatSessionLine(a));
+        startActivity(i);
+    }
+
+    private static String formatSessionLine(Appointment a) {
+        String time = a.getTimeDisplay() != null ? a.getTimeDisplay() : "";
+        if (a.getDate() == null) {
+            return time.isEmpty() ? "" : time;
+        }
+        String day = new SimpleDateFormat(DateUtils.DISPLAY_DATE, Locale.getDefault())
+                .format(new Date(a.getDate().toDate().getTime()));
+        return time.isEmpty() ? day : day + " · " + time;
     }
 }

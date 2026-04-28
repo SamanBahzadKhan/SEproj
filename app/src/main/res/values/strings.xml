@@ -2,6 +2,7 @@
     <string name="app_name">CAPs</string>
     <string name="cd_back">Back</string>
     <string name="cd_edit_journal">Edit journal entry</string>
+    <string name="cd_remove_attachment">Remove file</string>
     <string name="cd_confirm_request">Confirm appointment request</string>
     <string name="cd_decline_request">Decline appointment request</string>
     <string name="report_user_menu">Report</string>

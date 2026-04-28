@@ -1,9 +1,12 @@
 package com.fridge.caps.models;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.PropertyName;
 
+import java.util.Locale;
+
 /**
- * Counsellor profile document in {@code counselors}. Deserializes with {@code toObject(Counselor.class)}.
+ * Counsellor profile document in {@code counselors}. Prefer {@link #fromDocument(DocumentSnapshot)} for lists.
  */
 public class Counselor extends User {
 
@@ -118,5 +121,63 @@ public class Counselor extends User {
     @PropertyName("isDeleted")
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
+    }
+
+    /**
+     * Tolerant parse for list screens — avoids {@code toObject} dropping docs when {@code role}
+     * or numeric types do not match the POJO mapper.
+     */
+    public static Counselor fromDocument(DocumentSnapshot doc) {
+        if (doc == null || !doc.exists()) {
+            return null;
+        }
+        Counselor c = new Counselor();
+        c.setUserId(doc.getId());
+        c.setName(doc.getString("name"));
+        c.setEmail(doc.getString("email"));
+        c.setCreatedAt(doc.getString("createdAt"));
+        c.setSpecialization(doc.getString("specialization"));
+        c.setDepartment(doc.getString("department"));
+        c.setBio(doc.getString("bio"));
+        c.setPhone(doc.getString("phone"));
+
+        Double rating = doc.getDouble("rating");
+        if (rating == null) {
+            Long lr = doc.getLong("rating");
+            if (lr != null) {
+                rating = lr.doubleValue();
+            }
+        }
+        c.setRating(rating);
+
+        Long rc = doc.getLong("ratingCount");
+        if (rc == null) {
+            Object rawRc = doc.get("ratingCount");
+            if (rawRc instanceof Integer) {
+                rc = ((Integer) rawRc).longValue();
+            } else if (rawRc instanceof Double) {
+                rc = ((Double) rawRc).longValue();
+            }
+        }
+        c.setRatingCount(rc);
+
+        Boolean accepting = doc.getBoolean("isAcceptingClients");
+        c.setAcceptingClients(accepting == null || accepting);
+
+        c.setActive(doc.getBoolean("isActive"));
+        c.setDeleted(doc.getBoolean("isDeleted"));
+
+        String roleStr = doc.getString("role");
+        if (roleStr != null && !roleStr.isEmpty()) {
+            String norm = roleStr.trim().toUpperCase(Locale.US).replace('-', '_');
+            try {
+                c.setRole(UserRole.valueOf(norm));
+            } catch (IllegalArgumentException ex) {
+                c.setRole(UserRole.COUNSELOR);
+            }
+        } else {
+            c.setRole(UserRole.COUNSELOR);
+        }
+        return c;
     }
 }

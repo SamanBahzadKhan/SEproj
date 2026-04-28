@@ -45,29 +45,38 @@
         </FrameLayout>
     </LinearLayout>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnBookAppointment"
+    <FrameLayout
+        android:id="@+id/barBookAppointmentBottom"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="56dp"
         android:layout_alignParentBottom="true"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/bg_offset_done_button"
-        android:fontFamily="sans-serif-black"
-        android:stateListAnimator="@animator/press_down_button"
-        android:text="BOOK APPOINTMENT"
-        android:textColor="@color/caps_palette_white"
-        android:textSize="16sp"
-        android:visibility="gone"
-        app:backgroundTint="@android:color/transparent"
-        app:cornerRadius="12dp"
-        app:strokeWidth="0dp" />
+        android:background="@drawable/bg_brut_btn_book_bluegrey"
+        android:visibility="gone">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnBookAppointment"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_gravity="top|start"
+            android:background="@android:color/transparent"
+            android:fontFamily="sans-serif-black"
+            android:stateListAnimator="@animator/press_down_button"
+            android:text="BOOK APPOINTMENT"
+            android:textAllCaps="true"
+            android:textColor="@color/caps_palette_white"
+            android:textSize="16sp"
+            app:backgroundTint="@android:color/transparent"
+            app:cornerRadius="0dp"
+            app:strokeWidth="0dp" />
+    </FrameLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/topBar"
-        android:layout_above="@id/btnBookAppointment"
+        android:layout_above="@id/barBookAppointmentBottom"
         android:fillViewport="true">
 
         <LinearLayout

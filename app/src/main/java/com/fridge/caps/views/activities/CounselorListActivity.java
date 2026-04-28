@@ -63,7 +63,7 @@ public class CounselorListActivity extends AppCompatActivity {
         ImageButton back = findViewById(R.id.topBarBack);
         back.setOnClickListener(v -> finish());
 
-        tvTitle.setText(adminListMode ? "Active Counsellors" : "Find a Counsellor");
+        tvTitle.setText(adminListMode ? "All Counsellors" : "Find a Counsellor");
         if (!adminListMode) {
             etSearch.setHint("Search counsellors...");
         }

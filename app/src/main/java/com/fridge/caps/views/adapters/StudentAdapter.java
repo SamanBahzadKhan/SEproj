@@ -38,8 +38,7 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.VH> {
     public void onBindViewHolder(@NonNull VH h, int position) {
         Student s = items.get(position);
         h.tvName.setText(s.getName() != null ? s.getName() : "—");
-        String uid = s.getUserId();
-        h.tvStudentId.setText(uid != null ? ("ID: " + uid) : "ID: —");
+        h.tvStudentId.setText(formatStudentSecondaryLine(s));
 
         String dept = s.getDepartment() != null ? s.getDepartment().trim() : "";
         String yr = s.getYearOfStudy() != null ? s.getYearOfStudy().trim() : "";
@@ -69,6 +68,26 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.VH> {
     @Override
     public int getItemCount() {
         return items.size();
+    }
+
+    /**
+     * Same idea as the student profile screen: prefer campus {@code studentId}, then email,
+     * then a short UID prefix — not the full Firebase UID string.
+     */
+    private static String formatStudentSecondaryLine(Student s) {
+        String campus = s.getCampusStudentId();
+        if (!campus.isEmpty()) {
+            return campus;
+        }
+        String email = s.getEmail() != null ? s.getEmail().trim() : "";
+        if (!email.isEmpty()) {
+            return email;
+        }
+        String uid = s.getUserId();
+        if (uid != null && uid.length() >= 8) {
+            return uid.substring(0, 8).toUpperCase(Locale.US);
+        }
+        return uid != null ? uid : "—";
     }
 
     private static String initialsOf(String name) {

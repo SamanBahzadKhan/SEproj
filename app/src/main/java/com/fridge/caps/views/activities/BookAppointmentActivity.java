@@ -103,11 +103,15 @@ public class BookAppointmentActivity extends AppCompatActivity {
 
         if (rescheduleAppointmentId != null && !rescheduleAppointmentId.isEmpty()) {
             btnConfirm.setText("RESCHEDULE");
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle("Reschedule");
+            }
+        } else if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Book Appointment");
         }
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Book Appointment");
         }
 
         List<String> days = DateUtils.getNextFourteenDays();
@@ -118,7 +122,8 @@ public class BookAppointmentActivity extends AppCompatActivity {
         cardPickAfternoon.setOnClickListener(v -> selectPeriod("Afternoon"));
 
         btnConfirm.setOnClickListener(v -> {
-            if (oldSlotId != null && !oldSlotId.isEmpty()) {
+            boolean rescheduling = rescheduleAppointmentId != null && !rescheduleAppointmentId.isEmpty();
+            if (rescheduling) {
                 confirmReschedule();
             } else {
                 confirmBooking();
@@ -469,7 +474,11 @@ public class BookAppointmentActivity extends AppCompatActivity {
 
         String uid = FirebaseAuth.getInstance().getCurrentUser() != null
                 ? FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
-        if (uid == null || oldSlotId == null || oldSlotId.isEmpty()) {
+        String slotToRelease = (oldSlotId != null && !oldSlotId.isEmpty())
+                ? oldSlotId
+                : (rescheduleAppointmentId != null && !rescheduleAppointmentId.isEmpty()
+                        ? rescheduleAppointmentId : null);
+        if (uid == null || slotToRelease == null || slotToRelease.isEmpty()) {
             Toast.makeText(this, "Missing reschedule data.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -497,7 +506,7 @@ public class BookAppointmentActivity extends AppCompatActivity {
                 .addOnSuccessListener(doc -> {
                     String studentName = doc.getString("name") != null ? doc.getString("name") : "Student";
                     appointmentController.rescheduleCreateNew(
-                            oldSlotId, counselorId, selectedDate, selectedTime, selectedPeriod, type,
+                            slotToRelease, counselorId, selectedDate, selectedTime, selectedPeriod, type,
                             uid, studentName, notes,
                             new AppointmentController.AppointmentCallback() {
                                 @Override

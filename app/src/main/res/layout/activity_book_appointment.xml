@@ -263,20 +263,30 @@
             android:textColor="@color/caps_palette_neutral_dark"
             android:textColorHint="@color/caps_palette_grey_warm" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnConfirm"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="52dp"
+            android:layout_height="56dp"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/bg_offset_done_button"
-            android:stateListAnimator="@animator/press_down_button"
-            android:text="DONE"
-            android:textColor="@color/caps_palette_white"
-            android:textStyle="bold"
-            app:backgroundTint="@android:color/transparent"
-            app:cornerRadius="12dp"
-            app:elevation="0dp"
-            app:iconPadding="0dp" />
+            android:background="@drawable/bg_brut_btn_done_sage">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnConfirm"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_gravity="top|start"
+                android:background="@android:color/transparent"
+                android:fontFamily="sans-serif-black"
+                android:stateListAnimator="@animator/press_down_button"
+                android:text="DONE"
+                android:textAllCaps="true"
+                android:textColor="@color/caps_palette_white"
+                android:textSize="16sp"
+                app:backgroundTint="@android:color/transparent"
+                app:cornerRadius="0dp"
+                app:elevation="0dp"
+                app:iconPadding="0dp"
+                app:strokeWidth="0dp" />
+        </FrameLayout>
     </LinearLayout>
 </ScrollView>

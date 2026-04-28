@@ -46,6 +46,7 @@ public class CounselorProfileActivity extends AppCompatActivity {
     public static final String EXTRA_COUNSELOR_NAME = "counselor_name";
 
     private View btnEditProfile;
+    private View barBookAppointmentBottom;
     private com.google.android.material.button.MaterialButton btnBookAppointment;
     private View btnSignOut;
     private SwitchCompat switchAccepting;
@@ -108,6 +109,7 @@ public class CounselorProfileActivity extends AppCompatActivity {
         switchAccepting = findViewById(R.id.switchAccepting);
         btnSignOut = findViewById(R.id.btnSignOut);
         btnEditProfile = findViewById(R.id.btnEditProfile);
+        barBookAppointmentBottom = findViewById(R.id.barBookAppointmentBottom);
         btnBookAppointment = findViewById(R.id.btnBookAppointment);
 
         starAvg = new ImageView[]{
@@ -140,8 +142,8 @@ public class CounselorProfileActivity extends AppCompatActivity {
             btnEditProfile.setVisibility(View.VISIBLE);
             btnEditProfile.setOnClickListener(v ->
                     startActivity(new Intent(this, EditCounselorProfileActivity.class)));
-            if (btnBookAppointment != null) {
-                btnBookAppointment.setVisibility(View.GONE);
+            if (barBookAppointmentBottom != null) {
+                barBookAppointmentBottom.setVisibility(View.GONE);
             }
         } else {
             btnEditProfile.setVisibility(View.GONE);
@@ -149,6 +151,9 @@ public class CounselorProfileActivity extends AppCompatActivity {
                 db.collection("students").document(myUid).get()
                         .addOnSuccessListener(studentDoc -> {
                             if (studentDoc.exists()) {
+                                if (barBookAppointmentBottom != null) {
+                                    barBookAppointmentBottom.setVisibility(View.VISIBLE);
+                                }
                                 btnBookAppointment.setVisibility(View.VISIBLE);
                                 btnBookAppointment.setOnClickListener(v -> {
                                     Intent intent = new Intent(this, BookAppointmentActivity.class);
@@ -182,10 +187,7 @@ public class CounselorProfileActivity extends AppCompatActivity {
                         }
                         return;
                     }
-                    Counselor counselor = snap.toObject(Counselor.class);
-                    if (counselor != null) {
-                        counselor.setUserId(snap.getId());
-                    }
+                    Counselor counselor = Counselor.fromDocument(snap);
                     applyCounselorDoc(snap, counselor);
                 });
 

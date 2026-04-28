@@ -76,6 +76,12 @@ public class StudentListActivity extends AppCompatActivity {
                         Student s = doc.toObject(Student.class);
                         if (s != null) {
                             s.setUserId(doc.getId());
+                            if (s.getCampusStudentId().isEmpty()) {
+                                String sid = doc.getString("studentId");
+                                if (sid != null && !sid.trim().isEmpty()) {
+                                    s.setCampusStudentId(sid.trim());
+                                }
+                            }
                             allStudents.add(s);
                         }
                     }
@@ -96,7 +102,11 @@ public class StudentListActivity extends AppCompatActivity {
                     String id = s.getUserId() != null ? s.getUserId().toLowerCase(Locale.getDefault()) : "";
                     String dept = s.getDepartment() != null
                             ? s.getDepartment().toLowerCase(Locale.getDefault()) : "";
-                    return name.contains(q) || id.contains(q) || dept.contains(q);
+                    String email = s.getEmail() != null
+                            ? s.getEmail().toLowerCase(Locale.getDefault()) : "";
+                    String campus = s.getCampusStudentId().toLowerCase(Locale.getDefault());
+                    return name.contains(q) || id.contains(q) || dept.contains(q)
+                            || email.contains(q) || campus.contains(q);
                 })
                 .collect(Collectors.toList());
 

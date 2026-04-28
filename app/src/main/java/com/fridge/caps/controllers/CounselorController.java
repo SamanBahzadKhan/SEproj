@@ -65,9 +65,10 @@ public class CounselorController {
                         if (isActive != null && !isActive) {
                             continue;
                         }
-                        Counselor c = doc.toObject(Counselor.class);
-                        c.setUserId(doc.getId());
-                        list.add(c);
+                        Counselor c = Counselor.fromDocument(doc);
+                        if (c != null) {
+                            list.add(c);
+                        }
                     }
                     callback.onSuccess(list);
                 })
@@ -83,9 +84,8 @@ public class CounselorController {
                 .addOnSuccessListener(querySnapshot -> {
                     List<Counselor> list = new ArrayList<>();
                     for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
-                        Counselor c = doc.toObject(Counselor.class);
+                        Counselor c = Counselor.fromDocument(doc);
                         if (c != null) {
-                            c.setUserId(doc.getId());
                             list.add(c);
                         }
                     }
@@ -106,8 +106,7 @@ public class CounselorController {
                 .get()
                 .addOnSuccessListener(doc -> {
                     if (doc.exists()) {
-                        Counselor c = doc.toObject(Counselor.class);
-                        if (c != null) c.setUserId(doc.getId());
+                        Counselor c = Counselor.fromDocument(doc);
                         callback.onSuccess(c);
                     } else {
                         callback.onFailure("Counselor not found.");

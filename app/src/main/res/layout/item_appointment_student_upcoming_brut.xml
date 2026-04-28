@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Student dashboard upcoming appointment — neo-brutalist mockup (Column / Row / Box). -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp">
+
+    <LinearLayout
+        android:id="@+id/cardColumn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_brut_appt_card"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Row: counsellor name | overflow + status -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvPrimaryName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif-black"
+                android:textColor="@color/caps_brut_navy"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvOverflow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-black"
+                    android:letterSpacing="0.12"
+                    android:text="..."
+                    android:textColor="@color/caps_brut_blue_gray"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tvStatusChip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="@drawable/bg_brut_status_booked_pill"
+                    android:fontFamily="sans-serif-black"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="5dp"
+                    android:textAllCaps="true"
+                    android:textColor="@color/caps_palette_white"
+                    android:textSize="11sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Large day number -->
+        <TextView
+            android:id="@+id/tvDateTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="sans-serif-black"
+            android:includeFontPadding="false"
+            android:textColor="@color/caps_brut_navy"
+            android:textSize="56sp" />
+
+        <!-- Month year · time -->
+        <TextView
+            android:id="@+id/tvSecondaryLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/caps_brut_blue_gray"
+            android:textSize="15sp"
+            android:visibility="visible" />
+
+        <!-- Tag row -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvDurationChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_brut_tag"
+                android:fontFamily="sans-serif"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="7dp"
+                android:text="1 hour"
+                android:textColor="@color/caps_brut_navy"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/tvType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/bg_brut_tag"
+                android:fontFamily="sans-serif"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="7dp"
+                android:textColor="@color/caps_brut_navy"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <!-- Action row -->
+        <LinearLayout
+            android:id="@+id/rowStudentActions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1.2"
+                android:background="@drawable/bg_brut_btn_reschedule">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnReschedule"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_gravity="top|start"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="sans-serif-black"
+                    android:stateListAnimator="@animator/press_down_button"
+                    android:text="Reschedule"
+                    android:textAllCaps="false"
+                    android:textColor="@color/caps_palette_white"
+                    android:textSize="15sp"
+                    app:backgroundTint="@android:color/transparent"
+                    app:strokeWidth="0dp" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_brut_btn_cancel_light">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCancelStudent"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_gravity="top|start"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="sans-serif-black"
+                    android:stateListAnimator="@animator/press_down_button"
+                    android:text="Cancel"
+                    android:textAllCaps="false"
+                    android:textColor="@color/caps_brut_navy"
+                    android:textSize="15sp"
+                    app:backgroundTint="@android:color/transparent"
+                    app:strokeWidth="0dp" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnFeedback"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:visibility="gone"
+            app:backgroundTint="@android:color/transparent" />
+
+        <LinearLayout
+            android:id="@+id/rowCounselorActions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageButton
+                android:id="@+id/btnComplete"
+                android:layout_width="1dp"
+                android:layout_height="1dp"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/btnNoShow"
+                android:layout_width="1dp"
+                android:layout_height="1dp"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/btnCancelCounselor"
+                android:layout_width="1dp"
+                android:layout_height="1dp"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

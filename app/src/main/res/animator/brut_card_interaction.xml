@@ -1,34 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Pixel “key” press: shift down-right, release snaps back (app-wide buttons). -->
+<!-- Student upcoming card: slight lift on hover (pointer / stylus), press settles into shadow. -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
         <set>
             <objectAnimator
                 android:duration="55"
-                android:interpolator="@android:interpolator/fast_out_linear_in"
                 android:propertyName="translationY"
-                android:valueTo="10"
+                android:valueTo="5"
                 android:valueType="floatType" />
             <objectAnimator
                 android:duration="55"
-                android:interpolator="@android:interpolator/fast_out_linear_in"
                 android:propertyName="translationX"
-                android:valueTo="8"
+                android:valueTo="4"
                 android:valueType="floatType" />
         </set>
+    </item>
+    <item android:state_hovered="true">
+        <objectAnimator
+            android:duration="90"
+            android:propertyName="translationZ"
+            android:valueTo="4"
+            android:valueType="floatType" />
     </item>
     <item>
         <set>
             <objectAnimator
-                android:duration="70"
-                android:interpolator="@android:interpolator/linear_out_slow_in"
+                android:duration="90"
                 android:propertyName="translationY"
                 android:valueTo="0"
                 android:valueType="floatType" />
             <objectAnimator
-                android:duration="70"
-                android:interpolator="@android:interpolator/linear_out_slow_in"
+                android:duration="90"
                 android:propertyName="translationX"
+                android:valueTo="0"
+                android:valueType="floatType" />
+            <objectAnimator
+                android:duration="90"
+                android:propertyName="translationZ"
                 android:valueTo="0"
                 android:valueType="floatType" />
         </set>

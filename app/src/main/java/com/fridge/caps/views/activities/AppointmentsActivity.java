@@ -8,6 +8,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,11 +16,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fridge.caps.R;
 import com.fridge.caps.controllers.AppointmentController;
+import com.fridge.caps.controllers.NotificationController;
 import com.fridge.caps.models.Appointment;
 import com.fridge.caps.models.AppointmentStatus;
 import com.fridge.caps.utils.DateUtils;
+import com.fridge.caps.views.adapters.AppointmentAdapter;
 import com.fridge.caps.views.adapters.StudentPastAppointmentsAdapter;
-import com.fridge.caps.views.adapters.StudentUpcomingAppointmentsAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -46,6 +48,7 @@ public class AppointmentsActivity extends AppCompatActivity {
     private TextView chipAll, chipCompleted, chipCancelled, chipNoShow;
 
     private final AppointmentController appointmentController = new AppointmentController();
+    private final NotificationController notificationController = new NotificationController();
     private List<Appointment> upcoming = new ArrayList<>();
     private List<Appointment> pastAll = new ArrayList<>();
     private Map<String, StudentPastAppointmentsAdapter.Snippet> feedbackMap = new HashMap<>();
@@ -217,7 +220,11 @@ public class AppointmentsActivity extends AppCompatActivity {
             if (upcoming.isEmpty()) {
                 recyclerView.setAdapter(null);
             } else {
-                recyclerView.setAdapter(new StudentUpcomingAppointmentsAdapter(upcoming));
+                recyclerView.setAdapter(new AppointmentAdapter(upcoming,
+                        AppointmentAdapter.MODE_STUDENT_UPCOMING,
+                        this::cancelAppointment,
+                        this::rescheduleAppointment,
+                        null, null, null));
             }
         } else {
             List<Appointment> past = filteredPast();
@@ -247,6 +254,73 @@ public class AppointmentsActivity extends AppCompatActivity {
             }
         }
         i.putExtra(FeedbackActivity.EXTRA_APPOINTMENT_DATE, dateLine);
+        startActivity(i);
+    }
+
+    private void cancelAppointment(Appointment appt) {
+        new AlertDialog.Builder(this)
+                .setTitle("Cancel Appointment")
+                .setMessage("Are you sure you want to cancel your appointment with "
+                        + appt.getCounselorName() + "?")
+                .setPositiveButton("Yes, Cancel", (d, w) ->
+                        appointmentController.cancelAppointment(
+                                appt.getTimeSlotId(), appt.getTimeSlotId(),
+                                new AppointmentController.AppointmentCallback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        String uid = FirebaseAuth.getInstance().getCurrentUser() != null
+                                                ? FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
+                                        if (uid == null) {
+                                            Toast.makeText(AppointmentsActivity.this,
+                                                    "Appointment cancelled.", Toast.LENGTH_SHORT).show();
+                                            load();
+                                            return;
+                                        }
+                                        FirebaseFirestore.getInstance().collection("students")
+                                                .document(uid).get()
+                                                .addOnSuccessListener(doc -> {
+                                                    String sn = doc.getString("name");
+                                                    notifyCounselorCancel(appt,
+                                                            sn != null ? sn : "Student");
+                                                    Toast.makeText(AppointmentsActivity.this,
+                                                            "Appointment cancelled.", Toast.LENGTH_SHORT).show();
+                                                    load();
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    notifyCounselorCancel(appt, "Student");
+                                                    Toast.makeText(AppointmentsActivity.this,
+                                                            "Appointment cancelled.", Toast.LENGTH_SHORT).show();
+                                                    load();
+                                                });
+                                    }
+
+                                    @Override
+                                    public void onFailure(String error) {
+                                        Toast.makeText(AppointmentsActivity.this,
+                                                "Failed: " + error, Toast.LENGTH_SHORT).show();
+                                    }
+                                }))
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+    private void notifyCounselorCancel(Appointment appt, String studentName) {
+        String dateLine = "";
+        if (appt.getDate() != null) {
+            dateLine = new java.text.SimpleDateFormat(
+                    DateUtils.DISPLAY_DATE, java.util.Locale.US)
+                    .format(appt.getDate().toDate());
+        }
+        notificationController.sendStudentCancelledCounselor(
+                appt.getCounselorId(), studentName, dateLine, appt.getTimeDisplay());
+    }
+
+    private void rescheduleAppointment(Appointment appt) {
+        Intent i = new Intent(this, BookAppointmentActivity.class);
+        i.putExtra(BookAppointmentActivity.EXTRA_COUNSELOR_ID, appt.getCounselorId());
+        i.putExtra(BookAppointmentActivity.EXTRA_COUNSELOR_NAME, appt.getCounselorName());
+        i.putExtra(BookAppointmentActivity.EXTRA_RESCHEDULE_APPOINTMENT_ID, appt.getAppointmentId());
+        i.putExtra(BookAppointmentActivity.EXTRA_OLD_SLOT_ID, appt.getTimeSlotId());
         startActivity(i);
     }
 }

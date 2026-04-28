@@ -1,5 +1,7 @@
 package com.fridge.caps.models;
 
+import com.google.firebase.firestore.PropertyName;
+
 /**
  * Student.java
  * Represents a student user with academic information (department, year of study, phone).
@@ -11,6 +13,8 @@ public class Student extends User {
     private String phone;
     private String department;
     private String yearOfStudy;
+    /** Optional campus / roll number stored as {@code studentId} in Firestore (see profile screen). */
+    private String campusStudentId;
     /** When false, student account is disabled; null/missing treated as active. */
     private Boolean isActive;
 
@@ -31,6 +35,17 @@ public class Student extends User {
     public String getPhone()       { return phone; }
     public String getDepartment()  { return department; }
     public String getYearOfStudy() { return yearOfStudy; }
+
+    /** Human-readable student number when set in Firestore; otherwise use email / UID in UI. */
+    @PropertyName("studentId")
+    public String getCampusStudentId() {
+        return campusStudentId != null ? campusStudentId.trim() : "";
+    }
+
+    @PropertyName("studentId")
+    public void setCampusStudentId(String campusStudentId) {
+        this.campusStudentId = campusStudentId;
+    }
 
     public Boolean getIsActive() { return isActive; }
 

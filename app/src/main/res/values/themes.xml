@@ -8,7 +8,26 @@
         <item name="android:windowFrame">@null</item>
     </style>
 
-    <style name="Theme.CAPs" parent="Base.Theme.CAPs" />
+    <style name="Theme.CAPs" parent="Base.Theme.CAPs">
+        <item name="materialButtonStyle">@style/Widget.CAPs.MaterialButton</item>
+        <item name="materialButtonOutlinedStyle">@style/Widget.CAPs.MaterialButton</item>
+        <item name="android:buttonStyle">@style/Widget.CAPs.LegacyButton</item>
+        <item name="imageButtonStyle">@style/Widget.CAPs.ImageButton</item>
+    </style>
+
+    <style name="Widget.CAPs.MaterialButton" parent="Widget.Material3.Button">
+        <item name="android:stateListAnimator">@animator/press_down_button</item>
+        <item name="android:elevation">0dp</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+    <style name="Widget.CAPs.LegacyButton" parent="Widget.AppCompat.Button">
+        <item name="android:stateListAnimator">@animator/press_down_button</item>
+    </style>
+
+    <style name="Widget.CAPs.ImageButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:stateListAnimator">@animator/press_down_button</item>
+    </style>
 
     <style name="Theme.CAPs.Splash" parent="Theme.CAPs">
         <item name="android:windowBackground">@color/caps_palette_bg</item>

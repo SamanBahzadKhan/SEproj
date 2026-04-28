@@ -32,4 +32,13 @@
     <color name="caps_palette_subtitle">#8A8680</color>
     <color name="caps_palette_footer">#A4B1BA</color>
     <color name="caps_palette_spinner">#8A5A3A</color>
+
+    <!-- Neo-brutalist student upcoming card (mockup-aligned) -->
+    <color name="caps_brut_cream_bg">#F2EDE4</color>
+    <color name="caps_brut_navy">#2A3C44</color>
+    <color name="caps_brut_blue_gray">#648AA3</color>
+    <color name="caps_brut_status_teal">#345E77</color>
+    <color name="caps_brut_reschedule_brown">#8B5E3C</color>
+    <color name="caps_brut_cancel_fill">#EBEBEB</color>
+    <color name="caps_brut_tag_fill">#F0EEEB</color>
 </resources>

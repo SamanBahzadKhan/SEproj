@@ -6,6 +6,7 @@ package com.fridge.caps.views.adapters;
  * Supports multiple view modes with context-specific action buttons (cancel, reschedule, complete, feedback).
  * View in the MVC pattern.
  */
+import android.animation.AnimatorInflater;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -47,6 +48,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
 
     private final List<Appointment> items;
     private final int mode;
+    private final int itemLayoutRes;
 
     @Nullable private final Action onCancel;
     @Nullable private final Action onReschedule;
@@ -66,6 +68,9 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                               @Nullable Action onNoShow) {
         this.items     = items;
         this.mode      = mode;
+        this.itemLayoutRes = mode == MODE_STUDENT_UPCOMING
+                ? R.layout.item_appointment_student_upcoming_brut
+                : R.layout.item_appointment;
         this.onCancel  = onCancel;
         this.onReschedule = onReschedule;
         this.onFeedback = onFeedback;
@@ -77,8 +82,14 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     @Override
     public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_appointment, parent, false);
-        return new VH(v);
+                .inflate(itemLayoutRes, parent, false);
+        VH h = new VH(v);
+        if (mode == MODE_STUDENT_UPCOMING && android.os.Build.VERSION.SDK_INT
+                >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            h.itemView.setStateListAnimator(AnimatorInflater.loadStateListAnimator(
+                    parent.getContext(), R.animator.brut_card_interaction));
+        }
+        return h;
     }
 
     @Override
@@ -99,26 +110,37 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         h.tvDurationChip.setVisibility(View.VISIBLE);
 
         switch (mode) {
-            case MODE_STUDENT_UPCOMING:
+            case MODE_STUDENT_UPCOMING: {
+                int navy = ContextCompat.getColor(h.itemView.getContext(), R.color.caps_brut_navy);
+                int blueGray = ContextCompat.getColor(h.itemView.getContext(), R.color.caps_brut_blue_gray);
                 String counselorName = a.getCounselorName() != null ? a.getCounselorName() : "Counsellor";
                 if (!counselorName.toLowerCase(Locale.US).startsWith("dr.")) {
                     counselorName = "Dr. " + counselorName;
                 }
                 h.tvPrimaryName.setText(counselorName);
-                h.tvPrimaryName.setTextColor(Color.parseColor("#1E2F3F"));
+                h.tvPrimaryName.setTextColor(navy);
                 h.tvSecondaryLine.setVisibility(View.VISIBLE);
                 h.tvSecondaryLine.setText(formatUpcomingDateLine(a));
-                h.tvSecondaryLine.setTextColor(Color.parseColor("#3D6D8C"));
+                h.tvSecondaryLine.setTextColor(blueGray);
                 h.tvStatusChip.setVisibility(View.VISIBLE);
-                h.tvStatusChip.setText("BOOKED");
-                h.tvStatusChip.setBackground(ContextCompat.getDrawable(h.tvStatusChip.getContext(), R.drawable.bg_status_booked));
-                h.tvStatusChip.setTextColor(Color.WHITE);
-                h.btnReschedule.setVisibility(st == AppointmentStatus.PENDING ? View.GONE : View.VISIBLE);
+                if (st == AppointmentStatus.PENDING) {
+                    h.tvStatusChip.setText("PENDING");
+                    h.tvStatusChip.setBackground(ContextCompat.getDrawable(h.itemView.getContext(),
+                            R.drawable.bg_brut_status_pending_pill));
+                    h.tvStatusChip.setTextColor(navy);
+                } else {
+                    h.tvStatusChip.setText("BOOKED");
+                    h.tvStatusChip.setBackground(ContextCompat.getDrawable(h.itemView.getContext(),
+                            R.drawable.bg_brut_status_booked_pill));
+                    h.tvStatusChip.setTextColor(ContextCompat.getColor(h.itemView.getContext(),
+                            R.color.caps_palette_white));
+                }
+                h.btnReschedule.setVisibility(View.VISIBLE);
                 h.tvDateTime.setText(formatUpcomingDayNumber(a));
-                h.tvDateTime.setTextColor(Color.parseColor("#1E2F3F"));
+                h.tvDateTime.setTextColor(navy);
                 h.tvDateTime.setTextSize(56f);
                 h.tvType.setText(a.getType() != null && !a.getType().isEmpty() ? a.getType() : "In-Person");
-                h.tvType.setTextColor(Color.parseColor("#2D2D2D"));
+                h.tvType.setTextColor(navy);
                 h.rowStudentActions.setVisibility(View.VISIBLE);
                 h.btnReschedule.setOnClickListener(v -> {
                     if (onReschedule != null) onReschedule.run(a);
@@ -129,6 +151,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                 h.rowCounselorActions.setVisibility(View.GONE);
                 h.btnFeedback.setVisibility(View.GONE);
                 break;
+            }
 
             case MODE_STUDENT_PAST:
                 h.tvPrimaryName.setText(a.getCounselorName() != null ? a.getCounselorName() : "Counsellor");

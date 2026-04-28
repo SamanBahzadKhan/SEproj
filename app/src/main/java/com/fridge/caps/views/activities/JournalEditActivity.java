@@ -3,10 +3,12 @@ package com.fridge.caps.views.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fridge.caps.R;
@@ -91,6 +93,36 @@ public class JournalEditActivity extends AppCompatActivity {
         setMood(selectedMood);
 
         btnSave.setOnClickListener(v -> save(uid));
+
+        View btnDelete = findViewById(R.id.btnDeleteJournal);
+        if (isEdit) {
+            btnDelete.setVisibility(View.VISIBLE);
+            btnDelete.setOnClickListener(v -> confirmDelete(uid));
+        }
+    }
+
+    private void confirmDelete(String uid) {
+        new AlertDialog.Builder(this)
+                .setMessage(R.string.journal_delete_confirm)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(R.string.journal_delete, (d, w) -> {
+                    journalController.deleteEntry(uid, entryId,
+                            new JournalController.JournalVoidCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    Toast.makeText(JournalEditActivity.this, "Deleted.", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                }
+
+                                @Override
+                                public void onFailure(String message) {
+                                    Toast.makeText(JournalEditActivity.this,
+                                            message != null ? message : "Delete failed.",
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            });
+                })
+                .show();
     }
 
     private void setMood(String mood) {

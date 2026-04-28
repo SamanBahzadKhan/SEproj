@@ -10,4 +10,10 @@
     <string name="report_user_menu">Report</string>
     <string name="report_to_admin">Report to admin</string>
     <string name="report_student_unavailable">Student info unavailable for this slot.</string>
+    <string name="session_notes_list_title">Session notes</string>
+    <string name="session_notes_list_empty">No session notes yet. When a counsellor shares notes after a session, they will appear here.</string>
+    <string name="session_notes_status_shared">Shared</string>
+    <string name="session_notes_status_pending">Not submitted yet</string>
+    <string name="journal_delete">Delete entry</string>
+    <string name="journal_delete_confirm">Delete this journal entry? This cannot be undone.</string>
 </resources>

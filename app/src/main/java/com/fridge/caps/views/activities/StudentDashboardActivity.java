@@ -23,6 +23,8 @@ import com.fridge.caps.controllers.AppointmentController;
 import com.fridge.caps.controllers.NotificationController;
 import com.fridge.caps.models.Appointment;
 import com.fridge.caps.models.AppointmentStatus;
+import com.fridge.caps.utils.GreetingUtils;
+import com.fridge.caps.views.BottomNavUi;
 import com.fridge.caps.views.adapters.AppointmentAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -54,6 +56,9 @@ public class StudentDashboardActivity extends AppCompatActivity {
 
     private List<Appointment> allAppointments = new ArrayList<>();
 
+    /** Which bottom tab is visually selected (updated when launching destinations from the bar). */
+    private int selectedBottomNavId = R.id.navHome;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,7 +83,7 @@ public class StudentDashboardActivity extends AppCompatActivity {
             loadWelcomeName();
             attachUnreadBadge();
         } else {
-            tvWelcome.setText("Welcome back,\nAhmad Raza");
+            tvWelcome.setText(GreetingUtils.greetingWithName("Ahmad Raza"));
             tvNoUpcoming.setVisibility(View.VISIBLE);
             tvNoPast.setVisibility(View.VISIBLE);
         }
@@ -99,17 +104,34 @@ public class StudentDashboardActivity extends AppCompatActivity {
                 startActivity(new Intent(this, NotificationsActivity.class)));
         findViewById(R.id.btnHistory).setOnClickListener(v ->
                 startActivity(new Intent(this, StudentAppointmentHistoryActivity.class)));
+        findViewById(R.id.btnSessionNotesList).setOnClickListener(v ->
+                startActivity(new Intent(this, StudentSessionNotesListActivity.class)));
 
         // Bottom nav
-        findViewById(R.id.navHome).setOnClickListener(v -> { /* already here */ });
-        findViewById(R.id.navCounsel).setOnClickListener(v ->
-                startActivity(new Intent(this, CounselorListActivity.class)));
-        findViewById(R.id.navAppts).setOnClickListener(v ->
-                startActivity(new Intent(this, AppointmentsActivity.class)));
-        findViewById(R.id.navAlerts).setOnClickListener(v ->
-                startActivity(new Intent(this, NotificationsActivity.class)));
-        findViewById(R.id.navProfile).setOnClickListener(v ->
-                startActivity(new Intent(this, ProfileActivity.class)));
+        findViewById(R.id.navHome).setOnClickListener(v -> {
+            selectedBottomNavId = R.id.navHome;
+            BottomNavUi.applyStudentNav(this, selectedBottomNavId);
+        });
+        findViewById(R.id.navCounsel).setOnClickListener(v -> {
+            selectedBottomNavId = R.id.navCounsel;
+            BottomNavUi.applyStudentNav(this, selectedBottomNavId);
+            startActivity(new Intent(this, CounselorListActivity.class));
+        });
+        findViewById(R.id.navAppts).setOnClickListener(v -> {
+            selectedBottomNavId = R.id.navAppts;
+            BottomNavUi.applyStudentNav(this, selectedBottomNavId);
+            startActivity(new Intent(this, AppointmentsActivity.class));
+        });
+        findViewById(R.id.navAlerts).setOnClickListener(v -> {
+            selectedBottomNavId = R.id.navAlerts;
+            BottomNavUi.applyStudentNav(this, selectedBottomNavId);
+            startActivity(new Intent(this, NotificationsActivity.class));
+        });
+        findViewById(R.id.navProfile).setOnClickListener(v -> {
+            selectedBottomNavId = R.id.navProfile;
+            BottomNavUi.applyStudentNav(this, selectedBottomNavId);
+            startActivity(new Intent(this, ProfileActivity.class));
+        });
     }
 
     private void attachUnreadBadge() {
@@ -133,6 +155,8 @@ public class StudentDashboardActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        BottomNavUi.applyStudentNav(this, selectedBottomNavId);
+
         if (isTestMode) {
             return;
         }
@@ -175,7 +199,7 @@ public class StudentDashboardActivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(doc -> {
                     if (doc.exists() && doc.getString("name") != null) {
-                        tvWelcome.setText("Welcome back,\n" + doc.getString("name"));
+                        tvWelcome.setText(GreetingUtils.greetingWithName(doc.getString("name")));
                     }
                 });
     }

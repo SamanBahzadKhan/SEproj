@@ -2,9 +2,7 @@ package com.fridge.caps.views.activities;
 
 /**
  * NotificationsActivity.java
- * Displays user notifications in a list with auto-marking of visible items as read.
- * Shows appointment confirmations, reminders, cancellations, and system messages.
- * View in the MVC pattern.
+ * Displays user notifications in a list (unread only). Mark-all-read clears them from this screen.
  */
 import android.os.Bundle;
 import android.view.View;
@@ -20,19 +18,15 @@ import com.fridge.caps.R;
 import com.fridge.caps.controllers.NotificationController;
 import com.fridge.caps.models.Notification;
 import com.fridge.caps.views.adapters.NotificationAdapter;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Live notifications list; marks visible items read when opened.
+ * Live unread notifications; Mark all read dismisses the list until new notifications arrive.
  */
 public class NotificationsActivity extends AppCompatActivity {
 
@@ -43,7 +37,6 @@ public class NotificationsActivity extends AppCompatActivity {
 
     private NotificationController notificationController;
     private ListenerRegistration   registration;
-    private ListenerRegistration   adminRoleRegistration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,21 +54,24 @@ public class NotificationsActivity extends AppCompatActivity {
 
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
-        tvMarkAll.setOnClickListener(v ->
-                notificationController.markAllReadForCurrentUser(null));
+        tvMarkAll.setOnClickListener(v -> {
+            tvMarkAll.setEnabled(false);
+            notificationController.markAllReadForCurrentUser(() -> runOnUiThread(() -> {
+                tvMarkAll.setEnabled(true);
+                bindNotifications(Collections.emptyList());
+            }));
+        });
 
         progressBar.setVisibility(View.VISIBLE);
         registration = notificationController.listenToMyNotifications((snap, e) -> {
             progressBar.setVisibility(View.GONE);
             if (e != null || snap == null) {
                 tvEmpty.setVisibility(View.VISIBLE);
+                recyclerView.setAdapter(null);
                 return;
             }
-            bindNotifications(snap.getDocuments(), null);
-            notificationController.markAllReadForCurrentUser(null);
+            bindNotifications(snap.getDocuments());
         });
-
-        maybeAttachAdminRoleNotifications();
     }
 
     @Override
@@ -84,35 +80,14 @@ public class NotificationsActivity extends AppCompatActivity {
         if (registration != null) {
             registration.remove();
         }
-        if (adminRoleRegistration != null) {
-            adminRoleRegistration.remove();
-        }
     }
 
-    private void maybeAttachAdminRoleNotifications() {
-        String uid = FirebaseAuth.getInstance().getCurrentUser() != null
-                ? FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
-        if (uid == null) return;
-        FirebaseFirestore.getInstance().collection("admins").document(uid).get()
-                .addOnSuccessListener(doc -> {
-                    if (!doc.exists()) return;
-                    adminRoleRegistration = FirebaseFirestore.getInstance().collection("notifications")
-                            .whereEqualTo("targetRole", "admin")
-                            .addSnapshotListener((snap, e) -> bindNotifications(
-                                    registrationLastDocs, snap != null ? snap.getDocuments() : null));
-                });
-    }
-
-    private List<DocumentSnapshot> registrationLastDocs = new ArrayList<>();
-
-    private void bindNotifications(List<DocumentSnapshot> userDocs, List<DocumentSnapshot> roleDocs) {
-        if (userDocs != null) registrationLastDocs = new ArrayList<>(userDocs);
+    private void bindNotifications(List<DocumentSnapshot> docs) {
         List<Notification> list = new ArrayList<>();
-        if (registrationLastDocs != null) {
-            for (DocumentSnapshot doc : registrationLastDocs) list.add(Notification.fromDocument(doc));
-        }
-        if (roleDocs != null) {
-            for (DocumentSnapshot doc : roleDocs) list.add(Notification.fromDocument(doc));
+        if (docs != null) {
+            for (DocumentSnapshot doc : docs) {
+                list.add(Notification.fromDocument(doc));
+            }
         }
         Collections.sort(list, (a, b) -> Long.compare(b.getTimestampMillis(), a.getTimestampMillis()));
         if (list.isEmpty()) {
@@ -120,8 +95,7 @@ public class NotificationsActivity extends AppCompatActivity {
             recyclerView.setAdapter(null);
         } else {
             tvEmpty.setVisibility(View.GONE);
-            recyclerView.setAdapter(new NotificationAdapter(list,
-                    this::handleNotificationClick));
+            recyclerView.setAdapter(new NotificationAdapter(list, this::handleNotificationClick));
         }
     }
 

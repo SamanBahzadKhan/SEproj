@@ -28,6 +28,7 @@ import com.fridge.caps.models.Appointment;
 import com.fridge.caps.models.AppointmentStatus;
 import com.fridge.caps.models.TimeSlot;
 import com.fridge.caps.utils.DateUtils;
+import com.fridge.caps.views.BottomNavUi;
 import com.fridge.caps.views.adapters.AppointmentAdapter;
 import com.fridge.caps.views.adapters.PendingRequestAdapter;
 import com.fridge.caps.views.fragments.AvailabilityBottomSheet;
@@ -91,6 +92,8 @@ public class CounselorDashboardActivity extends AppCompatActivity {
     private String counselorUid;
     private String[] weekDates = new String[7];
 
+    private int selectedCounselorNavId = R.id.navHome;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,17 +144,32 @@ public class CounselorDashboardActivity extends AppCompatActivity {
                     .show(getSupportFragmentManager(), "availability_sheet");
         });
 
-        findViewById(R.id.navHome).setOnClickListener(v -> { });
+        findViewById(R.id.navHome).setOnClickListener(v -> {
+            selectedCounselorNavId = R.id.navHome;
+            BottomNavUi.applyCounselorNav(this, selectedCounselorNavId);
+        });
         findViewById(R.id.navCounsel).setOnClickListener(v -> {
+            selectedCounselorNavId = R.id.navCounsel;
+            BottomNavUi.applyCounselorNav(this, selectedCounselorNavId);
             if (counselorUid == null) return;
             AvailabilityBottomSheet.newInstance(counselorUid)
                     .show(getSupportFragmentManager(), "availability_sheet");
         });
-        findViewById(R.id.navAppts).setOnClickListener(v ->
-                startActivity(new Intent(this, CounselorAppointmentsActivity.class)));
-        findViewById(R.id.navAlerts).setOnClickListener(v ->
-                startActivity(new Intent(this, NotificationsActivity.class)));
-        findViewById(R.id.navProfile).setOnClickListener(v -> openOwnProfile());
+        findViewById(R.id.navAppts).setOnClickListener(v -> {
+            selectedCounselorNavId = R.id.navAppts;
+            BottomNavUi.applyCounselorNav(this, selectedCounselorNavId);
+            startActivity(new Intent(this, CounselorAppointmentsActivity.class));
+        });
+        findViewById(R.id.navAlerts).setOnClickListener(v -> {
+            selectedCounselorNavId = R.id.navAlerts;
+            BottomNavUi.applyCounselorNav(this, selectedCounselorNavId);
+            startActivity(new Intent(this, NotificationsActivity.class));
+        });
+        findViewById(R.id.navProfile).setOnClickListener(v -> {
+            selectedCounselorNavId = R.id.navProfile;
+            BottomNavUi.applyCounselorNav(this, selectedCounselorNavId);
+            openOwnProfile();
+        });
     }
 
     /** Called from {@link AvailabilityBottomSheet} after save/delete. */
@@ -460,6 +478,8 @@ public class CounselorDashboardActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        BottomNavUi.applyCounselorNav(this, selectedCounselorNavId);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {

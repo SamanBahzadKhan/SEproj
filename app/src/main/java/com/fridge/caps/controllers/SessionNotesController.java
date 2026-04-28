@@ -15,6 +15,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -301,6 +303,48 @@ public class SessionNotesController {
                             .addOnFailureListener(onFail);
                 })
                 .addOnFailureListener(onFail);
+    }
+
+    /**
+     * All documents under {@code students/{id}/receivedSessionNotes}, sorted by counsellor name
+     * (A–Z) then newest {@code submittedAt} first within each counsellor.
+     */
+    public void loadAllReceivedSessionNotes(String studentId,
+            com.google.android.gms.tasks.OnSuccessListener<List<DocumentSnapshot>> onOk,
+            com.google.android.gms.tasks.OnFailureListener onFail) {
+        if (studentId == null || studentId.isEmpty()) {
+            onOk.onSuccess(new ArrayList<>());
+            return;
+        }
+        db.collection(STUDENTS).document(studentId).collection(RECEIVED)
+                .get()
+                .addOnSuccessListener(q -> {
+                    List<DocumentSnapshot> list = new ArrayList<>(q.getDocuments());
+                    Collections.sort(list, RECEIVED_NOTES_LIST_ORDER);
+                    onOk.onSuccess(list);
+                })
+                .addOnFailureListener(onFail);
+    }
+
+    private static final Comparator<DocumentSnapshot> RECEIVED_NOTES_LIST_ORDER = (a, b) -> {
+        int c = counselorSortKey(a).compareToIgnoreCase(counselorSortKey(b));
+        if (c != 0) {
+            return c;
+        }
+        return Long.compare(submittedAtMillis(b), submittedAtMillis(a));
+    };
+
+    private static String counselorSortKey(DocumentSnapshot d) {
+        String n = d.getString("counselorName");
+        return n != null ? n.trim() : "";
+    }
+
+    private static long submittedAtMillis(DocumentSnapshot d) {
+        com.google.firebase.Timestamp t = d.getTimestamp("submittedAt");
+        if (t != null) {
+            return t.toDate().getTime();
+        }
+        return 0L;
     }
 
     /** Whether this snapshot should show submitted session notes to the student. */

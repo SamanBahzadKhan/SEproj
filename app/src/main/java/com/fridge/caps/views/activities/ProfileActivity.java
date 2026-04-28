@@ -84,6 +84,11 @@ public class ProfileActivity extends AppCompatActivity {
                     startActivity(new Intent(this, EditProfileActivity.class)));
         }
 
+        View back = findViewById(R.id.btnProfileBack);
+        if (back != null) {
+            back.setOnClickListener(v -> finish());
+        }
+
         findViewById(R.id.btnSignOut).setOnClickListener(v -> handleSignOut());
 
         findViewById(R.id.rowNotifications).setOnClickListener(v -> showNotificationPrefsDialog());

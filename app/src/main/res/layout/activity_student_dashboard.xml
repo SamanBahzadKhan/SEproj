@@ -109,19 +109,10 @@
             android:paddingBottom="16dp">
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:paddingHorizontal="16dp"
-                android:fontFamily="sans-serif"
-                android:text="Welcome back,"
-                android:textColor="@color/caps_palette_grey_warm"
-                android:textSize="14sp" />
-
-            <TextView
                 android:id="@+id/tvWelcome"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:paddingHorizontal="16dp"
                 android:fontFamily="sans-serif-black"
                 android:text="Username"
@@ -431,6 +422,7 @@
             </FrameLayout>
 
             <FrameLayout
+                android:id="@+id/btnSessionNotesList"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="10dp"
@@ -494,20 +486,20 @@
                 android:background="@drawable/bg_offset_home_icon">
 
                 <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
                     android:layout_gravity="center"
-                    android:src="@android:drawable/ic_menu_view"
-                    android:tint="@color/caps_palette_neutral_dark" />
+                    android:src="@drawable/ic_nav_home"
+                    android:tint="@color/caps_palette_grey_warm" />
             </FrameLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:fontFamily="sans-serif-black"
+                android:fontFamily="sans-serif"
                 android:text="Home"
-                android:textColor="@color/caps_palette_neutral_dark"
+                android:textColor="@color/caps_palette_grey_warm"
                 android:textSize="11sp" />
         </LinearLayout>
 

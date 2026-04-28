@@ -90,6 +90,27 @@ public class JournalController {
                 });
     }
 
+    public void deleteEntry(String studentId, String entryId, JournalVoidCallback callback) {
+        if (studentId == null || studentId.isEmpty() || entryId == null || entryId.isEmpty()) {
+            if (callback != null) {
+                callback.onFailure("Invalid entry.");
+            }
+            return;
+        }
+        db.collection(COL_STUDENTS).document(studentId).collection(SUB_JOURNAL).document(entryId)
+                .delete()
+                .addOnSuccessListener(v -> {
+                    if (callback != null) {
+                        callback.onSuccess();
+                    }
+                })
+                .addOnFailureListener(ex -> {
+                    if (callback != null) {
+                        callback.onFailure(ex.getMessage() != null ? ex.getMessage() : "Delete failed");
+                    }
+                });
+    }
+
     public interface JournalVoidCallback {
         void onSuccess();
 

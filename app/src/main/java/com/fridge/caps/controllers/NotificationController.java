@@ -15,7 +15,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
@@ -153,7 +152,7 @@ public class NotificationController {
                 .get()
                 .addOnSuccessListener(query -> {
                     List<Notification> list = new ArrayList<>();
-                    for (QueryDocumentSnapshot doc : query) {
+                    for (DocumentSnapshot doc : query.getDocuments()) {
                         list.add(Notification.fromDocument(doc));
                     }
                     list.sort((a, b) -> Long.compare(b.getTimestampMillis(), a.getTimestampMillis()));
@@ -166,7 +165,7 @@ public class NotificationController {
     }
 
     /**
-     * Real-time notifications for current user (sorted by timestamp desc in the activity).
+     * Real-time <strong>unread</strong> notifications for the current user (by {@code recipientId}).
      */
     public ListenerRegistration listenToMyNotifications(
             com.google.firebase.firestore.EventListener<com.google.firebase.firestore.QuerySnapshot> listener) {
@@ -174,6 +173,7 @@ public class NotificationController {
         if (uid == null) return null;
         return db.collection(NOTIFICATIONS)
                 .whereEqualTo("recipientId", uid)
+                .whereEqualTo("read", false)
                 .addSnapshotListener((snap, e) -> {
                     if (e != null) {
                         Log.e(TAG, e.getMessage() != null ? e.getMessage() : "listen");
@@ -198,8 +198,11 @@ public class NotificationController {
                         return;
                     }
                     WriteBatch batch = db.batch();
+                    Map<String, Object> readFields = new HashMap<>();
+                    readFields.put("read", true);
+                    readFields.put("isRead", true);
                     for (DocumentSnapshot doc : q.getDocuments()) {
-                        batch.update(doc.getReference(), "read", true);
+                        batch.update(doc.getReference(), readFields);
                     }
                     batch.commit()
                             .addOnSuccessListener(u -> {
@@ -217,9 +220,12 @@ public class NotificationController {
     }
 
     public void markAsRead(String notificationId) {
+        Map<String, Object> m = new HashMap<>();
+        m.put("read", true);
+        m.put("isRead", true);
         db.collection(NOTIFICATIONS)
                 .document(notificationId)
-                .update("read", true)
+                .update(m)
                 .addOnFailureListener(e -> Log.e(TAG, e.getMessage() != null ? e.getMessage() : "mark"));
     }
 

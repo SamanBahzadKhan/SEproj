@@ -421,19 +421,19 @@
                 android:background="@drawable/bg_offset_home_icon">
 
                 <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
                     android:layout_gravity="center"
-                    android:src="@android:drawable/ic_menu_view"
-                    android:tint="@color/caps_palette_neutral_dark" />
+                    android:src="@drawable/ic_nav_home"
+                    android:tint="@color/caps_palette_grey_warm" />
             </FrameLayout>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:fontFamily="sans-serif-black"
+                android:fontFamily="sans-serif"
                 android:text="Home"
-                android:textColor="@color/caps_palette_neutral_dark"
+                android:textColor="@color/caps_palette_grey_warm"
                 android:textSize="11sp" />
         </LinearLayout>
 
@@ -448,14 +448,14 @@
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:src="@android:drawable/ic_menu_my_calendar"
-                android:tint="@color/caps_palette_neutral_dark" />
+                android:tint="@color/caps_palette_grey_warm" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:fontFamily="sans-serif-black"
+                android:fontFamily="sans-serif"
                 android:text="Schedule"
-                android:textColor="@color/caps_palette_neutral_dark"
+                android:textColor="@color/caps_palette_grey_warm"
                 android:textSize="11sp" />
         </LinearLayout>
 

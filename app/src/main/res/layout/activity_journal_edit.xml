@@ -177,9 +177,30 @@
                 android:textSize="15sp" />
 
             <FrameLayout
+                android:id="@+id/btnDeleteJournal"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bg_offset_btn_decline_rose"
+                android:clickable="true"
+                android:focusable="true"
+                android:stateListAnimator="@animator/press_down_button"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fontFamily="sans-serif-black"
+                    android:gravity="center"
+                    android:text="@string/journal_delete"
+                    android:textColor="@color/caps_palette_neutral_dark"
+                    android:textSize="15sp" />
+            </FrameLayout>
+
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="12dp"
                 android:background="@drawable/bg_brut_btn_done_sage">
 
                 <com.google.android.material.button.MaterialButton

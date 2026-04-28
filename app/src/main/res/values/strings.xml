@@ -3,6 +3,8 @@
     <string name="cd_back">Back</string>
     <string name="cd_edit_journal">Edit journal entry</string>
     <string name="cd_remove_attachment">Remove file</string>
+    <string name="session_notes_not_submitted">Counsellor hasnt submitted any notes.</string>
+    <string name="session_notes_load_failed">Could not load session notes. Try again later.</string>
     <string name="cd_confirm_request">Confirm appointment request</string>
     <string name="cd_decline_request">Decline appointment request</string>
     <string name="report_user_menu">Report</string>

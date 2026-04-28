@@ -2,48 +2,73 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/caps_palette_bg"
+    android:background="@color/caps_feedback_bg"
     android:orientation="vertical">
 
+    <!-- Top app bar -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="62dp"
-        android:background="@color/caps_palette_text_dark"
+        android:layout_height="56dp"
+        android:background="@color/caps_feedback_topbar"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingHorizontal="8dp">
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp">
 
-        <ImageButton
+        <FrameLayout
             android:id="@+id/btnBack"
             android:layout_width="44dp"
             android:layout_height="44dp"
-            android:background="@drawable/bg_offset_circle_40_bell_admin"
-            android:contentDescription="@string/cd_back"
-            android:padding="10dp"
-            android:src="@android:drawable/ic_media_previous"
-            android:tint="@color/caps_palette_white" />
+            android:background="@drawable/bg_feedback_back_circle"
+            android:clickable="true"
+            android:focusable="true"
+            android:stateListAnimator="@animator/press_down_button">
 
-        <TextView
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/cd_back"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_arrow_back_black" />
+        </FrameLayout>
+
+        <FrameLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:fontFamily="sans-serif-black"
-            android:gravity="center"
-            android:text="Leave Feedback"
-            android:textColor="@color/caps_palette_white"
-            android:textSize="18sp" />
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif-black"
+                android:text="Leave Feedback"
+                android:textColor="@color/caps_palette_white"
+                android:textSize="20sp" />
+        </FrameLayout>
+
+        <View
+            android:layout_width="44dp"
+            android:layout_height="1dp"
+            android:importantForAccessibility="no" />
     </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
         android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="32dp">
+            android:paddingStart="20dp"
+            android:paddingTop="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="28dp">
 
             <ProgressBar
                 android:id="@+id/progressBar"
@@ -52,81 +77,69 @@
                 android:layout_gravity="center"
                 android:visibility="gone" />
 
-            <FrameLayout
+            <!-- Counsellor profile card -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="20dp">
+                android:background="@drawable/bg_feedback_counselor_card"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingTop="24dp"
+                android:paddingBottom="24dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="4dp"
-                    android:background="@drawable/bg_past_card_shadow" />
+                <FrameLayout
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@drawable/bg_feedback_avatar">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null"
+                        android:src="@android:drawable/ic_menu_myplaces"
+                        android:tint="@color/caps_palette_white" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tvCounselorName"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
-                    android:layout_marginBottom="4dp"
-                    android:background="@drawable/bg_past_card_foreground"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="sans-serif-black"
+                    android:gravity="center"
+                    android:textColor="@color/caps_palette_neutral_dark"
+                    android:textSize="18sp" />
 
-                    <FrameLayout
-                        android:layout_width="72dp"
-                        android:layout_height="72dp"
-                        android:background="@drawable/bg_offset_avatar_44">
+                <TextView
+                    android:id="@+id/tvSpecialization"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="sans-serif"
+                    android:gravity="center"
+                    android:textColor="@color/caps_feedback_spec_blue_grey"
+                    android:textSize="14sp" />
 
-                        <ImageView
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:layout_gravity="center"
-                            android:src="@android:drawable/ic_menu_myplaces"
-                            android:tint="@color/caps_palette_white" />
-                    </FrameLayout>
-
-                    <TextView
-                        android:id="@+id/tvCounselorName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:fontFamily="sans-serif-black"
-                        android:gravity="center"
-                        android:textColor="@color/caps_palette_neutral_dark"
-                        android:textSize="20sp" />
-
-                    <TextView
-                        android:id="@+id/tvSpecialization"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:fontFamily="sans-serif"
-                        android:gravity="center"
-                        android:textColor="@color/caps_palette_grey_warm"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/tvAppointmentDate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:fontFamily="sans-serif"
-                        android:gravity="center"
-                        android:textColor="@color/caps_palette_grey_warm"
-                        android:textSize="13sp" />
-                </LinearLayout>
-            </FrameLayout>
+                <TextView
+                    android:id="@+id/tvAppointmentDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="sans-serif"
+                    android:gravity="center"
+                    android:textColor="@color/caps_palette_grey_warm"
+                    android:textSize="13sp" />
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:layout_marginTop="20dp"
                 android:fontFamily="sans-serif-black"
-                android:letterSpacing="0.12"
+                android:letterSpacing="0.08"
                 android:text="RATE YOUR SESSION"
                 android:textAllCaps="true"
                 android:textColor="@color/caps_palette_neutral_dark"
@@ -142,66 +155,70 @@
 
                 <ImageView
                     android:id="@+id/star1"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/bg_star_rating_cell_empty"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_feedback_star_cell_empty"
                     android:contentDescription="1"
-                    android:padding="10dp"
+                    android:padding="8dp"
                     android:src="@drawable/ic_star_outline"
-                    android:tint="@color/caps_palette_neutral_dark" />
+                    android:stateListAnimator="@animator/press_down_button"
+                    android:tint="@color/caps_feedback_star_peach" />
 
                 <ImageView
                     android:id="@+id/star2"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_marginStart="8dp"
-                    android:background="@drawable/bg_star_rating_cell_empty"
+                    android:background="@drawable/bg_feedback_star_cell_empty"
                     android:contentDescription="2"
-                    android:padding="10dp"
+                    android:padding="8dp"
                     android:src="@drawable/ic_star_outline"
-                    android:tint="@color/caps_palette_neutral_dark" />
+                    android:stateListAnimator="@animator/press_down_button"
+                    android:tint="@color/caps_feedback_star_peach" />
 
                 <ImageView
                     android:id="@+id/star3"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_marginStart="8dp"
-                    android:background="@drawable/bg_star_rating_cell_empty"
+                    android:background="@drawable/bg_feedback_star_cell_empty"
                     android:contentDescription="3"
-                    android:padding="10dp"
+                    android:padding="8dp"
                     android:src="@drawable/ic_star_outline"
-                    android:tint="@color/caps_palette_neutral_dark" />
+                    android:stateListAnimator="@animator/press_down_button"
+                    android:tint="@color/caps_feedback_star_peach" />
 
                 <ImageView
                     android:id="@+id/star4"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_marginStart="8dp"
-                    android:background="@drawable/bg_star_rating_cell_empty"
+                    android:background="@drawable/bg_feedback_star_cell_empty"
                     android:contentDescription="4"
-                    android:padding="10dp"
+                    android:padding="8dp"
                     android:src="@drawable/ic_star_outline"
-                    android:tint="@color/caps_palette_neutral_dark" />
+                    android:stateListAnimator="@animator/press_down_button"
+                    android:tint="@color/caps_feedback_star_peach" />
 
                 <ImageView
                     android:id="@+id/star5"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_marginStart="8dp"
-                    android:background="@drawable/bg_star_rating_cell_empty"
+                    android:background="@drawable/bg_feedback_star_cell_empty"
                     android:contentDescription="5"
-                    android:padding="10dp"
+                    android:padding="8dp"
                     android:src="@drawable/ic_star_outline"
-                    android:tint="@color/caps_palette_neutral_dark" />
+                    android:stateListAnimator="@animator/press_down_button"
+                    android:tint="@color/caps_feedback_star_peach" />
             </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="20dp"
                 android:fontFamily="sans-serif-black"
-                android:letterSpacing="0.12"
+                android:letterSpacing="0.08"
                 android:text="YOUR COMMENTS"
                 android:textAllCaps="true"
                 android:textColor="@color/caps_palette_neutral_dark"
@@ -211,15 +228,14 @@
                 android:id="@+id/etComment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/bg_offset_input_12"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_feedback_comment_box"
                 android:fontFamily="sans-serif"
                 android:gravity="top|start"
                 android:hint="Share your experience with this counsellor..."
                 android:inputType="textMultiLine|textCapSentences"
-                android:minHeight="120dp"
-                android:padding="14dp"
+                android:minHeight="150dp"
+                android:padding="16dp"
                 android:textColor="@color/caps_palette_neutral_dark"
                 android:textColorHint="@color/caps_palette_grey_warm"
                 android:textSize="15sp" />
@@ -228,23 +244,23 @@
                 android:id="@+id/btnSubmit"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="24dp"
-                android:layout_marginBottom="32dp"
-                android:background="@drawable/bg_offset_btn_decline_rose"
+                android:background="@drawable/bg_feedback_submit"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                android:stateListAnimator="@animator/press_down_button">
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_gravity="center"
+                    android:layout_height="match_parent"
                     android:clickable="false"
                     android:fontFamily="sans-serif-black"
                     android:gravity="center"
+                    android:letterSpacing="0.06"
                     android:text="SUBMIT FEEDBACK"
-                    android:textColor="@color/caps_palette_neutral_dark"
-                    android:textSize="16sp" />
+                    android:textAllCaps="true"
+                    android:textColor="@color/caps_palette_white"
+                    android:textSize="15sp" />
             </FrameLayout>
         </LinearLayout>
     </ScrollView>

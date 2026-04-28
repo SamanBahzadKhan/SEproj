@@ -98,7 +98,7 @@ public class StudentDashboardActivity extends AppCompatActivity {
         findViewById(R.id.btnNotifications).setOnClickListener(v ->
                 startActivity(new Intent(this, NotificationsActivity.class)));
         findViewById(R.id.btnHistory).setOnClickListener(v ->
-                Toast.makeText(this, "History is shown below on this screen.", Toast.LENGTH_SHORT).show());
+                startActivity(new Intent(this, StudentAppointmentHistoryActivity.class)));
 
         // Bottom nav
         findViewById(R.id.navHome).setOnClickListener(v -> { /* already here */ });

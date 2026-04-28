@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -18,6 +17,8 @@ import com.fridge.caps.R;
 import com.fridge.caps.controllers.FeedbackController;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Locale;
 
 /**
  * Star rating + comment; saves to {@code feedback} and updates timeslot.
@@ -65,7 +66,7 @@ public class FeedbackActivity extends AppCompatActivity {
         etComment = findViewById(R.id.etComment);
         btnSubmit = findViewById(R.id.btnSubmit);
         progressBar = findViewById(R.id.progressBar);
-        ImageButton btnBack = findViewById(R.id.btnBack);
+        View btnBack = findViewById(R.id.btnBack);
 
         stars = new ImageView[]{
                 findViewById(R.id.star1),
@@ -75,17 +76,28 @@ public class FeedbackActivity extends AppCompatActivity {
                 findViewById(R.id.star5),
         };
 
-        tvCounselorName.setText(counselorName != null ? counselorName : "");
+        String nameLine = counselorName != null ? counselorName.trim() : "";
+        if (!nameLine.isEmpty()) {
+            String lower = nameLine.toLowerCase(Locale.US);
+            if (!lower.startsWith("dr.")) {
+                nameLine = "Dr. " + nameLine;
+            }
+        }
+        tvCounselorName.setText(nameLine);
         tvAppointmentDate.setText(date != null && !date.isEmpty() ? date : "");
 
         if (spec != null && !spec.isEmpty()) {
-            tvSpecialization.setText(spec);
+            tvSpecialization.setText(spec.trim().toLowerCase(Locale.US));
+            tvSpecialization.setTextColor(ContextCompat.getColor(this, R.color.caps_feedback_spec_blue_grey));
         } else if (counselorId != null) {
             FirebaseFirestore.getInstance().collection("counselors").document(counselorId)
                     .get()
                     .addOnSuccessListener(doc -> {
                         if (doc.exists() && doc.getString("specialization") != null) {
-                            tvSpecialization.setText(doc.getString("specialization"));
+                            String s = doc.getString("specialization").trim().toLowerCase(Locale.US);
+                            tvSpecialization.setText(s);
+                            tvSpecialization.setTextColor(ContextCompat.getColor(
+                                    FeedbackActivity.this, R.color.caps_feedback_spec_blue_grey));
                         } else {
                             tvSpecialization.setText("");
                         }
@@ -108,14 +120,14 @@ public class FeedbackActivity extends AppCompatActivity {
     private void setRating(int rating) {
         selectedRating = rating;
         int white = Color.WHITE;
-        int dark = ContextCompat.getColor(this, R.color.caps_palette_neutral_dark);
+        int peach = ContextCompat.getColor(this, R.color.caps_feedback_star_peach);
         for (int i = 0; i < stars.length; i++) {
             boolean on = i < rating;
             stars[i].setBackgroundResource(on
-                    ? R.drawable.bg_star_rating_cell_filled
-                    : R.drawable.bg_star_rating_cell_empty);
+                    ? R.drawable.bg_feedback_star_cell_filled
+                    : R.drawable.bg_feedback_star_cell_empty);
             stars[i].setImageResource(on ? R.drawable.ic_star_filled : R.drawable.ic_star_outline);
-            stars[i].setImageTintList(ColorStateList.valueOf(on ? white : dark));
+            stars[i].setImageTintList(ColorStateList.valueOf(on ? white : peach));
         }
     }
 

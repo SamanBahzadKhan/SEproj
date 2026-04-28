@@ -5,6 +5,7 @@ import android.net.Uri;
 import com.fridge.caps.utils.NotificationUtils;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -49,15 +50,27 @@ public class SessionNotesController {
             callback.onResult(false);
             return;
         }
-        db.collection(STUDENTS).document(studentId).collection(RECEIVED).document(timeSlotId)
+        CollectionReference col = db.collection(STUDENTS).document(studentId).collection(RECEIVED);
+        col.document(timeSlotId)
                 .get()
                 .addOnSuccessListener(doc -> {
-                    if (!doc.exists()) {
-                        callback.onResult(false);
+                    if (isReceivedNotesVisibleToStudent(doc)) {
+                        callback.onResult(true);
                         return;
                     }
-                    Boolean sub = doc.getBoolean("submitted");
-                    callback.onResult(Boolean.TRUE.equals(sub));
+                    col.whereEqualTo("timeSlotId", timeSlotId)
+                            .limit(5)
+                            .get()
+                            .addOnSuccessListener(snap -> {
+                                for (DocumentSnapshot q : snap.getDocuments()) {
+                                    if (isReceivedNotesVisibleToStudent(q)) {
+                                        callback.onResult(true);
+                                        return;
+                                    }
+                                }
+                                callback.onResult(false);
+                            })
+                            .addOnFailureListener(e -> callback.onResult(false));
                 })
                 .addOnFailureListener(e -> callback.onResult(false));
     }
@@ -243,6 +256,107 @@ public class SessionNotesController {
             return "file";
         }
         return last.replace("/", "_").substring(0, Math.min(last.length(), 80));
+    }
+
+    /**
+     * Submitted notes visible to the student (read-only).
+     * Resolves by document id first, then by {@code timeSlotId} field inside the subcollection.
+     */
+    public void loadReceivedNotes(String studentId, String timeSlotId,
+                                  com.google.android.gms.tasks.OnSuccessListener<DocumentSnapshot> onOk,
+                                  com.google.android.gms.tasks.OnFailureListener onFail) {
+        if (studentId == null || studentId.isEmpty() || timeSlotId == null || timeSlotId.isEmpty()) {
+            onOk.onSuccess(null);
+            return;
+        }
+        CollectionReference col = db.collection(STUDENTS).document(studentId).collection(RECEIVED);
+        col.document(timeSlotId)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (isReceivedNotesVisibleToStudent(doc)) {
+                        onOk.onSuccess(doc);
+                        return;
+                    }
+                    col.whereEqualTo("timeSlotId", timeSlotId)
+                            .limit(10)
+                            .get()
+                            .addOnSuccessListener(snap -> {
+                                DocumentSnapshot chosen = null;
+                                for (DocumentSnapshot q : snap.getDocuments()) {
+                                    if (isReceivedNotesVisibleToStudent(q)) {
+                                        chosen = q;
+                                        break;
+                                    }
+                                }
+                                if (chosen != null) {
+                                    onOk.onSuccess(chosen);
+                                } else if (doc.exists()) {
+                                    onOk.onSuccess(doc);
+                                } else if (!snap.isEmpty()) {
+                                    onOk.onSuccess(snap.getDocuments().get(0));
+                                } else {
+                                    onOk.onSuccess(null);
+                                }
+                            })
+                            .addOnFailureListener(onFail);
+                })
+                .addOnFailureListener(onFail);
+    }
+
+    /** Whether this snapshot should show submitted session notes to the student. */
+    public static boolean isReceivedNotesVisibleToStudent(DocumentSnapshot doc) {
+        if (doc == null || !doc.exists()) {
+            return false;
+        }
+        if (Boolean.FALSE.equals(doc.getBoolean("submitted"))) {
+            return false;
+        }
+        if (truthySubmittedRaw(doc.get("submitted"))) {
+            return true;
+        }
+        return hasMeaningfulNotesPayload(doc);
+    }
+
+    private static boolean truthySubmittedRaw(Object raw) {
+        if (raw == null) {
+            return false;
+        }
+        if (raw instanceof Boolean) {
+            return (Boolean) raw;
+        }
+        if (raw instanceof Long) {
+            return ((Long) raw) != 0L;
+        }
+        if (raw instanceof Double) {
+            return ((Double) raw) != 0.0;
+        }
+        if (raw instanceof Integer) {
+            return ((Integer) raw) != 0;
+        }
+        if (raw instanceof String) {
+            String s = ((String) raw).trim().toLowerCase(Locale.US);
+            return "true".equals(s) || "1".equals(s) || "yes".equals(s);
+        }
+        return false;
+    }
+
+    private static boolean hasMeaningfulNotesPayload(DocumentSnapshot doc) {
+        if (nonEmpty(doc.getString("diagnosis"))) {
+            return true;
+        }
+        if (nonEmpty(doc.getString("recommendations"))) {
+            return true;
+        }
+        Object urls = doc.get("attachmentUrls");
+        if (urls instanceof List && !((List<?>) urls).isEmpty()) {
+            return true;
+        }
+        Object rx = doc.get("prescriptions");
+        return rx instanceof List && !((List<?>) rx).isEmpty();
+    }
+
+    private static boolean nonEmpty(String s) {
+        return s != null && !s.trim().isEmpty();
     }
 
     private static Map<String, Object> basePayload(String timeSlotId, String studentId, String studentName,

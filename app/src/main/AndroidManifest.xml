@@ -56,6 +56,8 @@
         <activity android:name=".views.activities.JournalEntriesListActivity" />
         <activity android:name=".views.activities.JournalEditActivity" />
         <activity android:name=".views.activities.SessionNotesActivity" />
+        <activity android:name=".views.activities.StudentAppointmentHistoryActivity" />
+        <activity android:name=".views.activities.StudentSessionNotesViewActivity" />
     </application>
 
 </manifest>

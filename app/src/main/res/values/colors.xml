@@ -56,4 +56,12 @@
     <color name="caps_session_add_med">#4A6D81</color>
     <color name="caps_session_browse_grey">#7A8F9C</color>
     <color name="caps_session_input_border">#D8D4CC</color>
+
+    <!-- Leave Feedback screen (student mockup) -->
+    <color name="caps_feedback_bg">#F2EFE9</color>
+    <color name="caps_feedback_topbar">#1D2E3D</color>
+    <color name="caps_feedback_submit_brown">#8D5F3F</color>
+    <color name="caps_feedback_star_peach">#E8BC9C</color>
+    <color name="caps_feedback_spec_blue_grey">#7A9DB8</color>
+    <color name="caps_feedback_avatar_grey">#B5B5B5</color>
 </resources>

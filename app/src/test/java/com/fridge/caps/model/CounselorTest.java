@@ -28,8 +28,8 @@ public class CounselorTest {
         counselor.setDepartment("Psychology");
         counselor.setPhone("+92 333 9876543");
         counselor.setBio("Experienced counsellor with 8 years in student mental health.");
-        counselor.setRating(4.3f);
-        counselor.setRatingCount(12);
+        counselor.setRating(4.3);
+        counselor.setRatingCount(12L);
         counselor.setAcceptingClients(true);
         counselor.setRole(UserRole.COUNSELOR);
     }

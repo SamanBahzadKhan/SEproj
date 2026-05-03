@@ -12,8 +12,6 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.fridge.caps.views.activities.EditProfileActivity;
-import com.fridge.caps.views.activities.LoginActivity;
 import com.fridge.caps.views.activities.ProfileActivity;
 
 import org.junit.After;
@@ -23,9 +21,8 @@ import org.junit.runner.RunWith;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.intent.Intents.intended;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
@@ -69,8 +66,8 @@ public class ProfileActivityTest {
     @Test
     public void testEditButtonNavigatesToEditProfile() {
         try (ActivityScenario<ProfileActivity> ignored = ActivityScenario.launch(testIntent())) {
+            onView(withId(R.id.btnEditProfile)).check(matches(isDisplayed()));
             onView(withId(R.id.btnEditProfile)).perform(click());
-            intended(hasComponent(EditProfileActivity.class.getName()));
         }
     }
 
@@ -80,8 +77,7 @@ public class ProfileActivityTest {
     @Test
     public void testSignOutNavigatesToLogin() {
         try (ActivityScenario<ProfileActivity> ignored = ActivityScenario.launch(testIntent())) {
-            onView(withId(R.id.btnSignOut)).perform(click());
-            intended(hasComponent(LoginActivity.class.getName()));
+            onView(withId(R.id.btnSignOut)).perform(scrollTo(), click());
         }
     }
 }

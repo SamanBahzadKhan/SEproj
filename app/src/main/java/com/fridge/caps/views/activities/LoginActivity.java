@@ -2,10 +2,13 @@ package com.fridge.caps.views.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,10 +25,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
  * Login screen for students and counsellors (same credentials); admin uses a separate flow.
+ * Email verification is enforced for students only ({@link AppConfig#REQUIRE_EMAIL_VERIFICATION}).
  */
 public class LoginActivity extends AppCompatActivity {
 
     private EditText    etEmail, etPassword;
+    private ImageButton btnTogglePassword;
     private Button      btnLogin, btnAdminLogin;
     private ProgressBar progressBar;
     private TextView    tvRegisterLink;
@@ -34,6 +39,11 @@ public class LoginActivity extends AppCompatActivity {
     private AuthController authController;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private boolean isTestMode;
+    private boolean   passwordVisible;
+
+    /** Used by unverified dialog resend flow. */
+    private String lastEnteredEmail    = "";
+    private String lastEnteredPassword = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +54,7 @@ public class LoginActivity extends AppCompatActivity {
 
         etEmail           = findViewById(R.id.etEmail);
         etPassword        = findViewById(R.id.etPassword);
+        btnTogglePassword = findViewById(R.id.btnTogglePassword);
         btnLogin          = findViewById(R.id.btnLogin);
         btnAdminLogin     = findViewById(R.id.btnAdminLogin);
         progressBar       = findViewById(R.id.progressBar);
@@ -64,11 +75,68 @@ public class LoginActivity extends AppCompatActivity {
         btnAdminLogin.setOnClickListener(v ->
                 startActivity(new Intent(this, AdminLoginActivity.class)));
 
-        tvForgotPassword.setOnClickListener(v -> showForgotPasswordDialog());
+        tvForgotPassword.setOnClickListener(v -> handleForgotPassword());
+
+        btnTogglePassword.setOnClickListener(v -> togglePasswordVisibility());
+        passwordVisible = false;
+    }
+
+    private void togglePasswordVisibility() {
+        passwordVisible = !passwordVisible;
+        int selStart = etPassword.getSelectionStart();
+        int selEnd = etPassword.getSelectionEnd();
+        if (passwordVisible) {
+            etPassword.setInputType(InputType.TYPE_CLASS_TEXT
+                    | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            btnTogglePassword.setImageResource(R.drawable.ic_visibility_off_24);
+        } else {
+            etPassword.setInputType(InputType.TYPE_CLASS_TEXT
+                    | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            btnTogglePassword.setImageResource(R.drawable.ic_visibility_24);
+        }
+        etPassword.setTypeface(etEmail.getTypeface());
+        CharSequence text = etPassword.getText();
+        int len = text != null ? text.length() : 0;
+        int a = selStart >= 0 ? Math.min(selStart, len) : len;
+        int b = selEnd >= 0 ? Math.min(selEnd, len) : len;
+        if (a <= b) {
+            etPassword.setSelection(a, b);
+        } else {
+            etPassword.setSelection(b, a);
+        }
+    }
+
+    private void handleForgotPassword() {
+        String email = etEmail.getText() != null ? etEmail.getText().toString().trim() : "";
+        if (email.isEmpty()) {
+            Toast.makeText(this, R.string.forgot_password_enter_email_first, Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(this, R.string.forgot_password_invalid_email, Toast.LENGTH_LONG).show();
+            return;
+        }
+        authController.sendPasswordResetEmail(email, new AuthController.PasswordResetCallback() {
+            @Override
+            public void onSuccess() {
+                new AlertDialog.Builder(LoginActivity.this)
+                        .setTitle(R.string.forgot_reset_sent_title)
+                        .setMessage(getString(R.string.forgot_reset_sent_message, email))
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show();
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                Toast.makeText(LoginActivity.this,
+                        errorMessage != null ? errorMessage : getString(R.string.forgot_password_invalid_email),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     /**
-     * If Auth has a session, verify email (where applicable) and verify Firestore before routing.
+     * Restore session: counsellors and admins bypass student email verification.
      */
     private void routeExistingSessionFromLogin() {
         FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -81,30 +149,39 @@ public class LoginActivity extends AppCompatActivity {
             if (u == null) {
                 return;
             }
-            if (AppConfig.REQUIRE_EMAIL_VERIFICATION && !u.isEmailVerified()) {
-                auth.signOut();
-                Toast.makeText(this,
-                        "Please verify your email before signing in.",
-                        Toast.LENGTH_LONG).show();
-                return;
-            }
-            String uid = u.getUid();
-            db.collection("students").document(uid).get()
-                    .addOnSuccessListener(studentDoc -> {
-                        if (studentDoc.exists()) {
-                            goToStudentDashboard();
+            final String uid = u.getUid();
+            db.collection("counselors").document(uid).get()
+                    .addOnSuccessListener(cDoc -> {
+                        if (cDoc.exists()) {
+                            Boolean isActive = cDoc.getBoolean("isActive");
+                            if (isActive != null && !isActive) {
+                                auth.signOut();
+                                Toast.makeText(this,
+                                        "This counsellor account has been disabled.",
+                                        Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                            goToCounselorDashboard();
                             return;
                         }
-                        db.collection("counselors").document(uid).get()
-                                .addOnSuccessListener(counselorDoc -> {
-                                    if (counselorDoc.exists()) {
-                                        goToCounselorDashboard();
+                        db.collection("admins").document(uid).get()
+                                .addOnSuccessListener(aDoc -> {
+                                    if (aDoc.exists()) {
+                                        goToAdminDashboard();
                                         return;
                                     }
-                                    db.collection("admins").document(uid).get()
-                                            .addOnSuccessListener(adminDoc -> {
-                                                if (adminDoc.exists()) {
-                                                    goToAdminDashboard();
+                                    if (AppConfig.REQUIRE_EMAIL_VERIFICATION
+                                            && !u.isEmailVerified()) {
+                                        auth.signOut();
+                                        Toast.makeText(this,
+                                                "Please verify your email before signing in.",
+                                                Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+                                    db.collection("students").document(uid).get()
+                                            .addOnSuccessListener(sDoc -> {
+                                                if (sDoc.exists()) {
+                                                    goToStudentDashboard();
                                                 } else {
                                                     auth.signOut();
                                                     Toast.makeText(this,
@@ -119,7 +196,12 @@ public class LoginActivity extends AppCompatActivity {
                                                         Toast.LENGTH_SHORT).show();
                                             });
                                 })
-                                .addOnFailureListener(e -> auth.signOut());
+                                .addOnFailureListener(e -> {
+                                    auth.signOut();
+                                    Toast.makeText(this,
+                                            "Connection error. Please sign in again.",
+                                            Toast.LENGTH_SHORT).show();
+                                });
                     })
                     .addOnFailureListener(e -> {
                         auth.signOut();
@@ -150,35 +232,6 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-    private void showForgotPasswordDialog() {
-        final EditText input = new EditText(this);
-        input.setHint("Email");
-        input.setInputType(android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-
-        new AlertDialog.Builder(this)
-                .setTitle("Reset password")
-                .setMessage("Enter your account email. We will send a reset link.")
-                .setView(input)
-                .setPositiveButton("Send Reset Link", (d, w) -> {
-                    String email = input.getText() != null
-                            ? input.getText().toString().trim() : "";
-                    authController.sendPasswordResetEmail(email, new AuthController.PasswordResetCallback() {
-                        @Override
-                        public void onSuccess() {
-                            Toast.makeText(LoginActivity.this,
-                                    "Password reset email sent", Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void onFailure(String errorMessage) {
-                            Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_LONG).show();
-                        }
-                    });
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
-    }
-
     private void handleLogin() {
         String email    = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
@@ -191,6 +244,9 @@ public class LoginActivity extends AppCompatActivity {
             goToStudentDashboard();
             return;
         }
+
+        lastEnteredEmail = email;
+        lastEnteredPassword = password;
 
         showLoading(true);
 
@@ -209,12 +265,7 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(this, "Login failed.", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        if (AppConfig.REQUIRE_EMAIL_VERIFICATION && !u.isEmailVerified()) {
-                            FirebaseAuth.getInstance().signOut();
-                            showUnverifiedLoginDialog(email, password);
-                            return;
-                        }
-                        routeAfterSuccessfulLogin(u.getUid());
+                        maybeRouteAfterLogin(u.getUid(), email, password);
                     });
                 })
                 .addOnFailureListener(e -> {
@@ -223,18 +274,89 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Counsellors and admins sign in without student email verification; students must be verified
+     * when {@link AppConfig#REQUIRE_EMAIL_VERIFICATION} is true.
+     */
+    private void maybeRouteAfterLogin(String uid, String email, String password) {
+        db.collection("counselors").document(uid).get()
+                .addOnSuccessListener(cDoc -> {
+                    if (cDoc.exists()) {
+                        Boolean isActive = cDoc.getBoolean("isActive");
+                        if (isActive != null && !isActive) {
+                            FirebaseAuth.getInstance().signOut();
+                            Toast.makeText(this,
+                                    "This counsellor account has been disabled.",
+                                    Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        goToCounselorDashboard();
+                        return;
+                    }
+                    db.collection("admins").document(uid).get()
+                            .addOnSuccessListener(aDoc -> {
+                                if (aDoc.exists()) {
+                                    goToAdminDashboard();
+                                    return;
+                                }
+                                if (AppConfig.REQUIRE_EMAIL_VERIFICATION) {
+                                    FirebaseUser u = FirebaseAuth.getInstance().getCurrentUser();
+                                    if (u != null && !u.isEmailVerified()) {
+                                        FirebaseAuth.getInstance().signOut();
+                                        showUnverifiedLoginDialog(email, password);
+                                        return;
+                                    }
+                                }
+                                db.collection("students").document(uid).get()
+                                        .addOnSuccessListener(sDoc -> {
+                                            if (sDoc.exists()) {
+                                                goToStudentDashboard();
+                                            } else {
+                                                FirebaseAuth.getInstance().signOut();
+                                                Toast.makeText(this,
+                                                        "Account not found. Please register first.",
+                                                        Toast.LENGTH_LONG).show();
+                                            }
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            FirebaseAuth.getInstance().signOut();
+                                            Toast.makeText(this,
+                                                    "Login failed: connection error.",
+                                                    Toast.LENGTH_SHORT).show();
+                                        });
+                            })
+                            .addOnFailureListener(e -> {
+                                FirebaseAuth.getInstance().signOut();
+                                Toast.makeText(this, "Login failed: connection error.",
+                                        Toast.LENGTH_SHORT).show();
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    FirebaseAuth.getInstance().signOut();
+                    Toast.makeText(this, "Login failed: connection error.",
+                            Toast.LENGTH_SHORT).show();
+                });
+    }
+
     private void showUnverifiedLoginDialog(String email, String password) {
         View content = LayoutInflater.from(this).inflate(R.layout.dialog_login_email_unverified, null);
         Button btnResend = content.findViewById(R.id.btnResendVerificationFromLogin);
+        Button btnOk     = content.findViewById(R.id.btnOkUnverified);
 
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setView(content)
-                .setPositiveButton(android.R.string.ok, null)
                 .create();
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
         dialog.show();
 
+        btnOk.setOnClickListener(v -> dialog.dismiss());
+
         btnResend.setOnClickListener(v -> {
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+            String em = email != null ? email : lastEnteredEmail;
+            String pw = password != null ? password : lastEnteredPassword;
+            FirebaseAuth.getInstance().signInWithEmailAndPassword(em, pw)
                     .addOnSuccessListener(ar -> {
                         FirebaseUser u = ar.getUser();
                         if (u == null) {
@@ -245,8 +367,9 @@ public class LoginActivity extends AppCompatActivity {
                             FirebaseAuth.getInstance().signOut();
                             if (task.isSuccessful()) {
                                 Toast.makeText(this,
-                                        "Verification email resent",
+                                        "Verification email sent!",
                                         Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
                             } else {
                                 Toast.makeText(this,
                                         task.getException() != null
@@ -261,45 +384,6 @@ public class LoginActivity extends AppCompatActivity {
                                     e.getMessage() != null ? e.getMessage() : "Failed.",
                                     Toast.LENGTH_SHORT).show());
         });
-    }
-
-    private void routeAfterSuccessfulLogin(String uid) {
-        db.collection("students").document(uid).get()
-                .addOnSuccessListener(doc -> {
-                    if (doc.exists()) {
-                        goToStudentDashboard();
-                        return;
-                    }
-                    db.collection("counselors").document(uid).get()
-                            .addOnSuccessListener(cDoc -> {
-                                if (cDoc.exists()) {
-                                    Boolean isActive = cDoc.getBoolean("isActive");
-                                    if (isActive != null && !isActive) {
-                                        FirebaseAuth.getInstance().signOut();
-                                        Toast.makeText(this,
-                                                "This counsellor account has been disabled.",
-                                                Toast.LENGTH_LONG).show();
-                                    } else {
-                                        goToCounselorDashboard();
-                                    }
-                                } else {
-                                    FirebaseAuth.getInstance().signOut();
-                                    Toast.makeText(this,
-                                            "Account not found. Please register first.",
-                                            Toast.LENGTH_LONG).show();
-                                }
-                            })
-                            .addOnFailureListener(e -> {
-                                FirebaseAuth.getInstance().signOut();
-                                Toast.makeText(this, "Login failed: connection error.",
-                                        Toast.LENGTH_SHORT).show();
-                            });
-                })
-                .addOnFailureListener(e -> {
-                    FirebaseAuth.getInstance().signOut();
-                    Toast.makeText(this, "Login failed: connection error.",
-                            Toast.LENGTH_SHORT).show();
-                });
     }
 
     private void showLoading(boolean isLoading) {

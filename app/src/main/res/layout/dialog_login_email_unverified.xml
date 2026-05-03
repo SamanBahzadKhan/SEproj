@@ -4,23 +4,36 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingHorizontal="20dp"
-    android:paddingTop="16dp"
+    android:paddingTop="20dp"
     android:paddingBottom="12dp">
+
+    <TextView
+        android:id="@+id/tvUnverifiedTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-black"
+        android:gravity="center"
+        android:text="@string/email_not_verified_title"
+        android:textColor="@color/caps_palette_neutral_dark"
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/tvLoginVerifyMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:fontFamily="sans-serif"
-        android:text="Please verify your email before logging in. Check your inbox."
-        android:textColor="@color/caps_palette_neutral_dark"
-        android:textSize="15sp" />
+        android:gravity="center"
+        android:lineSpacingExtra="2dp"
+        android:text="@string/email_not_verified_body"
+        android:textColor="@color/caps_palette_grey_warm"
+        android:textSize="14sp" />
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:background="@drawable/bg_offset_button_brown_12">
+        android:background="@drawable/bg_offset_button_bluegrey_12">
 
         <Button
             android:id="@+id/btnResendVerificationFromLogin"
@@ -28,9 +41,27 @@
             android:layout_height="52dp"
             android:background="@android:color/transparent"
             android:fontFamily="sans-serif-black"
-            android:text="Resend Verification Email"
-            android:textAllCaps="false"
+            android:text="@string/resend_verification_email_upper"
+            android:textAllCaps="true"
             android:textColor="@color/caps_palette_neutral_dark"
-            android:textSize="15sp" />
+            android:textSize="14sp" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_offset_button_white_12">
+
+        <Button
+            android:id="@+id/btnOkUnverified"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@android:color/transparent"
+            android:fontFamily="sans-serif-black"
+            android:text="@android:string/ok"
+            android:textAllCaps="true"
+            android:textColor="@color/caps_palette_neutral_dark"
+            android:textSize="14sp" />
     </FrameLayout>
 </LinearLayout>

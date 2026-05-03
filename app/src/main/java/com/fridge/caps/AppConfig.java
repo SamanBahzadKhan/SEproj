@@ -12,7 +12,7 @@ public final class AppConfig {
      * {@link com.google.firebase.auth.FirebaseUser#isEmailVerified()}. Use while testing (e.g. Google Meet).
      * Set to {@code true} before release.
      */
-    public static final boolean REQUIRE_EMAIL_VERIFICATION = false;
+    public static final boolean REQUIRE_EMAIL_VERIFICATION = true;
 
     /**
      * Region hosting callable Cloud Functions (must match Firebase Console → Functions → region).

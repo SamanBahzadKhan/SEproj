@@ -16,9 +16,33 @@
     <string name="session_notes_status_pending">Not submitted yet</string>
     <string name="journal_delete">Delete entry</string>
     <string name="journal_delete_confirm">Delete this journal entry? This cannot be undone.</string>
-    <string name="google_web_client_id" translatable="false">YOUR_WEB_CLIENT_ID.apps.googleusercontent.com</string>
+    <string name="cd_email_verify_icon">Email</string>
+    <string name="google_web_client_id" translatable="false">744198650286-3mdes9lio8uqvsjhv749knipra616tvt.apps.googleusercontent.com</string>
     <string name="verify_email_body_template">We sent a verification link to %1$s. Please check your inbox and click the link to continue.</string>
     <string name="resend_email_countdown">Resend in %1$ds…</string>
+    <string name="checking_email">Checking…</string>
+    <string name="ive_verified_continue">I\'VE VERIFIED — CONTINUE</string>
+    <string name="resend_email_upper">RESEND EMAIL</string>
+    <string name="resend_in_seconds">RESEND IN %1$ds</string>
+    <string name="forgot_password_title">Forgot Password</string>
+    <string name="reset_your_password">Reset Your Password</string>
+    <string name="forgot_password_blurb">Enter your email address and we\'ll send you a link to reset your password.</string>
+    <string name="hint_enter_email">Enter your email address</string>
+    <string name="send_reset_link">SEND RESET LINK</string>
+    <string name="sending_reset">SENDING…</string>
+    <string name="email_sent_title">Email Sent!</string>
+    <string name="we_sent_reset_to">We sent a password reset link to</string>
+    <string name="check_inbox_reset">Check your inbox and click the link to reset your password.</string>
+    <string name="back_to_login_upper">BACK TO LOGIN</string>
+    <string name="resend_email_underline">RESEND EMAIL</string>
+    <string name="email_not_verified_title">Email Not Verified</string>
+    <string name="email_not_verified_body">Please verify your email before logging in. Check your inbox for the verification link.</string>
+    <string name="resend_verification_email_upper">RESEND VERIFICATION EMAIL</string>
+    <string name="cd_toggle_password_visibility">Show or hide password</string>
+    <string name="forgot_password_enter_email_first">Enter your email in the box above first.</string>
+    <string name="forgot_password_invalid_email">Enter a valid email address.</string>
+    <string name="forgot_reset_sent_title">Check your email</string>
+    <string name="forgot_reset_sent_message">A link to reset your password has been sent to %1$s. Please check your inbox.</string>
     <!-- Must be https; trailing slash optional (normalized in code). -->
     <string name="supabase_url" translatable="false">https://fuswhojmfbreyzzdnhcb.supabase.co/</string>
     <string name="supabase_anon_key" translatable="false">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1c3dob2ptZmJyZXl6emRuaGNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3ODg2NzQsImV4cCI6MjA5MzM2NDY3NH0.3JwQtOS5_tomjWwRJLgsIUVjr-kubbsnuNP2NIFWvqU</string>

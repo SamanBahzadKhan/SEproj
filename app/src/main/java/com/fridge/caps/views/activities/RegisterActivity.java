@@ -3,16 +3,15 @@ package com.fridge.caps.views.activities;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fridge.caps.AppConfig;
@@ -21,33 +20,28 @@ import com.fridge.caps.controllers.AuthController;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-/*
-MANUAL STEP IN FIREBASE CONSOLE:
-Go to Authentication → Email Templates → Email address verification
-Customize the email:
-- Subject: "Verify your CAPs account"
-- Body: include %LINK% which Firebase replaces with the verification button
-This cannot be done in code — must be done in Firebase Console
-*/
-
 /**
- * Registration screen for new student accounts.
- * Email must be verified before the Firestore profile is written and dashboard opens.
+ * Student registration. When email verification is required, Firestore is written only after
+ * the user verifies and taps Continue — not on initial Auth creation.
  */
 public class RegisterActivity extends AppCompatActivity {
 
-    private EditText    etName, etEmail, etPassword, etPhone, etDepartment, etYear;
-    private Button      btnRegister;
-    private ProgressBar progressBar;
-    private TextView    tvLoginLink;
+    private static final int FLIP_FORM = 0;
+    private static final int FLIP_VERIFY = 1;
+
+    private ViewFlipper     registerFlipper;
+    private EditText        etName, etEmail, etPassword, etPhone, etDepartment, etYear;
+    private Button          btnRegister;
+    private Button          btnVerifiedContinue;
+    private Button          btnResendVerification;
+    private TextView        tvLoginLink;
+    private TextView        tvVerificationEmail;
+    private TextView        tvWrongEmailGoBack;
+    private ProgressBar     progressBar;
 
     private AuthController authController;
 
-    private AlertDialog    verifyDialog;
-    private Handler        resendHandler = new Handler(Looper.getMainLooper());
-    private Runnable       resendCountdownRunnable;
-    private int            resendCooldownRemainingSec;
-    private TextView       tvResendLink;
+    private CountDownTimer resendCooldownTimer;
 
     private String pendingName;
     private String pendingEmail;
@@ -62,17 +56,28 @@ public class RegisterActivity extends AppCompatActivity {
 
         authController = new AuthController();
 
-        etName       = findViewById(R.id.etName);
-        etEmail      = findViewById(R.id.etEmail);
-        etPassword   = findViewById(R.id.etPassword);
-        etPhone      = findViewById(R.id.etPhone);
-        etDepartment = findViewById(R.id.etDepartment);
-        etYear       = findViewById(R.id.etYear);
-        btnRegister  = findViewById(R.id.btnRegister);
-        progressBar  = findViewById(R.id.progressBar);
-        tvLoginLink  = findViewById(R.id.tvLoginLink);
+        registerFlipper      = findViewById(R.id.registerFlipper);
+        etName               = findViewById(R.id.etName);
+        etEmail              = findViewById(R.id.etEmail);
+        etPassword           = findViewById(R.id.etPassword);
+        etPhone              = findViewById(R.id.etPhone);
+        etDepartment         = findViewById(R.id.etDepartment);
+        etYear               = findViewById(R.id.etYear);
+        btnRegister          = findViewById(R.id.btnRegister);
+        btnVerifiedContinue  = findViewById(R.id.btnVerifiedContinue);
+        btnResendVerification = findViewById(R.id.btnResendVerification);
+        tvLoginLink          = findViewById(R.id.tvLoginLink);
+        tvVerificationEmail  = findViewById(R.id.tvVerificationEmail);
+        tvWrongEmailGoBack   = findViewById(R.id.tvWrongEmailGoBack);
+        progressBar          = findViewById(R.id.progressBar);
+
+        tvWrongEmailGoBack.setPaintFlags(
+                tvWrongEmailGoBack.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
         btnRegister.setOnClickListener(v -> handleRegister());
+        btnVerifiedContinue.setOnClickListener(v -> onVerifiedContinueClicked());
+        btnResendVerification.setOnClickListener(v -> onResendVerification());
+        tvWrongEmailGoBack.setOnClickListener(v -> onWrongEmailGoBack());
         tvLoginLink.setOnClickListener(v -> {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
@@ -128,7 +133,9 @@ public class RegisterActivity extends AppCompatActivity {
                                             Toast.LENGTH_LONG).show();
                                     return;
                                 }
-                                showVerifyEmailDialog(user);
+                                tvVerificationEmail.setText(pendingEmail);
+                                registerFlipper.setDisplayedChild(FLIP_VERIFY);
+                                startResendCooldown(60_000L);
                             });
                 })
                 .addOnFailureListener(e -> {
@@ -139,7 +146,6 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
-    /** Writes student doc and opens dashboard (no verification step). */
     private void completeRegistrationAfterAuth(FirebaseUser user) {
         if (user == null) {
             showLoading(false);
@@ -172,44 +178,29 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
-    private void showVerifyEmailDialog(FirebaseUser user) {
-        View content = getLayoutInflater().inflate(R.layout.dialog_verify_email, null);
-        TextView tvBody = content.findViewById(R.id.tvVerifyBody);
-        Button btnContinue = content.findViewById(R.id.btnVerifiedContinue);
-        tvResendLink = content.findViewById(R.id.tvResendEmail);
-        tvResendLink.setPaintFlags(tvResendLink.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-
-        String emailShown = pendingEmail != null ? pendingEmail : "";
-        tvBody.setText(getString(R.string.verify_email_body_template, emailShown));
-
-        AlertDialog.Builder b = new AlertDialog.Builder(this)
-                .setView(content)
-                .setCancelable(false);
-        verifyDialog = b.create();
-        verifyDialog.setCanceledOnTouchOutside(false);
-        verifyDialog.show();
-
-        btnContinue.setOnClickListener(v -> onVerifiedContinueClicked(user));
-
-        tvResendLink.setOnClickListener(v -> onResendVerification(user));
-        startResendCooldown(0);
-    }
-
-    private void onVerifiedContinueClicked(FirebaseUser user) {
+    private void onVerifiedContinueClicked() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
             Toast.makeText(this, "Session expired. Please register again.", Toast.LENGTH_LONG).show();
             return;
         }
+        btnVerifiedContinue.setEnabled(false);
+        btnVerifiedContinue.setText(R.string.checking_email);
+
         user.reload().addOnCompleteListener(task -> {
             FirebaseUser u = FirebaseAuth.getInstance().getCurrentUser();
-            if (u == null || !u.getUid().equals(user.getUid())) {
+            if (u == null) {
+                btnVerifiedContinue.setEnabled(true);
+                btnVerifiedContinue.setText(R.string.ive_verified_continue);
                 Toast.makeText(this, "Session expired. Please sign in.", Toast.LENGTH_SHORT).show();
                 return;
             }
             if (!u.isEmailVerified()) {
+                btnVerifiedContinue.setEnabled(true);
+                btnVerifiedContinue.setText(R.string.ive_verified_continue);
                 Toast.makeText(this,
-                        "Email not verified yet. Please check your inbox.",
-                        Toast.LENGTH_SHORT).show();
+                        "Email not verified yet. Please click the link in your inbox.",
+                        Toast.LENGTH_LONG).show();
                 return;
             }
             showLoading(true);
@@ -225,12 +216,12 @@ public class RegisterActivity extends AppCompatActivity {
                         public void onSuccess() {
                             showLoading(false);
                             cancelResendCooldown();
-                            if (verifyDialog != null && verifyDialog.isShowing()) {
-                                verifyDialog.dismiss();
-                            }
+                            btnVerifiedContinue.setEnabled(true);
+                            btnVerifiedContinue.setText(R.string.ive_verified_continue);
                             Toast.makeText(RegisterActivity.this,
                                     "Account created!", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(RegisterActivity.this, StudentDashboardActivity.class);
+                            Intent intent = new Intent(RegisterActivity.this,
+                                    StudentDashboardActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
                             finish();
@@ -239,16 +230,19 @@ public class RegisterActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(String errorMessage) {
                             showLoading(false);
+                            btnVerifiedContinue.setEnabled(true);
+                            btnVerifiedContinue.setText(R.string.ive_verified_continue);
                             Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_LONG).show();
                         }
                     });
         });
     }
 
-    private void onResendVerification(FirebaseUser user) {
-        if (resendCooldownRemainingSec > 0) {
+    private void onResendVerification() {
+        if (!btnResendVerification.isEnabled()) {
             return;
         }
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
             Toast.makeText(this, "Session expired.", Toast.LENGTH_SHORT).show();
             return;
@@ -256,8 +250,8 @@ public class RegisterActivity extends AppCompatActivity {
         user.sendEmailVerification()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(this, "Verification email resent", Toast.LENGTH_SHORT).show();
-                        startResendCooldown(60);
+                        Toast.makeText(this, "Verification email resent!", Toast.LENGTH_SHORT).show();
+                        startResendCooldown(60_000L);
                     } else {
                         Toast.makeText(this,
                                 task.getException() != null
@@ -268,44 +262,62 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
-    private void startResendCooldown(int seconds) {
+    private void onWrongEmailGoBack() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            registerFlipper.setDisplayedChild(FLIP_FORM);
+            cancelResendCooldown();
+            return;
+        }
+        showLoading(true);
+        user.delete().addOnCompleteListener(task -> {
+            showLoading(false);
+            cancelResendCooldown();
+            registerFlipper.setDisplayedChild(FLIP_FORM);
+            if (task.isSuccessful()) {
+                Toast.makeText(this, "You can sign up again with a different email.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this,
+                        task.getException() != null ? task.getException().getMessage()
+                                : "Could not reset. Try again.",
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void startResendCooldown(long millisTotal) {
         cancelResendCooldown();
-        resendCooldownRemainingSec = seconds;
-        if (tvResendLink == null) {
-            return;
-        }
-        if (seconds <= 0) {
-            tvResendLink.setEnabled(true);
-            tvResendLink.setAlpha(1f);
-            tvResendLink.setText("Resend Email");
-            return;
-        }
-        tvResendLink.setEnabled(false);
-        tvResendLink.setAlpha(0.5f);
-        resendCountdownRunnable = new Runnable() {
+        btnResendVerification.setEnabled(false);
+        updateResendCooldownLabel(millisTotal);
+        resendCooldownTimer = new CountDownTimer(millisTotal, 1000L) {
             @Override
-            public void run() {
-                if (tvResendLink == null) return;
-                if (resendCooldownRemainingSec <= 0) {
-                    tvResendLink.setEnabled(true);
-                    tvResendLink.setAlpha(1f);
-                    tvResendLink.setText("Resend Email");
-                    return;
-                }
-                tvResendLink.setText(getString(R.string.resend_email_countdown, resendCooldownRemainingSec));
-                resendCooldownRemainingSec--;
-                resendHandler.postDelayed(this, 1000L);
+            public void onTick(long millisUntilFinished) {
+                updateResendCooldownLabel(millisUntilFinished);
+            }
+
+            @Override
+            public void onFinish() {
+                btnResendVerification.setEnabled(true);
+                btnResendVerification.setText(R.string.resend_email_upper);
             }
         };
-        resendHandler.post(resendCountdownRunnable);
+        resendCooldownTimer.start();
+    }
+
+    private void updateResendCooldownLabel(long millisUntilFinished) {
+        long sec = (millisUntilFinished + 999L) / 1000L;
+        btnResendVerification.setText(getString(R.string.resend_in_seconds, sec));
     }
 
     private void cancelResendCooldown() {
-        if (resendCountdownRunnable != null) {
-            resendHandler.removeCallbacks(resendCountdownRunnable);
-            resendCountdownRunnable = null;
+        if (resendCooldownTimer != null) {
+            resendCooldownTimer.cancel();
+            resendCooldownTimer = null;
         }
-        resendCooldownRemainingSec = 0;
+        if (btnResendVerification != null) {
+            btnResendVerification.setEnabled(true);
+            btnResendVerification.setText(R.string.resend_email_upper);
+        }
     }
 
     @Override

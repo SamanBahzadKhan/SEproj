@@ -1,206 +1,337 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Student create account: neubrutalist card + offset fields (matches login palette). -->
+<!-- Student signup + in-activity email verification (ViewFlipper). -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/caps_palette_bg">
 
-    <ScrollView
+    <ViewFlipper
+        android:id="@+id/registerFlipper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:fillViewport="true">
+        android:inAnimation="@android:anim/fade_in"
+        android:outAnimation="@android:anim/fade_out">
 
-        <LinearLayout
+        <!-- 0: Signup form -->
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:paddingHorizontal="20dp"
-            android:paddingTop="28dp"
-            android:paddingBottom="36dp">
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:fillViewport="true">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-black"
-                android:text="Create Account"
-                android:textColor="@color/caps_palette_neutral_dark"
-                android:textSize="28sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:fontFamily="sans-serif"
-                android:text="Sign up to get started"
-                android:textColor="@color/caps_palette_blue"
-                android:textSize="15sp" />
-
-            <FrameLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="22dp"
-                android:background="@drawable/bg_offset_form_card_20"
-                android:padding="24dp">
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingHorizontal="20dp"
+                android:paddingTop="28dp"
+                android:paddingBottom="36dp">
 
-                <LinearLayout
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-black"
+                    android:text="Create Account"
+                    android:textColor="@color/caps_palette_neutral_dark"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="sans-serif"
+                    android:text="Sign up to get started"
+                    android:textColor="@color/caps_palette_blue"
+                    android:textSize="15sp" />
+
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_marginTop="22dp"
+                    android:background="@drawable/bg_offset_form_card_20"
+                    android:padding="24dp">
 
-                    <FrameLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:background="@drawable/bg_offset_input_12">
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-                        <EditText
-                            android:id="@+id/etName"
+                        <FrameLayout
                             android:layout_width="match_parent"
-                            android:layout_height="52dp"
-                            android:background="@android:color/transparent"
-                            android:fontFamily="sans-serif"
-                            android:hint="Full Name"
-                            android:inputType="textPersonName"
-                            android:paddingHorizontal="14dp"
-                            android:textColor="@color/caps_palette_neutral_dark"
-                            android:textColorHint="@color/caps_palette_grey_warm"
-                            android:textSize="15sp" />
-                    </FrameLayout>
+                            android:layout_height="56dp"
+                            android:background="@drawable/bg_offset_input_12">
 
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:layout_marginTop="14dp"
-                        android:background="@drawable/bg_offset_input_12">
+                            <EditText
+                                android:id="@+id/etName"
+                                android:layout_width="match_parent"
+                                android:layout_height="52dp"
+                                android:background="@android:color/transparent"
+                                android:fontFamily="sans-serif"
+                                android:hint="Full Name"
+                                android:inputType="textPersonName"
+                                android:paddingHorizontal="14dp"
+                                android:textColor="@color/caps_palette_neutral_dark"
+                                android:textColorHint="@color/caps_palette_grey_warm"
+                                android:textSize="15sp" />
+                        </FrameLayout>
 
-                        <EditText
-                            android:id="@+id/etEmail"
+                        <FrameLayout
                             android:layout_width="match_parent"
-                            android:layout_height="52dp"
-                            android:background="@android:color/transparent"
-                            android:fontFamily="sans-serif"
-                            android:hint="Email Address"
-                            android:inputType="textEmailAddress"
-                            android:paddingHorizontal="14dp"
-                            android:textColor="@color/caps_palette_neutral_dark"
-                            android:textColorHint="@color/caps_palette_grey_warm"
-                            android:textSize="15sp" />
-                    </FrameLayout>
+                            android:layout_height="56dp"
+                            android:layout_marginTop="14dp"
+                            android:background="@drawable/bg_offset_input_12">
 
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:layout_marginTop="14dp"
-                        android:background="@drawable/bg_offset_input_12">
+                            <EditText
+                                android:id="@+id/etEmail"
+                                android:layout_width="match_parent"
+                                android:layout_height="52dp"
+                                android:background="@android:color/transparent"
+                                android:fontFamily="sans-serif"
+                                android:hint="Email Address"
+                                android:inputType="textEmailAddress"
+                                android:paddingHorizontal="14dp"
+                                android:textColor="@color/caps_palette_neutral_dark"
+                                android:textColorHint="@color/caps_palette_grey_warm"
+                                android:textSize="15sp" />
+                        </FrameLayout>
 
-                        <EditText
-                            android:id="@+id/etPassword"
+                        <FrameLayout
                             android:layout_width="match_parent"
-                            android:layout_height="52dp"
-                            android:background="@android:color/transparent"
-                            android:fontFamily="sans-serif"
-                            android:hint="Password"
-                            android:inputType="textPassword"
-                            android:paddingHorizontal="14dp"
-                            android:textColor="@color/caps_palette_neutral_dark"
-                            android:textColorHint="@color/caps_palette_grey_warm"
-                            android:textSize="15sp" />
-                    </FrameLayout>
+                            android:layout_height="56dp"
+                            android:layout_marginTop="14dp"
+                            android:background="@drawable/bg_offset_input_12">
 
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:layout_marginTop="14dp"
-                        android:background="@drawable/bg_offset_input_12">
+                            <EditText
+                                android:id="@+id/etPassword"
+                                android:layout_width="match_parent"
+                                android:layout_height="52dp"
+                                android:background="@android:color/transparent"
+                                android:fontFamily="sans-serif"
+                                android:hint="Password"
+                                android:inputType="textPassword"
+                                android:paddingHorizontal="14dp"
+                                android:textColor="@color/caps_palette_neutral_dark"
+                                android:textColorHint="@color/caps_palette_grey_warm"
+                                android:textSize="15sp" />
+                        </FrameLayout>
 
-                        <EditText
-                            android:id="@+id/etPhone"
+                        <FrameLayout
                             android:layout_width="match_parent"
-                            android:layout_height="52dp"
-                            android:background="@android:color/transparent"
-                            android:fontFamily="sans-serif"
-                            android:hint="Phone Number"
-                            android:inputType="phone"
-                            android:paddingHorizontal="14dp"
-                            android:textColor="@color/caps_palette_neutral_dark"
-                            android:textColorHint="@color/caps_palette_grey_warm"
-                            android:textSize="15sp" />
-                    </FrameLayout>
+                            android:layout_height="56dp"
+                            android:layout_marginTop="14dp"
+                            android:background="@drawable/bg_offset_input_12">
 
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:layout_marginTop="14dp"
-                        android:background="@drawable/bg_offset_input_12">
+                            <EditText
+                                android:id="@+id/etPhone"
+                                android:layout_width="match_parent"
+                                android:layout_height="52dp"
+                                android:background="@android:color/transparent"
+                                android:fontFamily="sans-serif"
+                                android:hint="Phone Number"
+                                android:inputType="phone"
+                                android:paddingHorizontal="14dp"
+                                android:textColor="@color/caps_palette_neutral_dark"
+                                android:textColorHint="@color/caps_palette_grey_warm"
+                                android:textSize="15sp" />
+                        </FrameLayout>
 
-                        <EditText
-                            android:id="@+id/etDepartment"
+                        <FrameLayout
                             android:layout_width="match_parent"
-                            android:layout_height="52dp"
-                            android:background="@android:color/transparent"
-                            android:fontFamily="sans-serif"
-                            android:hint="Department"
-                            android:inputType="text"
-                            android:paddingHorizontal="14dp"
-                            android:textColor="@color/caps_palette_neutral_dark"
-                            android:textColorHint="@color/caps_palette_grey_warm"
-                            android:textSize="15sp" />
-                    </FrameLayout>
+                            android:layout_height="56dp"
+                            android:layout_marginTop="14dp"
+                            android:background="@drawable/bg_offset_input_12">
 
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:layout_marginTop="14dp"
-                        android:background="@drawable/bg_offset_input_12">
+                            <EditText
+                                android:id="@+id/etDepartment"
+                                android:layout_width="match_parent"
+                                android:layout_height="52dp"
+                                android:background="@android:color/transparent"
+                                android:fontFamily="sans-serif"
+                                android:hint="Department"
+                                android:inputType="text"
+                                android:paddingHorizontal="14dp"
+                                android:textColor="@color/caps_palette_neutral_dark"
+                                android:textColorHint="@color/caps_palette_grey_warm"
+                                android:textSize="15sp" />
+                        </FrameLayout>
 
-                        <EditText
-                            android:id="@+id/etYear"
+                        <FrameLayout
                             android:layout_width="match_parent"
-                            android:layout_height="52dp"
-                            android:background="@android:color/transparent"
-                            android:fontFamily="sans-serif"
-                            android:hint="Year of Study"
-                            android:inputType="text"
-                            android:paddingHorizontal="14dp"
-                            android:textColor="@color/caps_palette_neutral_dark"
-                            android:textColorHint="@color/caps_palette_grey_warm"
-                            android:textSize="15sp" />
-                    </FrameLayout>
+                            android:layout_height="56dp"
+                            android:layout_marginTop="14dp"
+                            android:background="@drawable/bg_offset_input_12">
 
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:layout_marginTop="22dp"
-                        android:background="@drawable/bg_offset_button_blue_primary_12">
+                            <EditText
+                                android:id="@+id/etYear"
+                                android:layout_width="match_parent"
+                                android:layout_height="52dp"
+                                android:background="@android:color/transparent"
+                                android:fontFamily="sans-serif"
+                                android:hint="Year of Study"
+                                android:inputType="text"
+                                android:paddingHorizontal="14dp"
+                                android:textColor="@color/caps_palette_neutral_dark"
+                                android:textColorHint="@color/caps_palette_grey_warm"
+                                android:textSize="15sp" />
+                        </FrameLayout>
 
-                        <Button
-                            android:id="@+id/btnRegister"
+                        <FrameLayout
                             android:layout_width="match_parent"
-                            android:layout_height="52dp"
-                            android:background="@android:color/transparent"
-                            android:fontFamily="sans-serif-black"
-                            android:stateListAnimator="@null"
-                            android:text="CREATE ACCOUNT"
-                            android:textAllCaps="true"
-                            android:textColor="@color/caps_palette_white"
-                            android:textSize="15sp" />
-                    </FrameLayout>
-                </LinearLayout>
-            </FrameLayout>
+                            android:layout_height="56dp"
+                            android:layout_marginTop="22dp"
+                            android:background="@drawable/bg_offset_button_blue_primary_12">
 
-            <TextView
-                android:id="@+id/tvLoginLink"
-                android:layout_width="wrap_content"
+                            <Button
+                                android:id="@+id/btnRegister"
+                                android:layout_width="match_parent"
+                                android:layout_height="52dp"
+                                android:background="@android:color/transparent"
+                                android:fontFamily="sans-serif-black"
+                                android:stateListAnimator="@null"
+                                android:text="CREATE ACCOUNT"
+                                android:textAllCaps="true"
+                                android:textColor="@color/caps_palette_white"
+                                android:textSize="15sp" />
+                        </FrameLayout>
+                    </LinearLayout>
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tvLoginLink"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="sans-serif"
+                    android:gravity="center"
+                    android:text="Already have an account? Sign in"
+                    android:textColor="@color/caps_palette_text_dark"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- 1: Check your email -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:fontFamily="sans-serif"
-                android:gravity="center"
-                android:text="Already have an account? Sign in"
-                android:textColor="@color/caps_palette_text_dark"
-                android:textSize="14sp" />
-        </LinearLayout>
-    </ScrollView>
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingHorizontal="32dp"
+                android:paddingTop="36dp"
+                android:paddingBottom="40dp">
+
+                <FrameLayout
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:background="@drawable/bg_offset_circle_72_bluegrey">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/cd_email_verify_icon"
+                        android:src="@android:drawable/ic_dialog_email"
+                        android:tint="@color/caps_palette_white" />
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="sans-serif-black"
+                    android:gravity="center"
+                    android:text="Check Your Email"
+                    android:textColor="@color/caps_palette_neutral_dark"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="sans-serif"
+                    android:gravity="center"
+                    android:text="We sent a verification link to"
+                    android:textColor="@color/caps_palette_grey_warm"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tvVerificationEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="sans-serif-black"
+                    android:gravity="center"
+                    android:textColor="@color/caps_palette_neutral_dark"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="sans-serif"
+                    android:gravity="center"
+                    android:lineSpacingExtra="2dp"
+                    android:text="Click the link in the email to verify your account, then come back here."
+                    android:textColor="@color/caps_palette_grey_warm"
+                    android:textSize="14sp" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="32dp"
+                    android:background="@drawable/bg_offset_button_green_soft_12">
+
+                    <Button
+                        android:id="@+id/btnVerifiedContinue"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:background="@android:color/transparent"
+                        android:fontFamily="sans-serif-black"
+                        android:stateListAnimator="@null"
+                        android:text="I'VE VERIFIED — CONTINUE"
+                        android:textAllCaps="true"
+                        android:textColor="@color/caps_palette_white"
+                        android:textSize="16sp" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_offset_button_white_12">
+
+                    <Button
+                        android:id="@+id/btnResendVerification"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:background="@android:color/transparent"
+                        android:fontFamily="sans-serif-black"
+                        android:stateListAnimator="@null"
+                        android:text="RESEND EMAIL"
+                        android:textAllCaps="true"
+                        android:textColor="@color/caps_palette_neutral_dark"
+                        android:textSize="16sp" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tvWrongEmailGoBack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="sans-serif"
+                    android:padding="6dp"
+                    android:text="Wrong email? Go back"
+                    android:textColor="@color/caps_palette_grey_warm"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </ScrollView>
+    </ViewFlipper>
 
     <ProgressBar
         android:id="@+id/progressBar"

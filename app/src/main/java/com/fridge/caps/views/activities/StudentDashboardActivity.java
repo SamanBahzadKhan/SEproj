@@ -1,10 +1,10 @@
 package com.fridge.caps.views.activities;
 
+
 /**
- * StudentDashboardActivity.java
- * Main home screen for logged-in students showing upcoming appointments and quick navigation options.
- * Displays upcoming and past appointment lists with action buttons for booking, profile, and notifications.
- * View in the MVC pattern.
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
  */
 import android.content.Intent;
 import android.os.Bundle;
@@ -36,12 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * StudentDashboardActivity.java
- * Main home screen for logged-in students.
- * Shows upcoming appointments, quick actions, and past appointment history.
- * View in the MVC pattern.
- */
 public class StudentDashboardActivity extends AppCompatActivity {
 
     private TextView    tvGreeting;
@@ -58,7 +52,7 @@ public class StudentDashboardActivity extends AppCompatActivity {
 
     private List<Appointment> allAppointments = new ArrayList<>();
 
-    /** Which bottom tab is visually selected (updated when launching destinations from the bar). */
+    
     private int selectedBottomNavId = R.id.navHome;
 
     @Override
@@ -99,7 +93,6 @@ public class StudentDashboardActivity extends AppCompatActivity {
         findViewById(R.id.topBarSettings).setOnClickListener(v ->
                 startActivity(new Intent(this, ProfileActivity.class)));
 
-        // Quick action buttons
         findViewById(R.id.btnBookAppointment).setOnClickListener(v ->
                 startActivity(new Intent(this, CounselorListActivity.class)));
         findViewById(R.id.btnJournal).setOnClickListener(v ->
@@ -113,7 +106,6 @@ public class StudentDashboardActivity extends AppCompatActivity {
         findViewById(R.id.btnSessionNotesList).setOnClickListener(v ->
                 startActivity(new Intent(this, StudentSessionNotesListActivity.class)));
 
-        // Bottom nav
         findViewById(R.id.navHome).setOnClickListener(v -> {
             selectedBottomNavId = R.id.navHome;
             BottomNavUi.applyStudentNav(this, selectedBottomNavId);

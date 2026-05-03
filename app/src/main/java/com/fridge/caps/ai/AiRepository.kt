@@ -1,3 +1,9 @@
+/**
+ * Purpose: Handles AI assistant requests and response orchestration.
+ * Depends on: Android ViewModel/repository layers and Supabase Edge endpoint.
+ * Notes: Manages chat responses and safe fallback behavior.
+ */
+
 package com.fridge.caps.ai
 
 import android.content.Context
@@ -110,10 +116,7 @@ class AiRepository(context: Context) {
         ),
     )
 
-    /**
-     * POST `functions/v1/recommend-counsellor` with JSON body `{"query":"<text>"}`.
-     * No coroutines: runs OkHttp on a plain background [Thread], delivers [onResult] on the main thread.
-     */
+    
     fun getRecommendation(query: String, onResult: (Result<AiResponse>) -> Unit) {
         Log.d(
             "AI_DEBUG",

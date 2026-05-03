@@ -1,5 +1,17 @@
 package com.fridge.caps.network;
 
+
+
+/**
+ * Purpose: Handles external service request/response contracts.
+ * Depends on: HTTP client abstractions and app meeting integration flow.
+ * Notes: Encapsulates network payloads and API interfaces.
+ */
+/**
+ * Purpose: Handles external service request/response contracts.
+ * Depends on: HTTP client abstractions and app meeting integration flow.
+ * Notes: Encapsulates network payloads and API interfaces.
+ */
 import android.content.Context;
 
 import com.fridge.caps.R;
@@ -10,17 +22,11 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-/**
- * Retrofit client for Supabase Edge Functions (Meet link). Uses anon key + apikey headers.
- * Base URL is normalized to end with {@code /} so Retrofit resolves {@code functions/v1/...} correctly.
- */
 public final class SupabaseMeetClient {
 
     private SupabaseMeetClient() {}
 
-    /**
-     * Retrofit requires the base URL to end with {@code /}; missing slash breaks path resolution.
-     */
+    
     static String normalizeSupabaseBaseUrl(String raw) {
         if (raw == null) {
             return "";

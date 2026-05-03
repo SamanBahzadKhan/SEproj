@@ -1,3 +1,9 @@
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
+
 package com.fridge.caps.views.adapters
 
 import android.animation.ValueAnimator
@@ -175,7 +181,6 @@ class AiChatAdapter(
     }
 }
 
-/** Horizontal row of counsellor recommendation cards (nested in assistant message). */
 private class CounsellorMiniAdapter : RecyclerView.Adapter<CounsellorMiniAdapter.MiniVH>() {
 
     private var items = emptyList<AiRepository.Counsellor>()

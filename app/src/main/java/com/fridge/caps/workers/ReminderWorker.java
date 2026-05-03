@@ -1,5 +1,17 @@
 package com.fridge.caps.workers;
 
+
+
+/**
+ * Purpose: Handles background scheduling and reminder delivery tasks.
+ * Depends on: Android WorkManager, notification utilities, and date helpers.
+ * Notes: Runs deferred tasks safely outside foreground activity lifecycle.
+ */
+/**
+ * Purpose: Handles background scheduling and reminder delivery tasks.
+ * Depends on: Android WorkManager, notification utilities, date helpers.
+ * Notes: Runs deferred tasks safely outside foreground activity lifecycle.
+ */
 import android.content.Context;
 import android.util.Log;
 
@@ -19,9 +31,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Schedules a Firestore reminder notification ~24h before an appointment.
- */
 public class ReminderWorker extends Worker {
 
     private static final String TAG = "ReminderWorker";
@@ -52,9 +61,7 @@ public class ReminderWorker extends Worker {
         return Result.success();
     }
 
-    /**
-     * If appointment is more than 24h away, enqueue a one-time work to fire ~24h before.
-     */
+    
     public static void scheduleIfFuture(Context context, String studentId, String counselorName,
                                         String dateYmd, String startTime) {
         if (dateYmd == null || dateYmd.isEmpty() || startTime == null || startTime.isEmpty()) {

@@ -1,9 +1,16 @@
 package com.fridge.caps.models;
 
+
+
 /**
- * User.java
- * Abstract base class for all user types (Student, Counselor, Admin).
- * Stores shared fields and maps to Firestore via subclasses.
+ * Purpose: Defines core domain data structures and status values.
+ * Depends on: Firebase timestamp types and Java/Kotlin data accessors.
+ * Notes: Used as transfer objects between controllers and screens.
+ */
+/**
+ * Purpose: Defines core domain data structures and status values.
+ * Depends on: Firebase timestamp types and Java/Kotlin data accessors.
+ * Notes: Used as transfer objects between controllers and screens.
  */
 public abstract class User {
 

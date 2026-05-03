@@ -1,5 +1,11 @@
 package com.fridge.caps.views.activities;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,9 +23,6 @@ import com.fridge.caps.models.JournalEntry;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 
-/**
- * Create or edit a single journal entry (title, mood, body).
- */
 public class JournalEditActivity extends AppCompatActivity {
 
     public static final String EXTRA_ENTRY_ID   = "journal_entry_id";

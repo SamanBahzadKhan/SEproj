@@ -1,5 +1,11 @@
 package com.fridge.caps.views.activities;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -18,9 +24,6 @@ import com.google.firebase.functions.FirebaseFunctions;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Admin-only flow: creates a counsellor Auth user and Firestore profile via Cloud Function.
- */
 public class AddCounselorActivity extends AppCompatActivity {
 
     private EditText etName, etEmail, etPassword, etSpec, etDept, etPhone;

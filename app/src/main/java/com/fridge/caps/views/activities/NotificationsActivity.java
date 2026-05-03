@@ -1,8 +1,10 @@
 package com.fridge.caps.views.activities;
 
+
 /**
- * NotificationsActivity.java
- * Displays user notifications in a list (unread only). Mark-all-read clears them from this screen.
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
  */
 import android.content.Intent;
 import android.net.Uri;
@@ -27,9 +29,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Live unread notifications; Mark all read dismisses the list until new notifications arrive.
- */
 public class NotificationsActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;

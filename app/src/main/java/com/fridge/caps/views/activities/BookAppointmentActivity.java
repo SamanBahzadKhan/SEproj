@@ -1,10 +1,10 @@
 package com.fridge.caps.views.activities;
 
+
 /**
- * BookAppointmentActivity.java
- * Appointment booking interface for students to select date and time from available slots.
- * Displays available time slots in a grid, sends booking request notification, and manages confirmations.
- * View in the MVC pattern.
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
  */
 import android.content.Intent;
 import android.graphics.Color;
@@ -41,9 +41,6 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
-/**
- * Book from counsellor availability (morning/afternoon) with 1-hour slots; or reschedule.
- */
 public class BookAppointmentActivity extends AppCompatActivity {
 
     public static final String EXTRA_COUNSELOR_ID   = "counselor_id";

@@ -1,5 +1,11 @@
 package com.fridge.caps.views.activities;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -25,9 +31,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-/**
- * Student: active counsellors. Admin: all counsellor profiles (including inactive).
- */
 public class CounselorListActivity extends AppCompatActivity {
 
     public static final String EXTRA_ADMIN_COUNSELOR_LIST = "admin_counselor_list";

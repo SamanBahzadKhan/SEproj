@@ -1,3 +1,9 @@
+/**
+ * Purpose: Handles AI assistant requests and response orchestration.
+ * Depends on: Android ViewModel/repository layers and Supabase Edge endpoint.
+ * Notes: Manages chat responses and safe fallback behavior.
+ */
+
 package com.fridge.caps.ai
 
 import android.app.Application

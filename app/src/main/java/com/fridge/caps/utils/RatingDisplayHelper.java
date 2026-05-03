@@ -1,19 +1,26 @@
 package com.fridge.caps.utils;
 
+
+
+/**
+ * Purpose: Handles shared helper logic used across application features.
+ * Depends on: Standard libraries and app domain value types.
+ * Notes: Provides reusable utility behavior to reduce duplicated logic.
+ */
+/**
+ * Purpose: Handles shared helper logic used across non-UI features.
+ * Depends on: Java standard libraries and app domain value types.
+ * Notes: Provides reusable pure helpers to reduce duplicated logic.
+ */
 import android.widget.ImageView;
 
 import com.fridge.caps.R;
 
-/**
- * Fills 5 {@link ImageView} stars from a 0–5 average (supports half stars).
- */
 public final class RatingDisplayHelper {
 
     private RatingDisplayHelper() {}
 
-    /**
-     * @param stars exactly 5 views; index 0 = leftmost (rating 1).
-     */
+    
     public static void applyStarRating(ImageView[] stars, double rating) {
         if (stars == null || stars.length < 5) return;
         for (int i = 0; i < 5; i++) {

@@ -1,10 +1,16 @@
 package com.fridge.caps.controllers;
 
+
+
 /**
- * AppointmentController.java
- * Manages appointment booking lifecycle using timeslots collection as single source of truth.
- * Handles creation, confirmation, cancellation, and completion of appointments.
- * Controller in the MVC pattern.
+ * Purpose: Handles application business rules and data operations.
+ * Depends on: Firebase Firestore/Auth models and app domain objects.
+ * Notes: Coordinates validation and state changes used by app flows.
+ */
+/**
+ * Purpose: Handles application business rules and data operations.
+ * Depends on: Firebase Firestore/Auth models and app domain objects.
+ * Notes: Coordinates validation and state changes used by app flows.
  */
 import android.util.Log;
 
@@ -35,9 +41,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Booking lifecycle using the {@code timeslots} collection only.
- */
 public class AppointmentController {
 
     private static final String TAG = "Firestore";
@@ -102,7 +105,6 @@ public class AppointmentController {
         Map<String, Object> updates = new HashMap<>();
         updates.put("isBooked", false);
         updates.put("status", "CANCELLED");
-        // Keep studentId/studentName so student profile stats and history queries still match.
         updates.put("notes", FieldValue.delete());
         updates.put("bookedAt", FieldValue.delete());
         updates.put("feedbackSubmitted", FieldValue.delete());
@@ -116,9 +118,7 @@ public class AppointmentController {
                 });
     }
 
-    /**
-     * Reschedule: cancel old slot then book new. Rolls back on failure.
-     */
+    
     public void rescheduleTimeslot(String oldTimeslotId, String newTimeslotId,
                                    String studentId, String studentName, String notes, String appointmentType,
                                    AppointmentCallback callback) {
@@ -159,7 +159,7 @@ public class AppointmentController {
         });
     }
 
-    /** After a failed reschedule, put the student back on the original slot. */
+    
     public void restoreSlotBooking(String timeslotId, String studentId, String studentName, String notes,
                                    String appointmentType, AppointmentCallback callback) {
         Map<String, Object> u = new HashMap<>();
@@ -180,10 +180,7 @@ public class AppointmentController {
                 });
     }
 
-    /**
-     * Maps raw {@link TimeSlot} list to {@link Appointment} list with counselor/student names
-     * (same as internal {@link #enrichAndMap}).
-     */
+    
     public void enrichSlotsToAppointments(List<TimeSlot> slots, AppointmentListCallback callback) {
         enrichAndMap(slots, callback);
     }
@@ -259,7 +256,6 @@ public class AppointmentController {
         Map<String, Object> updates = new HashMap<>();
         updates.put("isBooked", false);
         updates.put("status", "NO_SHOW");
-        // Keep studentId/studentName so student history and profile queries still match.
         updates.put("notes", FieldValue.delete());
         updates.put("bookedAt", FieldValue.delete());
         updates.put("feedbackSubmitted", FieldValue.delete());
@@ -272,7 +268,7 @@ public class AppointmentController {
                 });
     }
 
-    /** Counsellor confirms a student request — slot becomes BOOKED. */
+    
     public void confirmPendingTimeslot(String timeslotId, AppointmentCallback callback) {
         db.collection(TIMESLOTS).document(timeslotId)
                 .update("status", "BOOKED")
@@ -283,15 +279,13 @@ public class AppointmentController {
                 });
     }
 
-    /** Stable document id for counsellor + date + start time. */
+    
     public static String slotDocumentId(String counselorId, String date, String startTime) {
         String safe = startTime == null ? "slot" : startTime.replaceAll("[^A-Za-z0-9]", "");
         return counselorId + "_" + date + "_" + safe;
     }
 
-    /**
-     * Student books a new concrete hour from availability (creates / merges timeslot doc).
-     */
+    
     public void createBookingFromAvailability(String counselorId, String date, String startTime,
                                               String period, String appointmentType,
                                               String studentId, String studentName, String notes,
@@ -361,7 +355,7 @@ public class AppointmentController {
         });
     }
 
-    /** Backward-compatible names used by activities. */
+    
     public void cancelAppointment(String appointmentId, String timeSlotId,
                                   AppointmentCallback callback) {
         String id = timeSlotId != null && !timeSlotId.isEmpty() ? timeSlotId : appointmentId;

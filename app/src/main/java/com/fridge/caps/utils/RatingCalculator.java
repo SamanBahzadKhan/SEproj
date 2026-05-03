@@ -1,5 +1,17 @@
 package com.fridge.caps.utils;
 
+
+
+/**
+ * Purpose: Handles shared helper logic used across application features.
+ * Depends on: Standard libraries and app domain value types.
+ * Notes: Provides reusable utility behavior to reduce duplicated logic.
+ */
+/**
+ * Purpose: Handles shared helper logic used across non-UI features.
+ * Depends on: Java standard libraries and app domain value types.
+ * Notes: Provides reusable pure helpers to reduce duplicated logic.
+ */
 public final class RatingCalculator {
 
     private RatingCalculator() {}

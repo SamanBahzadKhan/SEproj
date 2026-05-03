@@ -1,5 +1,11 @@
 package com.fridge.caps.views.adapters;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Completed sessions for student history; same card stack as dashboard past items.
- */
 public class StudentCompletedHistoryAdapter extends RecyclerView.Adapter<StudentCompletedHistoryAdapter.VH> {
 
     public interface Listener {

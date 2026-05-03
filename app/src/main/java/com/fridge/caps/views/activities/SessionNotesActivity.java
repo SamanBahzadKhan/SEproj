@@ -1,5 +1,11 @@
 package com.fridge.caps.views.activities;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,9 +36,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Counselor session notes: diagnosis, prescriptions, file uploads, recommendations; draft or submit to student.
- */
 public class SessionNotesActivity extends AppCompatActivity {
 
     public static final String EXTRA_TIME_SLOT_ID      = "time_slot_id";

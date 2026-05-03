@@ -1,5 +1,11 @@
 package com.fridge.caps.views.activities;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -23,10 +29,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-/**
- * Login screen for students and counsellors (same credentials); admin uses a separate flow.
- * Email verification is enforced for students only ({@link AppConfig#REQUIRE_EMAIL_VERIFICATION}).
- */
 public class LoginActivity extends AppCompatActivity {
 
     private EditText    etEmail, etPassword;
@@ -41,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     private boolean isTestMode;
     private boolean   passwordVisible;
 
-    /** Used by unverified dialog resend flow. */
+    
     private String lastEnteredEmail    = "";
     private String lastEnteredPassword = "";
 
@@ -135,9 +137,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Restore session: counsellors and admins bypass student email verification.
-     */
+    
     private void routeExistingSessionFromLogin() {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
@@ -274,10 +274,7 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    /**
-     * Counsellors and admins sign in without student email verification; students must be verified
-     * when {@link AppConfig#REQUIRE_EMAIL_VERIFICATION} is true.
-     */
+    
     private void maybeRouteAfterLogin(String uid, String email, String password) {
         db.collection("counselors").document(uid).get()
                 .addOnSuccessListener(cDoc -> {

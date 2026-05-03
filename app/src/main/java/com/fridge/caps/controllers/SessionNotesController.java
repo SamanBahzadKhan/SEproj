@@ -1,5 +1,17 @@
 package com.fridge.caps.controllers;
 
+
+
+/**
+ * Purpose: Handles application business rules and data operations.
+ * Depends on: Firebase Firestore/Auth models and app domain objects.
+ * Notes: Coordinates validation and state changes used by app flows.
+ */
+/**
+ * Purpose: Handles application business rules and data operations.
+ * Depends on: Firebase Firestore/Auth models and app domain objects.
+ * Notes: Coordinates validation and state changes used by app flows.
+ */
 import android.net.Uri;
 
 import com.fridge.caps.utils.NotificationUtils;
@@ -23,9 +35,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Draft session notes on the counselor; submitted notes are written to the student's document tree.
- */
 public class SessionNotesController {
 
     private static final String COUNSELORS = "counselors";
@@ -46,7 +55,7 @@ public class SessionNotesController {
         void onResult(boolean alreadySubmitted);
     }
 
-    /** Whether the student already has a submitted note for this slot. */
+    
     public void checkAlreadySubmitted(String studentId, String timeSlotId, BoolCallback callback) {
         if (studentId == null || timeSlotId == null) {
             callback.onResult(false);
@@ -260,10 +269,7 @@ public class SessionNotesController {
         return last.replace("/", "_").substring(0, Math.min(last.length(), 80));
     }
 
-    /**
-     * Submitted notes visible to the student (read-only).
-     * Resolves by document id first, then by {@code timeSlotId} field inside the subcollection.
-     */
+    
     public void loadReceivedNotes(String studentId, String timeSlotId,
                                   com.google.android.gms.tasks.OnSuccessListener<DocumentSnapshot> onOk,
                                   com.google.android.gms.tasks.OnFailureListener onFail) {
@@ -305,10 +311,7 @@ public class SessionNotesController {
                 .addOnFailureListener(onFail);
     }
 
-    /**
-     * All documents under {@code students/{id}/receivedSessionNotes}, sorted by counsellor name
-     * (A–Z) then newest {@code submittedAt} first within each counsellor.
-     */
+    
     public void loadAllReceivedSessionNotes(String studentId,
             com.google.android.gms.tasks.OnSuccessListener<List<DocumentSnapshot>> onOk,
             com.google.android.gms.tasks.OnFailureListener onFail) {
@@ -347,7 +350,7 @@ public class SessionNotesController {
         return 0L;
     }
 
-    /** Whether this snapshot should show submitted session notes to the student. */
+    
     public static boolean isReceivedNotesVisibleToStudent(DocumentSnapshot doc) {
         if (doc == null || !doc.exists()) {
             return false;

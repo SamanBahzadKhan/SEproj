@@ -1,5 +1,17 @@
 package com.fridge.caps.controllers;
 
+
+
+/**
+ * Purpose: Handles application business rules and data operations.
+ * Depends on: Firebase Firestore/Auth models and app domain objects.
+ * Notes: Coordinates validation and state changes used by app flows.
+ */
+/**
+ * Purpose: Handles application business rules and data operations.
+ * Depends on: Firebase Firestore/Auth models and app domain objects.
+ * Notes: Coordinates validation and state changes used by app flows.
+ */
 import com.fridge.caps.models.Student;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -9,11 +21,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-/**
- * AuthController.java
- * Handles student registration and login using Firebase Auth and Firestore.
- * Controller in the MVC pattern.
- */
 public class AuthController {
 
     private final FirebaseAuth      auth;
@@ -42,17 +49,7 @@ public class AuthController {
         this.db   = FirebaseFirestore.getInstance();
     }
 
-    /**
-     * Creates a new student account in Firebase Auth and saves profile to Firestore.
-     *
-     * @param name        Student's full name.
-     * @param email       Student's email address.
-     * @param password    Student's password (min 6 characters).
-     * @param phone       Student's phone number.
-     * @param department  Student's department.
-     * @param yearOfStudy Student's year of study.
-     * @param callback    Result callback.
-     */
+    
     public void registerStudent(String name, String email, String password,
                                 String phone, String department,
                                 String yearOfStudy, RegisterCallback callback) {
@@ -85,9 +82,7 @@ public class AuthController {
                 .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
     }
 
-    /**
-     * Writes the student profile to Firestore after email verification (registration flow).
-     */
+    
     public void saveStudentProfile(String uid, String name, String email,
                                    String phone, String department, String yearOfStudy,
                                    RegisterCallback callback) {
@@ -108,13 +103,7 @@ public class AuthController {
                         callback.onFailure("Profile save failed: " + e.getMessage()));
     }
 
-    /**
-     * Signs in an existing student using email and password.
-     *
-     * @param email    Student's email address.
-     * @param password Student's password.
-     * @param callback Result callback.
-     */
+    
     public void loginStudent(String email, String password, LoginCallback callback) {
         if (email.isEmpty() || password.isEmpty()) {
             callback.onFailure("Email and password are required.");
@@ -125,9 +114,7 @@ public class AuthController {
                 .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
     }
 
-    /**
-     * Signs in and verifies the account exists in the counselors collection.
-     */
+    
     public void loginCounselor(String email, String password, LoginCallback callback) {
         if (email.isEmpty() || password.isEmpty()) {
             callback.onFailure("Email and password are required.");
@@ -177,9 +164,7 @@ public class AuthController {
                 .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
     }
 
-    /**
-     * Signs in and verifies the account exists in the {@code admins} collection.
-     */
+    
     public void loginAdmin(String email, String password, LoginCallback callback) {
         if (email.isEmpty() || password.isEmpty()) {
             callback.onFailure("Email and password are required.");
@@ -210,14 +195,12 @@ public class AuthController {
                 .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
     }
 
-    /**
-     * Returns true if a user session currently exists.
-     */
+    
     public boolean isLoggedIn() {
         return auth.getCurrentUser() != null;
     }
 
-    /** Signs out the current user. */
+    
     public void logout() {
         auth.signOut();
     }

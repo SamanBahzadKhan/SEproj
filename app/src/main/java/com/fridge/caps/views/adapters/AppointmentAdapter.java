@@ -1,10 +1,10 @@
 package com.fridge.caps.views.adapters;
 
+
 /**
- * AppointmentAdapter.java
- * RecyclerView adapter for displaying appointment lists in different contexts (student, counselor, admin).
- * Supports multiple view modes with context-specific action buttons (cancel, reschedule, complete, feedback).
- * View in the MVC pattern.
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
  */
 import android.animation.AnimatorInflater;
 import android.content.Intent;
@@ -36,16 +36,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * RecyclerView adapter for appointment lists (student, counsellor, admin).
- */
 public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.VH> {
 
     public static final int MODE_STUDENT_UPCOMING = 0;
     public static final int MODE_STUDENT_PAST     = 1;
     public static final int MODE_COUNSELOR        = 2;
     public static final int MODE_ADMIN            = 3;
-    /** Read-only list: student name, date/time, type, status (counselor all-appointments screen). */
+    
     public static final int MODE_COUNSELOR_APPOINTMENT_LIST = 4;
 
     private final List<Appointment> items;
@@ -58,7 +55,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     @Nullable private final Action onComplete;
     @Nullable private final Action onNoShow;
     @Nullable private final Action onRecordDiagnosis;
-    /** Only used in {@link #MODE_STUDENT_PAST}: whole-row tap opens session notes. */
+    
     @Nullable private final Action onStudentPastOpenNotes;
 
     public interface Action {

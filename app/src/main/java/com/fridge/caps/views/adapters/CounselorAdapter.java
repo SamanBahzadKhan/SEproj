@@ -1,10 +1,10 @@
 package com.fridge.caps.views.adapters;
 
+
 /**
- * CounselorAdapter.java
- * RecyclerView adapter for displaying counselor profile cards with ratings and specializations.
- * Used in counselor list and browsing screens with click listeners for profile navigation.
- * View in the MVC pattern.
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
  */
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,11 +22,6 @@ import com.fridge.caps.models.Counselor;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * CounselorAdapter.java
- * RecyclerView adapter for displaying the counselor list (US-3).
- * View in the MVC pattern.
- */
 public class CounselorAdapter extends RecyclerView.Adapter<CounselorAdapter.CounselorViewHolder> {
 
     public interface OnCounselorClickListener {

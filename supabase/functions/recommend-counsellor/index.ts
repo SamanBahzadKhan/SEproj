@@ -1,12 +1,7 @@
 /**
- * AI counsellor recommendation + LUMS guidance.
- *
- * Secrets: GROQ_API_KEY, FIREBASE_PROJECT_ID, FIREBASE_API_KEY
- *
- * Reads counsellor profiles from Firestore `counselors` (same collection as the Android app).
- * Ensure Firestore rules allow this access path for your deployment (e.g. public read on counsellor directory profiles).
- *
- * Deploy: supabase functions deploy recommend-counsellor
+ * Purpose: Handles server-side CAPs feature logic and AI/API orchestration.
+ * Depends on: Supabase Edge runtime and external API integrations.
+ * Notes: Enforces backend-side validation and response shaping.
  */
 
 const FALLBACK_ANSWER =
@@ -154,7 +149,6 @@ function parseBool(fields: Record<string, unknown>, key: string): boolean {
   return wrap?.booleanValue === true;
 }
 
-/** Safe for LLM prompt — rating may be string/unknown from Firestore or maps. */
 function formatRatingOneDecimal(rating: unknown): string {
   const n = Number(rating);
   if (!Number.isFinite(n)) return "0.0";
@@ -282,7 +276,6 @@ function rankCounsellors(query: string, counsellors: any[]): any[] {
   return scored.sort((a, b) => b.score - a.score).slice(0, 3);
 }
 
-/** Groq chat completions — never throws; returns fallback text on any failure. */
 async function callGroq(prompt: string, groqApiKey: string): Promise<string> {
   const key = groqApiKey?.trim();
   if (!key) {
@@ -298,7 +291,6 @@ async function callGroq(prompt: string, groqApiKey: string): Promise<string> {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        // llama3-8b-8192 was retired; see https://console.groq.com/docs/deprecations
         model: "llama-3.1-8b-instant",
         messages: [
           {

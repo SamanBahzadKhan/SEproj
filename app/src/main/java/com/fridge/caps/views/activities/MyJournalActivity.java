@@ -1,5 +1,11 @@
 package com.fridge.caps.views.activities;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -21,9 +27,6 @@ import com.google.firebase.firestore.ListenerRegistration;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Student journal hub: stats, new entry, and recent entry cards (neo-brutalist UI).
- */
 public class MyJournalActivity extends AppCompatActivity implements JournalEntryCardAdapter.Listener {
 
     private TextView tvStatTotal;

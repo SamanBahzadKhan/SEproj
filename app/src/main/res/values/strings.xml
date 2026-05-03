@@ -55,7 +55,7 @@
     <string name="forgot_password_invalid_email">Enter a valid email address.</string>
     <string name="forgot_reset_sent_title">Check your email</string>
     <string name="forgot_reset_sent_message">A link to reset your password has been sent to %1$s. Please check your inbox.</string>
-    <!-- Firebase Web SDK config (reference). Auth/Firestore/Storage on Android use google-services.json + Android API key. -->
+    
     <string name="firebase_web_api_key" translatable="false">AIzaSyDj8d5RKxV32VIYTzY37irJtCdl432Z6Dw</string>
     <string name="firebase_auth_domain" translatable="false">fridge-156bb.firebaseapp.com</string>
     <string name="firebase_project_id" translatable="false">fridge-156bb</string>
@@ -63,7 +63,7 @@
     <string name="firebase_messaging_sender_id" translatable="false">744198650286</string>
     <string name="firebase_web_app_id" translatable="false">1:744198650286:web:17c1b628f928f09517f03f</string>
     <string name="firebase_measurement_id" translatable="false">G-68MS5QV1DR</string>
-    <!-- Must be https; trailing slash optional (normalized in code). Matches deployed Edge Functions host. -->
+    
     <string name="supabase_url" translatable="false">https://fuswhojmfbreyzzdnhcb.supabase.co/</string>
     <string name="supabase_anon_key" translatable="false">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1c3dob2ptZmJyZXl6emRuaGNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3ODg2NzQsImV4cCI6MjA5MzM2NDY3NH0.3JwQtOS5_tomjWwRJLgsIUVjr-kubbsnuNP2NIFWvqU</string>
 </resources>

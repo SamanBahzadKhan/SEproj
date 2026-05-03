@@ -1,5 +1,17 @@
 package com.fridge.caps.controllers;
 
+
+
+/**
+ * Purpose: Handles application business rules and data operations.
+ * Depends on: Firebase Firestore/Auth models and app domain objects.
+ * Notes: Coordinates validation and state changes used by app flows.
+ */
+/**
+ * Purpose: Handles application business rules and data operations.
+ * Depends on: Firebase Firestore/Auth models and app domain objects.
+ * Notes: Coordinates validation and state changes used by app flows.
+ */
 import com.fridge.caps.models.JournalEntry;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
@@ -12,9 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Persists journal entries for a student under {@code students/{studentId}/journalEntries}.
- */
 public class JournalController {
 
     private static final String COL_STUDENTS = "students";
@@ -28,7 +37,7 @@ public class JournalController {
         void onFailure(String message);
     }
 
-    /** Live updates, ordered newest first. */
+    
     public ListenerRegistration listenEntries(String studentId, JournalListCallback callback) {
         if (studentId == null || studentId.isEmpty()) {
             callback.onSuccess(new ArrayList<>());

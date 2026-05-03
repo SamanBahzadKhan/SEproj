@@ -1,5 +1,11 @@
 package com.fridge.caps.views.adapters;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +22,6 @@ import com.fridge.caps.utils.RatingDisplayHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Feedback rows on counsellor profile (all reviews, sorted client-side).
- */
 public class FeedbackReviewAdapter extends RecyclerView.Adapter<FeedbackReviewAdapter.VH> {
 
     private final List<FeedbackItem> items = new ArrayList<>();

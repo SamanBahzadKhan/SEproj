@@ -1,10 +1,10 @@
 package com.fridge.caps.views.activities;
 
+
 /**
- * CounselorDashboardActivity.java
- * Counselor home screen displaying weekly availability grid, pending appointment requests, and confirmed sessions.
- * Shows morning/afternoon availability for each day and appointment management options.
- * View in the MVC pattern.
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
  */
 import android.content.Intent;
 import android.os.Bundle;
@@ -63,9 +63,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Counsellor home: availability grid, pending requests, today's confirmed sessions.
- */
 public class CounselorDashboardActivity extends AppCompatActivity {
 
     private static final int[] DAY_HEADER_IDS = {
@@ -186,7 +183,7 @@ public class CounselorDashboardActivity extends AppCompatActivity {
         });
     }
 
-    /** Called from {@link AvailabilityBottomSheet} after save/delete. */
+    
     public void refreshAvailabilityGrid() {
         fetchAvailabilityWeekSnapshot();
     }
@@ -601,9 +598,7 @@ public class CounselorDashboardActivity extends AppCompatActivity {
                 });
     }
 
-    /**
-     * Creates a Google Meet link for online appointments after the slot is confirmed.
-     */
+    
     private void generateMeetLinkIfOnline(Appointment appt) {
         if (appt == null || !"Online".equals(appt.getType())) {
             return;

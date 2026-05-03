@@ -1,7 +1,16 @@
 package com.fridge.caps.models;
 
+
+
 /**
- * Admin user; document lives in {@code admins}.
+ * Purpose: Defines core domain data structures and status values.
+ * Depends on: Firebase timestamp types and Java/Kotlin data accessors.
+ * Notes: Used as transfer objects between controllers and screens.
+ */
+/**
+ * Purpose: Defines core domain data structures and status values.
+ * Depends on: Firebase timestamp types and Java/Kotlin data accessors.
+ * Notes: Used as transfer objects between controllers and screens.
  */
 public class Admin extends User {
 
@@ -15,6 +24,5 @@ public class Admin extends User {
 
     @Override
     public void getProfile() {
-        // Hook for shared {@link User} API.
     }
 }

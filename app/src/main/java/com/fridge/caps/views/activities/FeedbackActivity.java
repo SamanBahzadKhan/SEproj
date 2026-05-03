@@ -1,5 +1,11 @@
 package com.fridge.caps.views.activities;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -20,9 +26,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Locale;
 
-/**
- * Star rating + comment; saves to {@code feedback} and updates timeslot.
- */
 public class FeedbackActivity extends AppCompatActivity {
 
     public static final String EXTRA_TIMESLOT_ID = "timeslotId";

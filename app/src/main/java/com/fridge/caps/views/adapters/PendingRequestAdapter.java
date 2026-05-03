@@ -1,10 +1,10 @@
 package com.fridge.caps.views.adapters;
 
+
 /**
- * PendingRequestAdapter.java
- * RecyclerView adapter for displaying pending appointment requests with approve/decline actions.
- * Shows pending requests with appointment details and counselor action buttons.
- * View in the MVC pattern.
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
  */
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,9 +23,6 @@ import java.util.Locale;
 
 import com.google.firebase.Timestamp;
 
-/**
- * Pending appointment requests (status PENDING) for counsellor dashboard.
- */
 public class PendingRequestAdapter extends RecyclerView.Adapter<PendingRequestAdapter.VH> {
 
     public interface Action {
@@ -61,7 +58,7 @@ public class PendingRequestAdapter extends RecyclerView.Adapter<PendingRequestAd
         h.btnDecline.setOnClickListener(v -> action.onDecline(a));
     }
 
-    /** Top caption: time like mockup; falls back to date + time if time missing. */
+    
     private static String formatTimeCaption(Appointment a) {
         String time = a.getTimeDisplay() != null ? a.getTimeDisplay().trim() : "";
         Timestamp ts = a.getDate();

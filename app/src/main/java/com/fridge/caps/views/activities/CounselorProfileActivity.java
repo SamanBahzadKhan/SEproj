@@ -1,10 +1,10 @@
 package com.fridge.caps.views.activities;
 
+
 /**
- * CounselorProfileActivity.java
- * Displays detailed counselor profile with ratings, reviews, and booking options.
- * Shows counselor specialization, bio, feedback history, and allows students to book appointments.
- * View in the MVC pattern.
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
  */
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,9 +37,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Counsellor profile for students/admins; own profile adds accepting switch + sign out.
- */
 public class CounselorProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "CounselorProfile";
@@ -326,9 +323,7 @@ public class CounselorProfileActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> loadFeedbackReviewsForViewer(false));
     }
 
-    /**
-     * Students and counsellors see reviewer as anonymous; admins (collection {@code admins}) see stored names.
-     */
+    
     private void loadFeedbackReviewsForViewer(boolean viewerIsAdmin) {
         db.collection("feedback")
                 .whereEqualTo("counselorId", counselorId)

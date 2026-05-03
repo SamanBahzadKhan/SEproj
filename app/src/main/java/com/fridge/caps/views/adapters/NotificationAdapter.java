@@ -1,5 +1,11 @@
 package com.fridge.caps.views.adapters;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +34,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         void onNotificationClick(Notification n);
     }
 
-    /** Optional; used for Meet link notifications. */
+    
     public interface OnMeetLinkTapListener {
         void onMeetLinkTap(Notification n);
     }

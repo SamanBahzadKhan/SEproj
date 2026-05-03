@@ -1,5 +1,11 @@
 package com.fridge.caps.views.adapters;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +21,6 @@ import com.fridge.caps.models.Student;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Admin student list rows (neubrutalist card + status pill).
- */
 public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.VH> {
 
     private final List<Student> items;
@@ -70,10 +73,7 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.VH> {
         return items.size();
     }
 
-    /**
-     * Same idea as the student profile screen: prefer campus {@code studentId}, then email,
-     * then a short UID prefix — not the full Firebase UID string.
-     */
+    
     private static String formatStudentSecondaryLine(Student s) {
         String campus = s.getCampusStudentId();
         if (!campus.isEmpty()) {

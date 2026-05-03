@@ -1,10 +1,7 @@
 /**
- * Google Meet via Calendar API (service account JWT).
- *
- * Secrets (Supabase Dashboard → Project Settings → Edge Functions → Secrets):
- * - GOOGLE_CLIENT_EMAIL — service account email (e.g. meet-service@....iam.gserviceaccount.com)
- * - GOOGLE_PRIVATE_KEY — full PEM; may be pasted as one line with \n escapes (handled below)
- * - CALENDAR_ID — calendar id (often your Gmail: cs360proj@gmail.com)
+ * Purpose: Handles server-side CAPs feature logic and AI/API orchestration.
+ * Depends on: Supabase Edge runtime and external API integrations.
+ * Notes: Enforces backend-side validation and response shaping.
  */
 
 import { decode as decodeBase64 } from "https://deno.land/std@0.224.0/encoding/base64.ts";
@@ -22,7 +19,6 @@ function normalizePrivateKeyPem(raw: string | undefined): string {
   ) {
     s = s.slice(1, -1).trim();
   }
-  // Dashboard / JSON paste often stores newlines as the two characters \ and n
   if (s.includes("\\n")) {
     s = s.replace(/\\n/g, "\n");
   }
@@ -131,7 +127,6 @@ async function getAccessToken(): Promise<string> {
   return data.access_token as string;
 }
 
-/** Canonical Meet extraction: hangoutLink first, then conferenceData.entryPoints (video preferred). */
 function extractMeetLink(event: Record<string, unknown>): string | null {
   const hangout = event["hangoutLink"];
   if (typeof hangout === "string" && hangout.length > 0) {
@@ -174,7 +169,6 @@ Deno.serve(async (req) => {
       throw new Error("CALENDAR_ID secret is missing.");
     }
 
-    // Query params (Calendar API): conference creation + attendee notifications for Meet conference.
     const calendarUrl =
       `https://www.googleapis.com/calendar/v3/calendars/${
         encodeURIComponent(calendarId)

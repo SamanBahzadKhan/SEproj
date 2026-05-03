@@ -1,5 +1,11 @@
 package com.fridge.caps.model;
 
+
+/**
+ * Purpose: Handles automated verification for application behavior.
+ * Depends on: JUnit/Android test frameworks and app classes under test.
+ * Notes: Provides regression coverage for key workflows.
+ */
 import com.fridge.caps.models.Feedback;
 import com.google.firebase.Timestamp;
 

@@ -1,5 +1,11 @@
 package com.fridge.caps.views.adapters;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +21,6 @@ import com.fridge.caps.R;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Pending (local URI) or already-uploaded attachment rows. */
 public class SessionAttachmentAdapter extends RecyclerView.Adapter<SessionAttachmentAdapter.VH> {
 
     public static class Row {

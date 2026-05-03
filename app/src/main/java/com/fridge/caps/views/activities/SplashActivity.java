@@ -1,5 +1,11 @@
 package com.fridge.caps.views.activities;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -9,9 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.fridge.caps.R;
 import com.google.firebase.auth.FirebaseAuth;
 
-/**
- * Launcher activity: clears any persisted auth so each cold start begins at the login screen.
- */
 public class SplashActivity extends AppCompatActivity {
 
     @Override

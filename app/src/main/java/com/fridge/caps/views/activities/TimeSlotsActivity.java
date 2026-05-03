@@ -1,5 +1,11 @@
 package com.fridge.caps.views.activities;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -26,9 +32,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Browse available slots for a counsellor on a chosen day (next 14 days).
- */
 public class TimeSlotsActivity extends AppCompatActivity {
 
     public static final String EXTRA_COUNSELOR_ID              = "counselor_id";

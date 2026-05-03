@@ -1,5 +1,11 @@
 package com.fridge.caps.controller;
 
+
+/**
+ * Purpose: Handles automated verification for application behavior.
+ * Depends on: JUnit/Android test frameworks and app classes under test.
+ * Notes: Provides regression coverage for key workflows.
+ */
 import com.fridge.caps.controllers.AppointmentController;
 
 import org.junit.Test;

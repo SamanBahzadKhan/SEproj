@@ -1,5 +1,11 @@
 package com.fridge.caps.views.activities;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -25,20 +31,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-/**
- * Read-only session notes submitted by the counsellor for a completed session.
- */
 public class StudentSessionNotesViewActivity extends AppCompatActivity {
 
     public static final String EXTRA_TIME_SLOT_ID      = "time_slot_id";
-    /** When set, used if {@link #EXTRA_TIME_SLOT_ID} is empty; also used as alternate Firestore doc id. */
+    
     public static final String EXTRA_APPOINTMENT_ID    = "appointment_id";
     public static final String EXTRA_COUNSELOR_NAME    = "counselor_name";
     public static final String EXTRA_SESSION_DATE_LINE = "session_date_line";
 
     private String studentId;
     private String timeSlotId;
-    /** Optional second document id for the same session (e.g. when slot vs appointment ids diverge). */
+    
     private String alternateNoteDocId;
     private String counselorNameHint;
     private String sessionDateHint;

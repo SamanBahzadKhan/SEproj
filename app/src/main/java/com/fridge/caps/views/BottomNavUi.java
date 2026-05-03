@@ -1,5 +1,11 @@
 package com.fridge.caps.views;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.view.View;
@@ -13,9 +19,6 @@ import androidx.core.content.ContextCompat;
 
 import com.fridge.caps.R;
 
-/**
- * Shared bottom navigation styling: muted unselected tabs, bold + dark tint for the active tab.
- */
 public final class BottomNavUi {
 
     private BottomNavUi() {}

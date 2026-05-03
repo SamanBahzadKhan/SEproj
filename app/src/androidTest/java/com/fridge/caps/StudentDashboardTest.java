@@ -1,9 +1,10 @@
 package com.fridge.caps;
 
+
 /**
- * StudentDashboardTest.java
- * Instrumented test for StudentDashboardActivity main dashboard and quick actions.
- * Tests appointment list display, navigation to other features, and UI interactions.
+ * Purpose: Handles automated verification for application behavior.
+ * Depends on: JUnit/Android test frameworks and app classes under test.
+ * Notes: Provides regression coverage for key workflows.
  */
 import android.content.Intent;
 

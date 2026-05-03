@@ -1,10 +1,17 @@
 package com.fridge.caps.views.activities;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,9 +28,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-/**
- * Student profile, stats from {@code timeslots}, and settings.
- */
 public class ProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "ProfileActivity";
@@ -36,6 +40,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView    tvStatTotal, tvStatUpcoming, tvStatCancelled;
     private ProgressBar progressBar;
     private CircleImageView ivAvatar;
+    private ImageView ivAvatarPlaceholder;
     private AuthController authController;
     private boolean isTestMode;
 
@@ -57,6 +62,7 @@ public class ProfileActivity extends AppCompatActivity {
         tvStatCancelled  = findViewById(R.id.tvStatCancelled);
         progressBar      = findViewById(R.id.progressBar);
         ivAvatar         = findViewById(R.id.ivAvatar);
+        ivAvatarPlaceholder = findViewById(R.id.ivAvatarPlaceholder);
         isTestMode       = getIntent().getBooleanExtra("TEST_MODE", false);
 
         if (tvStatTotal != null) tvStatTotal.setText("0");
@@ -74,6 +80,7 @@ public class ProfileActivity extends AppCompatActivity {
             tvStatUpcoming.setText("2");
             tvStatCancelled.setText("1");
             ivAvatar.setImageResource(R.drawable.circle_blue_bg);
+            if (ivAvatarPlaceholder != null) ivAvatarPlaceholder.setVisibility(View.VISIBLE);
         } else {
             loadStudentProfile();
         }
@@ -180,8 +187,10 @@ public class ProfileActivity extends AppCompatActivity {
 
                     if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
                         Glide.with(this).load(profilePicUrl).circleCrop().into(ivAvatar);
+                        if (ivAvatarPlaceholder != null) ivAvatarPlaceholder.setVisibility(View.GONE);
                     } else {
                         ivAvatar.setImageResource(R.drawable.circle_blue_bg);
+                        if (ivAvatarPlaceholder != null) ivAvatarPlaceholder.setVisibility(View.VISIBLE);
                     }
                 })
                 .addOnFailureListener(e -> {

@@ -1,11 +1,20 @@
 package com.fridge.caps.models;
 
+
+
+/**
+ * Purpose: Defines core domain data structures and status values.
+ * Depends on: Firebase timestamp types and Java/Kotlin data accessors.
+ * Notes: Used as transfer objects between controllers and screens.
+ */
+/**
+ * Purpose: Defines core domain data structures and status values.
+ * Depends on: Firebase timestamp types and Java/Kotlin data accessors.
+ * Notes: Used as transfer objects between controllers and screens.
+ */
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 
-/**
- * Single student journal entry stored under {@code students/{uid}/journalEntries}.
- */
 public class JournalEntry {
 
     public static final String MOOD_HAPPY   = "happy";

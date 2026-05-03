@@ -1,5 +1,17 @@
 package com.fridge.caps.utils;
 
+
+
+/**
+ * Purpose: Handles shared helper logic used across application features.
+ * Depends on: Standard libraries and app domain value types.
+ * Notes: Provides reusable utility behavior to reduce duplicated logic.
+ */
+/**
+ * Purpose: Handles shared helper logic used across non-UI features.
+ * Depends on: Java standard libraries and app domain value types.
+ * Notes: Provides reusable pure helpers to reduce duplicated logic.
+ */
 import com.fridge.caps.models.JournalEntry;
 
 import java.text.SimpleDateFormat;
@@ -10,7 +22,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-/** Client-side stats for the My Journal dashboard cards. */
 public final class JournalStatsHelper {
 
     private JournalStatsHelper() {}
@@ -19,9 +30,7 @@ public final class JournalStatsHelper {
         return entries == null ? 0 : entries.size();
     }
 
-    /**
-     * Consecutive calendar days (ending today or yesterday) that have at least one entry.
-     */
+    
     public static int dayStreak(List<JournalEntry> entries) {
         if (entries == null || entries.isEmpty()) {
             return 0;
@@ -44,7 +53,7 @@ public final class JournalStatsHelper {
         return streak;
     }
 
-    /** Entries whose {@code createdAt} falls on or after the start of this locale week. */
+    
     public static int entriesThisWeek(List<JournalEntry> entries) {
         if (entries == null || entries.isEmpty()) {
             return 0;

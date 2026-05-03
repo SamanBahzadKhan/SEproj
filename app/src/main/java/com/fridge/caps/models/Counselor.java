@@ -1,13 +1,22 @@
 package com.fridge.caps.models;
 
+
+
+/**
+ * Purpose: Defines core domain data structures and status values.
+ * Depends on: Firebase timestamp types and Java/Kotlin data accessors.
+ * Notes: Used as transfer objects between controllers and screens.
+ */
+/**
+ * Purpose: Defines core domain data structures and status values.
+ * Depends on: Firebase timestamp types and Java/Kotlin data accessors.
+ * Notes: Used as transfer objects between controllers and screens.
+ */
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.PropertyName;
 
 import java.util.Locale;
 
-/**
- * Counsellor profile document in {@code counselors}. Prefer {@link #fromDocument(DocumentSnapshot)} for lists.
- */
 public class Counselor extends User {
 
     private String specialization;
@@ -25,9 +34,7 @@ public class Counselor extends User {
         super();
     }
 
-    /**
-     * Admin-created counsellor account (see Cloud Function {@code createCounsellorAccount} / {@link com.fridge.caps.views.activities.AddCounselorActivity}).
-     */
+    
     public Counselor(String userId, String name, String email, String specialization,
                      String bio, String phone, float rating, boolean acceptingClients, String createdAt) {
         super(userId, name, email, UserRole.COUNSELOR, createdAt);
@@ -42,7 +49,6 @@ public class Counselor extends User {
 
     @Override
     public void getProfile() {
-        // Hook for shared {@link User} API; profile UI uses Firestore snapshots directly.
     }
 
     public String getSpecialization() {
@@ -123,10 +129,7 @@ public class Counselor extends User {
         this.deleted = deleted;
     }
 
-    /**
-     * Tolerant parse for list screens — avoids {@code toObject} dropping docs when {@code role}
-     * or numeric types do not match the POJO mapper.
-     */
+    
     public static Counselor fromDocument(DocumentSnapshot doc) {
         if (doc == null || !doc.exists()) {
             return null;

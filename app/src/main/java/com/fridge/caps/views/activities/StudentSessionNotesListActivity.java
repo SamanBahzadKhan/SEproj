@@ -1,5 +1,11 @@
 package com.fridge.caps.views.activities;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -19,9 +25,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.List;
 
-/**
- * Lists all received session-note documents for the student, grouped under each counsellor.
- */
 public class StudentSessionNotesListActivity extends AppCompatActivity {
 
     private ProgressBar progressBar;

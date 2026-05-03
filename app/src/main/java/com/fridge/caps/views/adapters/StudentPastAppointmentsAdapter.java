@@ -1,5 +1,11 @@
 package com.fridge.caps.views.adapters;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,9 +29,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-/**
- * Student "My Appointments" — past tab rows with optional feedback snippets.
- */
 public class StudentPastAppointmentsAdapter extends RecyclerView.Adapter<StudentPastAppointmentsAdapter.VH> {
 
     public interface Listener {

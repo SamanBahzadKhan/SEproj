@@ -1,14 +1,20 @@
 package com.fridge.caps.models;
 
+
+
+/**
+ * Purpose: Defines core domain data structures and status values.
+ * Depends on: Firebase timestamp types and Java/Kotlin data accessors.
+ * Notes: Used as transfer objects between controllers and screens.
+ */
+/**
+ * Purpose: Defines core domain data structures and status values.
+ * Depends on: Firebase timestamp types and Java/Kotlin data accessors.
+ * Notes: Used as transfer objects between controllers and screens.
+ */
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 
-/**
- * TimeSlot.java
- * Represents an available appointment time slot created by counselors for booking.
- * Single source of truth for availability. Maps to Firestore "timeslots" collection.
- * Tracks booking status, participant details, and appointment notifications.
- */
 public class TimeSlot {
 
     private String  id;
@@ -20,18 +26,18 @@ public class TimeSlot {
     private boolean isBooked;
 
     private String  studentId;
-    /** Denormalized for counsellor pending list (optional). */
+    
     private String  studentName;
-    /** "Morning" or "Afternoon" when set. */
+    
     private String  period;
     private String  status;
     private String  notes;
     private boolean feedbackSubmitted;
     private String  bookedAt;
-    /** Set when an online session gets a Google Meet link (Firestore on timeslot document). */
+    
     private String  meetLink;
 
-    /** Legacy fields (older documents). */
+    
     private Timestamp legacyStartTime;
     private Timestamp legacyEndTime;
     private Boolean   legacyIsAvailable;
@@ -98,7 +104,7 @@ public class TimeSlot {
         return t;
     }
 
-    /** Label for slot grid (date + time). */
+    
     public String getSlotLabel() {
         if (date != null && startTime != null) {
             return com.fridge.caps.utils.DateUtils.formatSessionLine(date, startTime);

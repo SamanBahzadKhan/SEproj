@@ -1,5 +1,11 @@
 package com.fridge.caps.views.activities;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -30,9 +36,6 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-/**
- * Edit student profile fields and optional profile photo (Firebase Storage).
- */
 public class EditProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "EditProfile";

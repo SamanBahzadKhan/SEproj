@@ -1,10 +1,19 @@
 package com.fridge.caps.models;
 
-import com.google.firebase.Timestamp;
+
 
 /**
- * Student feedback for a completed session (see {@code feedback} collection).
+ * Purpose: Defines core domain data structures and status values.
+ * Depends on: Firebase timestamp types and Java/Kotlin data accessors.
+ * Notes: Used as transfer objects between controllers and screens.
  */
+/**
+ * Purpose: Defines core domain data structures and status values.
+ * Depends on: Firebase timestamp types and Java/Kotlin data accessors.
+ * Notes: Used as transfer objects between controllers and screens.
+ */
+import com.google.firebase.Timestamp;
+
 public class Feedback {
 
     private String    timeslotId;

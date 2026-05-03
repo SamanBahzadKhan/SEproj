@@ -1,5 +1,11 @@
 package com.fridge.caps.views.activities;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -18,9 +24,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.fridge.caps.R;
 import com.fridge.caps.controllers.AuthController;
 
-/**
- * Admin email/password sign-in; verifies {@code admins} collection after Firebase Auth.
- */
 public class AdminLoginActivity extends AppCompatActivity {
 
     private EditText    etEmail, etPassword;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- colors.xml: Color palette definitions used throughout the application for consistent theming. -->
+
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
@@ -12,7 +12,7 @@
     <color name="caps_red">#F44336</color>
     <color name="caps_grey">#9E9E9E</color>
 
-    <!-- Project palette -->
+    
     <color name="caps_palette_bg">#E8E9EB</color>
     <color name="caps_dashboard_bg">#EFEBE8</color>
     <color name="caps_palette_green_soft">#8FA68A</color>
@@ -29,12 +29,12 @@
     <color name="caps_palette_blue_light">#B7D0DE</color>
     <color name="caps_palette_star_muted">#B7B5AE</color>
 
-    <!-- Splash-specific aliases -->
+    
     <color name="caps_palette_subtitle">#8A8680</color>
     <color name="caps_palette_footer">#A4B1BA</color>
     <color name="caps_palette_spinner">#8A5A3A</color>
 
-    <!-- Neo-brutalist student upcoming card (mockup-aligned) -->
+    
     <color name="caps_brut_cream_bg">#F2EDE4</color>
     <color name="caps_brut_navy">#2A3C44</color>
     <color name="caps_brut_blue_gray">#648AA3</color>
@@ -43,14 +43,14 @@
     <color name="caps_brut_cancel_fill">#EBEBEB</color>
     <color name="caps_brut_tag_fill">#F0EEEB</color>
 
-    <!-- My Journal (neo-brutalist mockup) -->
+    
     <color name="caps_journal_topbar">#1B2E3C</color>
     <color name="caps_journal_stat_blue">#94A3B8</color>
     <color name="caps_journal_stat_sage">#8BA789</color>
     <color name="caps_journal_stat_peach">#D7BCAD</color>
     <color name="caps_journal_btn_new">#436782</color>
 
-    <!-- Session notes (counselor diagnosis / uploads mockup) -->
+    
     <color name="caps_session_screen_bg">#F5F2ED</color>
     <color name="caps_session_topbar">#1D2C34</color>
     <color name="caps_session_submit_sage">#8DA089</color>
@@ -58,7 +58,7 @@
     <color name="caps_session_browse_grey">#7A8F9C</color>
     <color name="caps_session_input_border">#D8D4CC</color>
 
-    <!-- Leave Feedback screen (student mockup) -->
+    
     <color name="caps_feedback_bg">#F2EFE9</color>
     <color name="caps_feedback_topbar">#1D2E3D</color>
     <color name="caps_feedback_submit_brown">#8D5F3F</color>

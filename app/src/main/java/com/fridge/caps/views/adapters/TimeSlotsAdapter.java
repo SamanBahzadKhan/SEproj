@@ -1,5 +1,11 @@
 package com.fridge.caps.views.adapters;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * TimeSlotsAdapter.java
- * RecyclerView adapter for displaying available time slots in a grid.
- * View in the MVC pattern.
- */
 public class TimeSlotsAdapter extends RecyclerView.Adapter<TimeSlotsAdapter.SlotViewHolder> {
 
     public interface OnSlotClickListener {

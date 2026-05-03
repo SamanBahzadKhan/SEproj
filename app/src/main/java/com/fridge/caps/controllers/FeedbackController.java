@@ -1,5 +1,17 @@
 package com.fridge.caps.controllers;
 
+
+
+/**
+ * Purpose: Handles application business rules and data operations.
+ * Depends on: Firebase Firestore/Auth models and app domain objects.
+ * Notes: Coordinates validation and state changes used by app flows.
+ */
+/**
+ * Purpose: Handles application business rules and data operations.
+ * Depends on: Firebase Firestore/Auth models and app domain objects.
+ * Notes: Coordinates validation and state changes used by app flows.
+ */
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -8,9 +20,6 @@ import com.google.firebase.firestore.Transaction;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Persists student session feedback and marks the timeslot as submitted.
- */
 public class FeedbackController {
 
     private final FirebaseFirestore db;
@@ -82,9 +91,7 @@ public class FeedbackController {
                 });
     }
 
-    /**
-     * Updates {@code counselors/{id}} aggregate {@code rating} and {@code ratingCount} after feedback is saved.
-     */
+    
     private void updateCounselorRatingFromFeedback(String counselorId, int newRating,
                                                  FeedbackCallback callback) {
         if (counselorId == null || counselorId.isEmpty()) {

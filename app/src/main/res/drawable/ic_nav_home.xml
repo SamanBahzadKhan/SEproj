@@ -4,7 +4,7 @@
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
-    <!-- Simple house (neo-brutal block shape) -->
+    
     <path
         android:fillColor="#FFFFFFFF"
         android:pathData="M12,3L3,10h2v9h6v-5h2v5h6v-9h2L12,3z" />

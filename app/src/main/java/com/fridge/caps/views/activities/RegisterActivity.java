@@ -1,5 +1,11 @@
 package com.fridge.caps.views.activities;
 
+
+/**
+ * Purpose: Handles screen flow, UI state coordination, and user interactions.
+ * Depends on: Android UI toolkit, app controllers/viewmodels, and navigation intents.
+ * Notes: Focuses on presentation logic while delegating business rules to controllers.
+ */
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -20,10 +26,6 @@ import com.fridge.caps.controllers.AuthController;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-/**
- * Student registration. When email verification is required, Firestore is written only after
- * the user verifies and taps Continue — not on initial Auth creation.
- */
 public class RegisterActivity extends AppCompatActivity {
 
     private static final int FLIP_FORM = 0;

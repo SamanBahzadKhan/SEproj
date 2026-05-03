@@ -1,5 +1,17 @@
 package com.fridge.caps.auth;
 
+
+
+/**
+ * Purpose: Handles authentication provider integration and sign-in flow.
+ * Depends on: Firebase Auth and Google sign-in SDK components.
+ * Notes: Bridges account sign-in results to app auth state.
+ */
+/**
+ * Purpose: Handles authentication provider integration and sign-in flow.
+ * Depends on: Firebase Auth and Google sign-in SDK components.
+ * Notes: Bridges account sign-in results to app auth state.
+ */
 import android.app.Activity;
 import android.content.Intent;
 
@@ -13,9 +25,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Scope;
 
-/**
- * Google Sign-In configured for Calendar scope + server auth code (exchanged for refresh token on Cloud Functions).
- */
 public final class GoogleAuthManager {
 
     private final GoogleSignInClient googleSignInClient;

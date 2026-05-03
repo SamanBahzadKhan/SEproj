@@ -1,5 +1,17 @@
 package com.fridge.caps.utils;
 
+
+
+/**
+ * Purpose: Handles shared helper logic used across application features.
+ * Depends on: Standard libraries and app domain value types.
+ * Notes: Provides reusable utility behavior to reduce duplicated logic.
+ */
+/**
+ * Purpose: Handles shared helper logic used across non-UI features.
+ * Depends on: Java standard libraries and app domain value types.
+ * Notes: Provides reusable pure helpers to reduce duplicated logic.
+ */
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,26 +21,21 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Date / time strings for Firestore ({@code yyyy-MM-dd}, {@code h:mm a}) and UI labels.
- */
 public final class DateUtils {
 
     private DateUtils() {}
 
     public static final String STORAGE_DATE = "yyyy-MM-dd";
-    /** Matches slot chips and {@link com.fridge.caps.workers.ReminderWorker} parsing. */
+    
     public static final String STORAGE_TIME = "h:mm a";
-    /** Human-readable date for appointment lines. */
+    
     public static final String DISPLAY_DATE = "MMM d, yyyy";
 
     public static String getTodayString() {
         return new SimpleDateFormat(STORAGE_DATE, Locale.US).format(new Date());
     }
 
-    /**
-     * Monday of the calendar week containing today ({@link Calendar} US: week Sun–Sat, anchored to Mon..Sun span).
-     */
+    
     public static String getThisWeekMonday() {
         Calendar c = startOfDayCalendar();
         int dow = c.get(Calendar.DAY_OF_WEEK);
@@ -40,7 +47,7 @@ public final class DateUtils {
         return new SimpleDateFormat(STORAGE_DATE, Locale.US).format(c.getTime());
     }
 
-    /** Sunday of the same week as {@link #getThisWeekMonday()}. */
+    
     public static String getThisWeekSunday() {
         Calendar c = startOfDayCalendar();
         int dow = c.get(Calendar.DAY_OF_WEEK);
@@ -137,10 +144,7 @@ public final class DateUtils {
         return dayPart + " · " + startTime;
     }
 
-    /**
-     * Whether the slot start (date + {@link #STORAGE_TIME} string) is strictly before the current instant.
-     * Used to block booking times that have already passed on the selected day.
-     */
+    
     public static boolean isSlotStartInPast(String dateYmd, String startTimeHm) {
         if (dateYmd == null || dateYmd.isEmpty() || startTimeHm == null || startTimeHm.isEmpty()) {
             return false;

@@ -1,23 +1,30 @@
 package com.fridge.caps.utils;
 
+
+
+/**
+ * Purpose: Handles shared helper logic used across application features.
+ * Depends on: Standard libraries and app domain value types.
+ * Notes: Provides reusable utility behavior to reduce duplicated logic.
+ */
+/**
+ * Purpose: Handles shared helper logic used across non-UI features.
+ * Depends on: Java standard libraries and app domain value types.
+ * Notes: Provides reusable pure helpers to reduce duplicated logic.
+ */
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-/**
- * Builds RFC3339 date-times in Asia/Karachi for Google Calendar from slot {@code date} + {@code startTime}.
- */
 public final class MeetLinkTimeHelper {
 
     private static final TimeZone KARACHI = TimeZone.getTimeZone("Asia/Karachi");
 
     private MeetLinkTimeHelper() {}
 
-    /**
-     * @return {@code [startIso, endIso]} or null if parsing fails
-     */
+    
     public static String[] buildStartEndIso(String dateYmd, String startTime12h, int durationMinutes) {
         if (dateYmd == null || dateYmd.isEmpty()) {
             return null;

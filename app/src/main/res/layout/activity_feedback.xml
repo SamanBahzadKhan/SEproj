@@ -5,7 +5,7 @@
     android:background="@color/caps_feedback_bg"
     android:orientation="vertical">
 
-    <!-- Top app bar -->
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
@@ -77,7 +77,7 @@
                 android:layout_gravity="center"
                 android:visibility="gone" />
 
-            <!-- Counsellor profile card -->
+            
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

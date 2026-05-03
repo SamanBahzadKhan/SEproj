@@ -1,14 +1,20 @@
 package com.fridge.caps.models;
 
+
+
+/**
+ * Purpose: Defines core domain data structures and status values.
+ * Depends on: Firebase timestamp types and Java/Kotlin data accessors.
+ * Notes: Used as transfer objects between controllers and screens.
+ */
+/**
+ * Purpose: Defines core domain data structures and status values.
+ * Depends on: Firebase timestamp types and Java/Kotlin data accessors.
+ * Notes: Used as transfer objects between controllers and screens.
+ */
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 
-/**
- * Notification.java
- * Represents a system notification for appointment confirmations, reminders, and status updates.
- * Maps to Firestore "notifications" collection with read status and timestamp tracking.
- * Supports multiple notification types (reminder, confirmation, cancellation, etc).
- */
 public class Notification {
 
     private String           notificationId;
@@ -16,7 +22,7 @@ public class Notification {
     private String           title;
     private String           message;
     private NotificationType type;
-    /** Firestore string type for theming (CONFIRMATION, NEW_BOOKING, …). */
+    
     private String           typeKey;
     private Timestamp        sentAt;
     private long               timestampMillis;

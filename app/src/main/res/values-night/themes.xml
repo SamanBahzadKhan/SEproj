@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- themes.xml (night): Dark theme style definitions for night mode. -->
+
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    
     <style name="Base.Theme.CAPs" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowBackground">@color/caps_palette_bg</item>
         <item name="android:windowFullscreen">false</item>

@@ -1,10 +1,16 @@
 package com.fridge.caps.controllers;
 
+
+
 /**
- * NotificationController.java
- * Manages creation, retrieval, and lifecycle of user notifications for appointments and system events.
- * Handles notification creation for booking requests, confirmations, cancellations, and reminders.
- * Controller in the MVC pattern.
+ * Purpose: Handles application business rules and data operations.
+ * Depends on: Firebase Firestore/Auth models and app domain objects.
+ * Notes: Coordinates validation and state changes used by app flows.
+ */
+/**
+ * Purpose: Handles application business rules and data operations.
+ * Depends on: Firebase Firestore/Auth models and app domain objects.
+ * Notes: Coordinates validation and state changes used by app flows.
  */
 import android.util.Log;
 
@@ -22,9 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Firestore notifications: {@code read}, {@code timestamp} (millis), {@code type} (string).
- */
 public class NotificationController {
 
     private static final String TAG = "Firestore";
@@ -137,9 +140,7 @@ public class NotificationController {
                 "REMINDER");
     }
 
-    /**
-     * After Meet link is stored, notifies student and counsellor (same shape as legacy Cloud Function).
-     */
+    
     public void sendMeetLinkReady(String studentId, String counselorId,
                                   String studentName, String counselorName,
                                   String meetLink, String appointmentId) {
@@ -188,9 +189,7 @@ public class NotificationController {
                 });
     }
 
-    /**
-     * Real-time <strong>unread</strong> notifications for the current user (by {@code recipientId}).
-     */
+    
     public ListenerRegistration listenToMyNotifications(
             com.google.firebase.firestore.EventListener<com.google.firebase.firestore.QuerySnapshot> listener) {
         String uid = currentUid();
@@ -253,7 +252,7 @@ public class NotificationController {
                 .addOnFailureListener(e -> Log.e(TAG, e.getMessage() != null ? e.getMessage() : "mark"));
     }
 
-    /** Unread count for badge (real-time). */
+    
     public ListenerRegistration listenUnreadCount(
             com.google.firebase.firestore.EventListener<com.google.firebase.firestore.QuerySnapshot> listener) {
         String uid = currentUid();

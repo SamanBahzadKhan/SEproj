@@ -1,5 +1,11 @@
 package com.fridge.caps;
 
+
+/**
+ * Purpose: Handles automated verification for application behavior.
+ * Depends on: JUnit/Android test frameworks and app classes under test.
+ * Notes: Provides regression coverage for key workflows.
+ */
 import android.content.Intent;
 
 import androidx.test.core.app.ActivityScenario;

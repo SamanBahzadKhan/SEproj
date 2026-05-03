@@ -30,6 +30,9 @@ public class StudentTest {
         student.setRole(UserRole.STUDENT);
     }
 
+    /**
+     * Verifies testStudentFieldsSetCorrectly scenario.
+     */
     @Test
     public void testStudentFieldsSetCorrectly() {
         assertEquals("ahmad.raza@lums.edu.pk", student.getEmail());
@@ -40,12 +43,18 @@ public class StudentTest {
         assertEquals(UserRole.STUDENT, student.getRole());
     }
 
+    /**
+     * Verifies testStudentUidNotNull scenario.
+     */
     @Test
     public void testStudentUidNotNull() {
         assertNotNull(student.getUserId());
         assertFalse(student.getUserId().isEmpty());
     }
 
+    /**
+     * Verifies testStudentDefaultConstructor scenario.
+     */
     @Test
     public void testStudentDefaultConstructor() {
         Student emptyStudent = new Student();

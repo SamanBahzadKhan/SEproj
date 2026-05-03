@@ -28,6 +28,9 @@ public class NotificationTest {
         notif.setRead(false);
     }
 
+    /**
+     * Verifies testNotificationFieldsSet scenario.
+     */
     @Test
     public void testNotificationFieldsSet() {
         assertEquals("student_001", notif.getRecipientId());
@@ -36,6 +39,9 @@ public class NotificationTest {
         assertFalse(notif.isRead());
     }
 
+    /**
+     * Verifies testNotificationMarkRead scenario.
+     */
     @Test
     public void testNotificationMarkRead() {
         assertFalse(notif.isRead());

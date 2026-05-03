@@ -12,6 +12,9 @@ import static org.junit.Assert.assertNotNull;
 
 public class ControllerClassSmokeTest {
 
+    /**
+     * Verifies testControllerClassesExist scenario.
+     */
     @Test
     public void testControllerClassesExist() throws Exception {
         assertNotNull(Class.forName("com.fridge.caps.controllers.AuthController"));

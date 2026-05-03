@@ -30,11 +30,17 @@ public class TimeSlotTest {
         slot.setStatus(null);
     }
 
+    /**
+     * Verifies testSlotInitiallyNotBooked scenario.
+     */
     @Test
     public void testSlotInitiallyNotBooked() {
         assertFalse(slot.isBooked());
     }
 
+    /**
+     * Verifies testSlotBooking scenario.
+     */
     @Test
     public void testSlotBooking() {
         slot.setBooked(true);
@@ -46,6 +52,9 @@ public class TimeSlotTest {
         assertEquals("student_001", slot.getStudentId());
     }
 
+    /**
+     * Verifies testSlotCancellationKeepsStudentId scenario.
+     */
     @Test
     public void testSlotCancellationKeepsStudentId() {
         slot.setBooked(true);
@@ -58,6 +67,9 @@ public class TimeSlotTest {
         assertEquals("student_001", slot.getStudentId());
     }
 
+    /**
+     * Verifies testFeedbackSubmittedDefaultFalse scenario.
+     */
     @Test
     public void testFeedbackSubmittedDefaultFalse() {
         TimeSlot newSlot = new TimeSlot();

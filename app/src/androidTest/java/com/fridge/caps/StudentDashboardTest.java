@@ -51,6 +51,9 @@ public class StudentDashboardTest {
         return i;
     }
 
+    /**
+     * Verifies testDashboardElementsVisible scenario.
+     */
     @Test
     public void testDashboardElementsVisible() {
         try (ActivityScenario<StudentDashboardActivity> ignored = ActivityScenario.launch(testIntent())) {
@@ -60,6 +63,9 @@ public class StudentDashboardTest {
         }
     }
 
+    /**
+     * Verifies testBookAppointmentNavigates scenario.
+     */
     @Test
     public void testBookAppointmentNavigates() {
         try (ActivityScenario<StudentDashboardActivity> ignored = ActivityScenario.launch(testIntent())) {
@@ -68,6 +74,9 @@ public class StudentDashboardTest {
         }
     }
 
+    /**
+     * Verifies testBottomNavProfileNavigates scenario.
+     */
     @Test
     public void testBottomNavProfileNavigates() {
         try (ActivityScenario<StudentDashboardActivity> ignored = ActivityScenario.launch(testIntent())) {
@@ -76,6 +85,9 @@ public class StudentDashboardTest {
         }
     }
 
+    /**
+     * Verifies testBottomNavAlertsNavigates scenario.
+     */
     @Test
     public void testBottomNavAlertsNavigates() {
         try (ActivityScenario<StudentDashboardActivity> ignored = ActivityScenario.launch(testIntent())) {
@@ -84,6 +96,9 @@ public class StudentDashboardTest {
         }
     }
 
+    /**
+     * Verifies testBottomNavAppointmentsNavigates scenario.
+     */
     @Test
     public void testBottomNavAppointmentsNavigates() {
         try (ActivityScenario<StudentDashboardActivity> ignored = ActivityScenario.launch(testIntent())) {

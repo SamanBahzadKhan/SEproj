@@ -40,6 +40,9 @@ public class FeedbackActivityTest {
         return intent;
     }
 
+    /**
+     * Verifies testFeedbackScreenElementsVisible scenario.
+     */
     @Test
     public void testFeedbackScreenElementsVisible() {
         try (ActivityScenario<FeedbackActivity> ignored = ActivityScenario.launch(testIntent())) {
@@ -49,6 +52,9 @@ public class FeedbackActivityTest {
         }
     }
 
+    /**
+     * Verifies testCommentFieldAcceptsInput scenario.
+     */
     @Test
     public void testCommentFieldAcceptsInput() {
         try (ActivityScenario<FeedbackActivity> ignored = ActivityScenario.launch(testIntent())) {
@@ -58,6 +64,9 @@ public class FeedbackActivityTest {
         }
     }
 
+    /**
+     * Verifies testStarSelectionWorks scenario.
+     */
     @Test
     public void testStarSelectionWorks() {
         try (ActivityScenario<FeedbackActivity> ignored = ActivityScenario.launch(testIntent())) {

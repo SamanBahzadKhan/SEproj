@@ -41,6 +41,9 @@ public class LoginActivityTest {
         Intents.release();
     }
 
+    /**
+     * Verifies testLoginScreenElementsVisible scenario.
+     */
     @Test
     public void testLoginScreenElementsVisible() {
         Intent i = new Intent(androidx.test.platform.app.InstrumentationRegistry
@@ -54,6 +57,9 @@ public class LoginActivityTest {
         }
     }
 
+    /**
+     * Verifies testRegisterLinkNavigatesToRegister scenario.
+     */
     @Test
     public void testRegisterLinkNavigatesToRegister() {
         Intent i = new Intent(androidx.test.platform.app.InstrumentationRegistry

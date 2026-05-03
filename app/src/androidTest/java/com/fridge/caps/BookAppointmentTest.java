@@ -37,6 +37,9 @@ public class BookAppointmentTest {
         return intent;
     }
 
+    /**
+     * Verifies testBookingScreenElementsVisible scenario.
+     */
     @Test
     public void testBookingScreenElementsVisible() {
         try (ActivityScenario<BookAppointmentActivity> ignored = ActivityScenario.launch(testIntent())) {
@@ -46,6 +49,9 @@ public class BookAppointmentTest {
         }
     }
 
+    /**
+     * Verifies testNotesFieldAcceptsInput scenario.
+     */
     @Test
     public void testNotesFieldAcceptsInput() {
         try (ActivityScenario<BookAppointmentActivity> ignored = ActivityScenario.launch(testIntent())) {
@@ -55,6 +61,9 @@ public class BookAppointmentTest {
         }
     }
 
+    /**
+     * Verifies testConfirmShowsValidationPath scenario.
+     */
     @Test
     public void testConfirmShowsValidationPath() {
         try (ActivityScenario<BookAppointmentActivity> ignored = ActivityScenario.launch(testIntent())) {

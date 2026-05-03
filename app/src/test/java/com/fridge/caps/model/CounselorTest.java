@@ -34,6 +34,9 @@ public class CounselorTest {
         counselor.setRole(UserRole.COUNSELOR);
     }
 
+    /**
+     * Verifies testCounselorFieldsSetCorrectly scenario.
+     */
     @Test
     public void testCounselorFieldsSetCorrectly() {
         assertEquals("Dr. Sara Khan", counselor.getName());
@@ -42,6 +45,9 @@ public class CounselorTest {
         assertEquals(UserRole.COUNSELOR, counselor.getRole());
     }
 
+    /**
+     * Verifies testCounselorRatingBounds scenario.
+     */
     @Test
     public void testCounselorRatingBounds() {
         double rating = counselor.getRating();
@@ -49,11 +55,17 @@ public class CounselorTest {
         assertTrue(rating <= 5.0);
     }
 
+    /**
+     * Verifies testCounselorRatingCountNonNegative scenario.
+     */
     @Test
     public void testCounselorRatingCountNonNegative() {
         assertTrue(counselor.getRatingCount() >= 0);
     }
 
+    /**
+     * Verifies testCounselorAcceptingClientsDefaultBehavior scenario.
+     */
     @Test
     public void testCounselorAcceptingClientsDefaultBehavior() {
         Counselor c = new Counselor();

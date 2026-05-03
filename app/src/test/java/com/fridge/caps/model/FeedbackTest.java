@@ -29,6 +29,9 @@ public class FeedbackTest {
         feedback.setSubmittedAt(new Timestamp(System.currentTimeMillis() / 1000, 0));
     }
 
+    /**
+     * Verifies testFeedbackRatingBounds scenario.
+     */
     @Test
     public void testFeedbackRatingBounds() {
         int rating = feedback.getRating();
@@ -36,6 +39,9 @@ public class FeedbackTest {
         assertTrue(rating <= 5);
     }
 
+    /**
+     * Verifies testFeedbackLinkedToSlot scenario.
+     */
     @Test
     public void testFeedbackLinkedToSlot() {
         assertEquals("slot_001", feedback.getTimeslotId());
@@ -43,6 +49,9 @@ public class FeedbackTest {
         assertEquals("student_001", feedback.getStudentId());
     }
 
+    /**
+     * Verifies testFeedbackDefaultConstructor scenario.
+     */
     @Test
     public void testFeedbackDefaultConstructor() {
         Feedback empty = new Feedback();

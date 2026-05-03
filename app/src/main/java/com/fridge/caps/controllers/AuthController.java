@@ -86,19 +86,49 @@ public class AuthController {
     public void saveStudentProfile(String uid, String name, String email,
                                    String phone, String department, String yearOfStudy,
                                    RegisterCallback callback) {
+        saveStudentProfile(uid, name, email, phone, null, department, yearOfStudy, callback);
+    }
+
+    public void saveStudentProfile(String uid, String name, String email,
+                                   String phone, String rollNumber, String department,
+                                   String yearOfStudy, RegisterCallback callback) {
         if (uid == null || uid.isEmpty()) {
             callback.onFailure("Invalid account.");
             return;
         }
-        String createdAt = new SimpleDateFormat(
-                "yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-                .format(new Date());
-        Student student = new Student(uid, name, email,
-                phone, department, yearOfStudy, createdAt);
+        if (rollNumber == null || rollNumber.trim().isEmpty()) {
+            callback.onFailure("Roll number is required.");
+            return;
+        }
+        String roll = rollNumber.trim();
         db.collection(STUDENTS_COLLECTION)
-                .document(uid)
-                .set(student)
-                .addOnSuccessListener(unused -> callback.onSuccess())
+                .whereEqualTo("studentId", roll)
+                .get()
+                .addOnSuccessListener(query -> {
+                    boolean alreadyUsed = false;
+                    for (com.google.firebase.firestore.QueryDocumentSnapshot d : query) {
+                        if (!uid.equals(d.getId())) {
+                            alreadyUsed = true;
+                            break;
+                        }
+                    }
+                    if (alreadyUsed) {
+                        callback.onFailure("Roll number already exists.");
+                        return;
+                    }
+                    String createdAt = new SimpleDateFormat(
+                            "yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+                            .format(new Date());
+                    Student student = new Student(uid, name, email,
+                            phone, department, yearOfStudy, createdAt);
+                    student.setCampusStudentId(roll);
+                    db.collection(STUDENTS_COLLECTION)
+                            .document(uid)
+                            .set(student)
+                            .addOnSuccessListener(unused -> callback.onSuccess())
+                            .addOnFailureListener(e ->
+                                    callback.onFailure("Profile save failed: " + e.getMessage()));
+                })
                 .addOnFailureListener(e ->
                         callback.onFailure("Profile save failed: " + e.getMessage()));
     }

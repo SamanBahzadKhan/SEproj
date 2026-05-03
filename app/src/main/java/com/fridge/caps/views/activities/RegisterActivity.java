@@ -32,7 +32,7 @@ public class RegisterActivity extends AppCompatActivity {
     private static final int FLIP_VERIFY = 1;
 
     private ViewFlipper     registerFlipper;
-    private EditText        etName, etEmail, etPassword, etPhone, etDepartment, etYear;
+    private EditText        etName, etEmail, etPassword, etPhone, etDepartment, etYear, etRollNumber;
     private Button          btnRegister;
     private Button          btnVerifiedContinue;
     private Button          btnResendVerification;
@@ -48,6 +48,7 @@ public class RegisterActivity extends AppCompatActivity {
     private String pendingName;
     private String pendingEmail;
     private String pendingPhone;
+    private String pendingRollNumber;
     private String pendingDepartment;
     private String pendingYear;
 
@@ -63,6 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
         etEmail              = findViewById(R.id.etEmail);
         etPassword           = findViewById(R.id.etPassword);
         etPhone              = findViewById(R.id.etPhone);
+        etRollNumber         = findViewById(R.id.etRollNumber);
         etDepartment         = findViewById(R.id.etDepartment);
         etYear               = findViewById(R.id.etYear);
         btnRegister          = findViewById(R.id.btnRegister);
@@ -91,6 +93,7 @@ public class RegisterActivity extends AppCompatActivity {
         String email      = etEmail.getText().toString().trim();
         String password   = etPassword.getText().toString().trim();
         String phone      = etPhone.getText().toString().trim();
+        String rollNumber = etRollNumber.getText().toString().trim();
         String department = etDepartment.getText().toString().trim();
         String year       = etYear.getText().toString().trim();
 
@@ -100,6 +103,10 @@ public class RegisterActivity extends AppCompatActivity {
         }
         if (password.length() < 6) {
             Toast.makeText(this, "Password must be at least 6 characters.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (rollNumber.isEmpty()) {
+            Toast.makeText(this, "Roll number is required.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -116,6 +123,7 @@ public class RegisterActivity extends AppCompatActivity {
                     pendingName = name;
                     pendingEmail = email;
                     pendingPhone = phone;
+                    pendingRollNumber = rollNumber;
                     pendingDepartment = department;
                     pendingYear = year;
 
@@ -158,6 +166,7 @@ public class RegisterActivity extends AppCompatActivity {
                 pendingName,
                 pendingEmail,
                 pendingPhone,
+                pendingRollNumber,
                 pendingDepartment,
                 pendingYear,
                 new AuthController.RegisterCallback() {
@@ -211,6 +220,7 @@ public class RegisterActivity extends AppCompatActivity {
                     pendingName,
                     pendingEmail,
                     pendingPhone,
+                    pendingRollNumber,
                     pendingDepartment,
                     pendingYear,
                     new AuthController.RegisterCallback() {

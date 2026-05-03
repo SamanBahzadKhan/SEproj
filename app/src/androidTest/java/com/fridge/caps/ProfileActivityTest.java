@@ -49,6 +49,9 @@ public class ProfileActivityTest {
         return intent;
     }
 
+    /**
+     * Verifies testProfileElementsVisible scenario.
+     */
     @Test
     public void testProfileElementsVisible() {
         try (ActivityScenario<ProfileActivity> ignored = ActivityScenario.launch(testIntent())) {
@@ -60,6 +63,9 @@ public class ProfileActivityTest {
         }
     }
 
+    /**
+     * Verifies testEditButtonNavigatesToEditProfile scenario.
+     */
     @Test
     public void testEditButtonNavigatesToEditProfile() {
         try (ActivityScenario<ProfileActivity> ignored = ActivityScenario.launch(testIntent())) {
@@ -68,6 +74,9 @@ public class ProfileActivityTest {
         }
     }
 
+    /**
+     * Verifies testSignOutNavigatesToLogin scenario.
+     */
     @Test
     public void testSignOutNavigatesToLogin() {
         try (ActivityScenario<ProfileActivity> ignored = ActivityScenario.launch(testIntent())) {

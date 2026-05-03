@@ -15,6 +15,9 @@ import static org.junit.Assert.assertTrue;
 
 public class AppointmentControllerTest {
 
+    /**
+     * Verifies testSlotDocumentIdStableFormat scenario.
+     */
     @Test
     public void testSlotDocumentIdStableFormat() {
         String id = AppointmentController.slotDocumentId("c1", "2026-04-10", "10:00 AM");

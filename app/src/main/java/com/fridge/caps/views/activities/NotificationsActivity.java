@@ -4,6 +4,8 @@ package com.fridge.caps.views.activities;
  * NotificationsActivity.java
  * Displays user notifications in a list (unread only). Mark-all-read clears them from this screen.
  */
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -95,7 +97,23 @@ public class NotificationsActivity extends AppCompatActivity {
             recyclerView.setAdapter(null);
         } else {
             tvEmpty.setVisibility(View.GONE);
-            recyclerView.setAdapter(new NotificationAdapter(list, this::handleNotificationClick));
+            recyclerView.setAdapter(new NotificationAdapter(list, this::handleNotificationClick,
+                    this::handleMeetLinkTap));
+        }
+    }
+
+    private void handleMeetLinkTap(Notification n) {
+        if (n == null) return;
+        if (n.getNotificationId() != null && !n.getNotificationId().isEmpty()) {
+            notificationController.markAsRead(n.getNotificationId());
+        }
+        String url = n.getMeetLink();
+        if (url != null && !url.trim().isEmpty()) {
+            try {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url.trim())));
+            } catch (Exception e) {
+                Toast.makeText(this, "Could not open meeting link.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -106,16 +124,9 @@ public class NotificationsActivity extends AppCompatActivity {
         }
         String type = n.getTypeKey() != null ? n.getTypeKey() : "";
         String reportId = n.getRelatedReportId();
-        String signupId = n.getRelatedSignupId();
         if (reportId != null && !reportId.isEmpty()) {
             android.content.Intent i = new android.content.Intent(this, ReportDetailActivity.class);
             i.putExtra(ReportDetailActivity.EXTRA_REPORT_ID, reportId);
-            startActivity(i);
-            return;
-        }
-        if (signupId != null && !signupId.isEmpty()) {
-            android.content.Intent i = new android.content.Intent(this, PendingCounselorSignupDetailActivity.class);
-            i.putExtra(PendingCounselorSignupDetailActivity.EXTRA_SIGNUP_ID, signupId);
             startActivity(i);
             return;
         }

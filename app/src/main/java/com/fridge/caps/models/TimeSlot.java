@@ -28,6 +28,8 @@ public class TimeSlot {
     private String  notes;
     private boolean feedbackSubmitted;
     private String  bookedAt;
+    /** Set when an online session gets a Google Meet link (Firestore on timeslot document). */
+    private String  meetLink;
 
     /** Legacy fields (older documents). */
     private Timestamp legacyStartTime;
@@ -123,6 +125,7 @@ public class TimeSlot {
     public String getNotes() { return notes; }
     public boolean isFeedbackSubmitted() { return feedbackSubmitted; }
     public String getBookedAt() { return bookedAt; }
+    public String getMeetLink() { return meetLink; }
     public Timestamp getLegacyStartTime() { return legacyStartTime; }
     public Timestamp getLegacyEndTime() { return legacyEndTime; }
     public Boolean getLegacyIsAvailable() { return legacyIsAvailable; }
@@ -142,6 +145,7 @@ public class TimeSlot {
     public void setNotes(String notes) { this.notes = notes; }
     public void setFeedbackSubmitted(boolean feedbackSubmitted) { this.feedbackSubmitted = feedbackSubmitted; }
     public void setBookedAt(String bookedAt) { this.bookedAt = bookedAt; }
+    public void setMeetLink(String meetLink) { this.meetLink = meetLink; }
     public void setLegacyStartTime(Timestamp legacyStartTime) { this.legacyStartTime = legacyStartTime; }
     public void setLegacyEndTime(Timestamp legacyEndTime) { this.legacyEndTime = legacyEndTime; }
     public void setLegacyIsAvailable(Boolean legacyIsAvailable) { this.legacyIsAvailable = legacyIsAvailable; }

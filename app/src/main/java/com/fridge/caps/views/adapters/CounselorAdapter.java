@@ -124,9 +124,15 @@ public class CounselorAdapter extends RecyclerView.Adapter<CounselorAdapter.Coun
     private String initialsOf(String name) {
         if (name == null || name.trim().isEmpty()) return "NA";
         String[] parts = name.trim().split("\\s+");
-        if (parts.length == 1) return parts[0].substring(0, 1).toUpperCase(Locale.US);
-        String first = parts[0].substring(0, 1).toUpperCase(Locale.US);
-        String last = parts[parts.length - 1].substring(0, 1).toUpperCase(Locale.US);
-        return first + last;
+        if (parts.length == 0) return "NA";
+        if (parts.length == 1) {
+            String only = parts[0];
+            return only.isEmpty() ? "NA" : only.substring(0, 1).toUpperCase(Locale.US);
+        }
+        String first = parts[0];
+        String last = parts[parts.length - 1];
+        if (first.isEmpty() || last.isEmpty()) return "NA";
+        return first.substring(0, 1).toUpperCase(Locale.US)
+                + last.substring(0, 1).toUpperCase(Locale.US);
     }
 }

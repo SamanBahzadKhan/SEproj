@@ -44,7 +44,6 @@ public class LoginActivityTest {
             onView(withId(R.id.etEmail)).check(matches(isDisplayed()));
             onView(withId(R.id.etPassword)).check(matches(isDisplayed()));
             onView(withId(R.id.btnLogin)).check(matches(isDisplayed()));
-            onView(withId(R.id.btnCounselorLogin)).check(matches(isDisplayed()));
             onView(withId(R.id.tvRegisterLink)).check(matches(isDisplayed()));
         }
     }

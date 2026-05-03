@@ -172,6 +172,62 @@
             </FrameLayout>
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/rowMeetOnline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvMeetLinkPending"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="Meeting link will appear once counsellor confirms"
+                android:textColor="@color/caps_palette_grey_warm"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+            <FrameLayout
+                android:id="@+id/frameJoinMeet"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/bg_offset_join_meet_10"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/btnJoinMeet"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_gravity="top|start"
+                    android:background="@android:color/transparent"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:stateListAnimator="@animator/press_down_button">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_marginEnd="10dp"
+                        android:contentDescription="@null"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_videocam_meet" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-black"
+                        android:text="Join Google Meet"
+                        android:textColor="@color/caps_palette_white"
+                        android:textSize="15sp" />
+                </LinearLayout>
+            </FrameLayout>
+        </LinearLayout>
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnFeedback"
             android:layout_width="match_parent"

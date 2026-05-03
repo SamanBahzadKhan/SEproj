@@ -22,6 +22,7 @@ public class Appointment {
     private String            notes;
     private AppointmentStatus status;
     private boolean           feedbackSubmitted;
+    private String            meetLink;
 
     public Appointment() {}
 
@@ -62,6 +63,7 @@ public class Appointment {
     public String getNotes()                { return notes; }
     public AppointmentStatus getStatus()    { return status; }
     public boolean isFeedbackSubmitted()   { return feedbackSubmitted; }
+    public String getMeetLink()                 { return meetLink; }
 
     public void setAppointmentId(String id)         { this.appointmentId = id; }
     public void setStudentId(String id)             { this.studentId = id; }
@@ -77,4 +79,5 @@ public class Appointment {
     public void setFeedbackSubmitted(boolean feedbackSubmitted) {
         this.feedbackSubmitted = feedbackSubmitted;
     }
+    public void setMeetLink(String meetLink) { this.meetLink = meetLink; }
 }

@@ -26,7 +26,7 @@ public class Counselor extends User {
     }
 
     /**
-     * Admin-created counsellor account (see {@link com.fridge.caps.controllers.AuthController#registerCounselor}).
+     * Admin-created counsellor account (see Cloud Function {@code createCounsellorAccount} / {@link com.fridge.caps.views.activities.AddCounselorActivity}).
      */
     public Counselor(String userId, String name, String email, String specialization,
                      String bio, String phone, float rating, boolean acceptingClients, String createdAt) {

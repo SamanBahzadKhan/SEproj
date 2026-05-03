@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -39,7 +38,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class EditCounselorProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "EditCounselorProfile";
-
     private static final int PERMISSION_REQUEST = 1002;
 
     private EditText etName, etPhone, etSpecialization, etDepartment, etBio;

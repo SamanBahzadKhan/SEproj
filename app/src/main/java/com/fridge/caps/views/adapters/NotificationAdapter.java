@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fridge.caps.R;
@@ -27,12 +28,24 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         void onNotificationClick(Notification n);
     }
 
+    /** Optional; used for Meet link notifications. */
+    public interface OnMeetLinkTapListener {
+        void onMeetLinkTap(Notification n);
+    }
+
     private final List<Row> rows;
     private final OnNotificationClickListener listener;
+    @Nullable private final OnMeetLinkTapListener meetLinkListener;
 
     public NotificationAdapter(List<Notification> items, OnNotificationClickListener listener) {
+        this(items, listener, null);
+    }
+
+    public NotificationAdapter(List<Notification> items, OnNotificationClickListener listener,
+                               @Nullable OnMeetLinkTapListener meetLinkListener) {
         this.rows = buildRows(items);
         this.listener = listener;
+        this.meetLinkListener = meetLinkListener;
     }
 
     @NonNull
@@ -88,6 +101,12 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                     cardBg = R.drawable.bg_offset_notification_card_sage;
                     iconTint = 0xFFFFFFFF;
                     break;
+                case "meet_link":
+                    iconRes = android.R.drawable.ic_media_play;
+                    iconBg = R.drawable.bg_offset_notification_icon_bluegray;
+                    cardBg = R.drawable.bg_offset_notification_card_bluegrey;
+                    iconTint = 0xFFFFFFFF;
+                    break;
                 case "CONFIRMATION":
                 case "NEW_BOOKING":
                 default:
@@ -102,6 +121,18 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         h.iconCircle.setBackgroundResource(iconBg);
         h.ivIcon.setImageResource(iconRes);
         h.ivIcon.setColorFilter(iconTint);
+
+        if (h.btnTapJoin != null) {
+            String ml = n.getMeetLink();
+            boolean showJoin = "meet_link".equals(tk) && ml != null && !ml.trim().isEmpty();
+            h.btnTapJoin.setVisibility(showJoin ? View.VISIBLE : View.GONE);
+            if (showJoin && meetLinkListener != null) {
+                h.btnTapJoin.setOnClickListener(v ->
+                        meetLinkListener.onMeetLinkTap(n));
+            } else {
+                h.btnTapJoin.setOnClickListener(null);
+            }
+        }
 
         h.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onNotificationClick(n);
@@ -182,6 +213,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         final View iconCircle;
         final ImageView ivIcon;
         final TextView tvTitle, tvMessage, tvTime, tvHeader;
+        @Nullable final TextView btnTapJoin;
 
         VH(@NonNull View itemView) {
             super(itemView);
@@ -192,6 +224,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             tvMessage = itemView.findViewById(R.id.tvMessage);
             tvTime = itemView.findViewById(R.id.tvTime);
             tvHeader = itemView.findViewById(R.id.tvHeader);
+            btnTapJoin = itemView.findViewById(R.id.btnTapJoin);
         }
     }
 

@@ -127,34 +127,6 @@
                     android:textSize="16sp" />
             </FrameLayout>
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginHorizontal="16dp"
-                android:background="@drawable/bg_offset_button_white_12">
-
-                <Button
-                    android:id="@+id/btnCounselorLogin"
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:background="@android:color/transparent"
-                    android:fontFamily="sans-serif-black"
-                    android:text="SIGN IN AS COUNSELLOR"
-                    android:textColor="@color/caps_palette_neutral_dark"
-                    android:textSize="16sp" />
-            </FrameLayout>
-
-            <TextView
-                android:id="@+id/tvCounselorRegister"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:fontFamily="sans-serif"
-                android:text="New counsellor? Register here"
-                android:textColor="@color/caps_palette_grey_warm"
-                android:textSize="13sp" />
-
             <TextView
                 android:id="@+id/tvRegisterLink"
                 android:layout_width="wrap_content"

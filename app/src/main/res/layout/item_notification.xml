@@ -70,6 +70,22 @@
                 android:maxLines="3"
                 android:textColor="@color/caps_palette_grey_warm"
                 android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/btnTapJoin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_offset_tap_join_pill"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="sans-serif-black"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="8dp"
+                android:text="Tap to Join"
+                android:textColor="@color/caps_palette_white"
+                android:textSize="12sp"
+                android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

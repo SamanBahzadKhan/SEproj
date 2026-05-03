@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="20dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="12dp">
+
+    <TextView
+        android:id="@+id/tvLoginVerifyMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:text="Please verify your email before logging in. Check your inbox."
+        android:textColor="@color/caps_palette_neutral_dark"
+        android:textSize="15sp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_offset_button_brown_12">
+
+        <Button
+            android:id="@+id/btnResendVerificationFromLogin"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@android:color/transparent"
+            android:fontFamily="sans-serif-black"
+            android:text="Resend Verification Email"
+            android:textAllCaps="false"
+            android:textColor="@color/caps_palette_neutral_dark"
+            android:textSize="15sp" />
+    </FrameLayout>
+</LinearLayout>

@@ -1,17 +1,13 @@
 package com.fridge.caps.controllers;
 
-import com.fridge.caps.models.Counselor;
 import com.fridge.caps.models.Student;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * AuthController.java
@@ -26,8 +22,6 @@ public class AuthController {
     private static final String STUDENTS_COLLECTION   = "students";
     private static final String COUNSELORS_COLLECTION = "counselors";
     private static final String ADMINS_COLLECTION     = "admins";
-    private static final String PENDING_COUNSELOR_SIGNUPS = "pending_counselor_signups";
-
     public interface RegisterCallback {
         void onSuccess();
         void onFailure(String errorMessage);
@@ -89,6 +83,29 @@ public class AuthController {
                                     callback.onFailure("Profile save failed: " + e.getMessage()));
                 })
                 .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
+    }
+
+    /**
+     * Writes the student profile to Firestore after email verification (registration flow).
+     */
+    public void saveStudentProfile(String uid, String name, String email,
+                                   String phone, String department, String yearOfStudy,
+                                   RegisterCallback callback) {
+        if (uid == null || uid.isEmpty()) {
+            callback.onFailure("Invalid account.");
+            return;
+        }
+        String createdAt = new SimpleDateFormat(
+                "yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+                .format(new Date());
+        Student student = new Student(uid, name, email,
+                phone, department, yearOfStudy, createdAt);
+        db.collection(STUDENTS_COLLECTION)
+                .document(uid)
+                .set(student)
+                .addOnSuccessListener(unused -> callback.onSuccess())
+                .addOnFailureListener(e ->
+                        callback.onFailure("Profile save failed: " + e.getMessage()));
     }
 
     /**
@@ -189,121 +206,6 @@ public class AuthController {
                                 auth.signOut();
                                 callback.onFailure(e.getMessage());
                             });
-                })
-                .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
-    }
-
-    /**
-     * Self-service counsellor registration (same as spec: role, rating, accepting clients).
-     */
-    public void registerCounselorAccount(String name, String email, String password,
-                                         String specialization, String department,
-                                         String phone, String bio,
-                                         RegisterCallback callback) {
-        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            callback.onFailure("All required fields must be filled.");
-            return;
-        }
-        if (password.length() < 6) {
-            callback.onFailure("Password must be at least 6 characters.");
-            return;
-        }
-        auth.createUserWithEmailAndPassword(email, password)
-                .addOnSuccessListener(authResult -> {
-                    String uid = authResult.getUser() != null
-                            ? authResult.getUser().getUid() : null;
-                    if (uid == null) {
-                        callback.onFailure("Account creation failed.");
-                        return;
-                    }
-                    String createdAt = new SimpleDateFormat(
-                            "yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-                            .format(new Date());
-                    Map<String, Object> data = new HashMap<>();
-                    data.put("name", name);
-                    data.put("email", email);
-                    data.put("specialization", specialization != null ? specialization : "");
-                    data.put("department", department != null ? department : "");
-                    data.put("phone", phone != null ? phone : "");
-                    data.put("bio", bio != null ? bio : "");
-                    data.put("role", "PENDING_COUNSELOR");
-                    data.put("isAcceptingClients", true);
-                    data.put("createdAt", createdAt);
-                    data.put("timestamp", FieldValue.serverTimestamp());
-                    data.put("status", "pending");
-                    db.collection(PENDING_COUNSELOR_SIGNUPS).document(uid)
-                            .set(data)
-                            .addOnSuccessListener(unused -> {
-                                notifyAdminsForSignup(uid, name, specialization);
-                                callback.onSuccess();
-                            })
-                            .addOnFailureListener(e ->
-                                    callback.onFailure("Profile save failed: " + e.getMessage()));
-                })
-                .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
-    }
-
-    private void notifyAdminsForSignup(String uid, String name, String specialization) {
-        db.collection(ADMINS_COLLECTION).get()
-                .addOnSuccessListener(q -> {
-                    for (com.google.firebase.firestore.QueryDocumentSnapshot admin : q) {
-                        Map<String, Object> notif = new HashMap<>();
-                        notif.put("recipientId", admin.getId());
-                        notif.put("targetRole", "admin");
-                        notif.put("title", "New Counsellor Signup");
-                        notif.put("message", (name != null ? name : "A counsellor")
-                                + " requested account approval"
-                                + (specialization != null && !specialization.isEmpty()
-                                ? " (" + specialization + ")" : "") + ".");
-                        notif.put("type", "COUNSELLOR_SIGNUP_PENDING");
-                        notif.put("relatedSignupId", uid);
-                        notif.put("timestamp", System.currentTimeMillis());
-                        notif.put("read", false);
-                        notif.put("isRead", false);
-                        db.collection("notifications").add(notif);
-                    }
-                });
-    }
-
-    /**
-     * Creates a counsellor account (Auth + Firestore counsellors doc). Used from admin panel.
-     */
-    public void registerCounselor(String name, String email, String password,
-                                  String specialization, RegisterCallback callback) {
-        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            callback.onFailure("Name, email and password are required.");
-            return;
-        }
-        if (password.length() < 6) {
-            callback.onFailure("Password must be at least 6 characters.");
-            return;
-        }
-
-        auth.createUserWithEmailAndPassword(email, password)
-                .addOnSuccessListener(authResult -> {
-                    String uid = authResult.getUser() != null
-                            ? authResult.getUser().getUid() : null;
-                    if (uid == null) {
-                        callback.onFailure("Account creation failed.");
-                        return;
-                    }
-                    String createdAt = new SimpleDateFormat(
-                            "yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-                            .format(new Date());
-                    Counselor counselor = new Counselor(uid, name, email,
-                            specialization != null ? specialization : "",
-                            "", "", 0f, true, createdAt);
-
-                    db.collection(COUNSELORS_COLLECTION).document(uid)
-                            .set(counselor)
-                            .addOnSuccessListener(unused ->
-                                    db.collection(COUNSELORS_COLLECTION).document(uid)
-                                            .update("isActive", true, "isDeleted", false)
-                                            .addOnSuccessListener(v -> callback.onSuccess())
-                                            .addOnFailureListener(e ->
-                                                    callback.onFailure("Profile save failed: " + e.getMessage())))
-                            .addOnFailureListener(e ->
-                                    callback.onFailure("Profile save failed: " + e.getMessage()));
                 })
                 .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
     }

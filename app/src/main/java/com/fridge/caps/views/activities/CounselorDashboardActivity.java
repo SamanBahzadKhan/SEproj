@@ -27,7 +27,11 @@ import com.fridge.caps.controllers.NotificationController;
 import com.fridge.caps.models.Appointment;
 import com.fridge.caps.models.AppointmentStatus;
 import com.fridge.caps.models.TimeSlot;
+import com.fridge.caps.network.MeetRequest;
+import com.fridge.caps.network.MeetResponse;
+import com.fridge.caps.network.SupabaseMeetClient;
 import com.fridge.caps.utils.DateUtils;
+import com.fridge.caps.utils.MeetLinkTimeHelper;
 import com.fridge.caps.views.BottomNavUi;
 import com.fridge.caps.views.adapters.AppointmentAdapter;
 import com.fridge.caps.views.adapters.PendingRequestAdapter;
@@ -35,6 +39,7 @@ import com.fridge.caps.views.fragments.AvailabilityBottomSheet;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 
@@ -50,6 +55,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Counsellor home: availability grid, pending requests, today's confirmed sessions.
@@ -557,6 +567,7 @@ public class CounselorDashboardActivity extends AppCompatActivity {
                                 dt);
                         Toast.makeText(CounselorDashboardActivity.this,
                                 "Appointment confirmed.", Toast.LENGTH_SHORT).show();
+                        generateMeetLinkIfOnline(appt);
                     }
 
                     @Override
@@ -564,6 +575,172 @@ public class CounselorDashboardActivity extends AppCompatActivity {
                         Toast.makeText(CounselorDashboardActivity.this,
                                 error, Toast.LENGTH_SHORT).show();
                     }
+                });
+    }
+
+    /**
+     * Creates a Google Meet link for online appointments after the slot is confirmed.
+     */
+    private void generateMeetLinkIfOnline(Appointment appt) {
+        if (appt == null || !"Online".equals(appt.getType())) {
+            return;
+        }
+        if (counselorUid == null) {
+            return;
+        }
+        String supabaseUrl = getString(R.string.supabase_url).trim();
+        String supabaseKey = getString(R.string.supabase_anon_key).trim();
+        if (supabaseUrl.isEmpty() || supabaseKey.isEmpty()) {
+            Toast.makeText(this,
+                    "Add non-empty supabase_url and supabase_anon_key in strings.xml.",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (!supabaseUrl.startsWith("https://")) {
+            Toast.makeText(this,
+                    "supabase_url must start with https://",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+        db.collection("counselors").document(counselorUid).get()
+                .addOnSuccessListener(cDoc -> {
+                    if (!cDoc.exists()) {
+                        return;
+                    }
+                    String cEmail = cDoc.getString("email");
+                    String cName = cDoc.getString("name");
+                    if (cEmail == null || cEmail.isEmpty()) {
+                        Toast.makeText(CounselorDashboardActivity.this,
+                                "Your profile is missing an email address.",
+                                Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    db.collection("timeslots").document(appt.getTimeSlotId()).get()
+                            .addOnSuccessListener(tDoc -> {
+                                String dateStr = tDoc.getString("date");
+                                String startStr = tDoc.getString("startTime");
+                                if (startStr == null || startStr.isEmpty()) {
+                                    startStr = appt.getTimeDisplay();
+                                }
+                                String[] iso = MeetLinkTimeHelper.buildStartEndIso(dateStr, startStr, 60);
+                                if (iso == null) {
+                                    Toast.makeText(CounselorDashboardActivity.this,
+                                            "Could not determine session time for Meet link.",
+                                            Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                                db.collection("students").document(appt.getStudentId()).get()
+                                        .addOnSuccessListener(sDoc -> {
+                                            String sEmail = sDoc.getString("email");
+                                            String sName = sDoc.getString("name");
+                                            if (sEmail == null || sEmail.isEmpty()) {
+                                                Toast.makeText(CounselorDashboardActivity.this,
+                                                        "Student email not found.",
+                                                        Toast.LENGTH_LONG).show();
+                                                return;
+                                            }
+                                            MeetRequest req = new MeetRequest(
+                                                    sEmail,
+                                                    cEmail,
+                                                    iso[0],
+                                                    iso[1]);
+                                            SupabaseMeetClient.create(CounselorDashboardActivity.this)
+                                                    .createMeet(req)
+                                                    .enqueue(new Callback<MeetResponse>() {
+                                                        @Override
+                                                        public void onResponse(Call<MeetResponse> call,
+                                                                Response<MeetResponse> response) {
+                                                            runOnUiThread(() -> handleSupabaseMeetResponse(
+                                                                    appt, sName, cName, response));
+                                                        }
+
+                                                        @Override
+                                                        public void onFailure(Call<MeetResponse> call,
+                                                                Throwable t) {
+                                                            runOnUiThread(() -> {
+                                                                Log.e("MeetLink",
+                                                                        t.getMessage() != null ? t.getMessage()
+                                                                                : "onFailure",
+                                                                        t);
+                                                                Toast.makeText(CounselorDashboardActivity.this,
+                                                                        t.getMessage() != null ? t.getMessage()
+                                                                                : "Could not reach Supabase.",
+                                                                        Toast.LENGTH_LONG).show();
+                                                            });
+                                                        }
+                                                    });
+                                        })
+                                        .addOnFailureListener(e ->
+                                                Toast.makeText(CounselorDashboardActivity.this,
+                                                        "Could not load student profile.",
+                                                        Toast.LENGTH_SHORT).show());
+                            })
+                            .addOnFailureListener(e ->
+                                    Toast.makeText(CounselorDashboardActivity.this,
+                                            "Could not load appointment slot.",
+                                            Toast.LENGTH_SHORT).show());
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(CounselorDashboardActivity.this,
+                                "Could not load counsellor profile.",
+                                Toast.LENGTH_SHORT).show());
+    }
+
+    private void handleSupabaseMeetResponse(Appointment appt, String studentName, String counselorName,
+                                            Response<MeetResponse> response) {
+        if (!response.isSuccessful()) {
+            String detail = "Meet link failed (" + response.code() + ").";
+            ResponseBody err = response.errorBody();
+            if (err != null) {
+                try {
+                    String body = err.string();
+                    if (body != null && !body.trim().isEmpty()) {
+                        detail = detail + " " + body;
+                    }
+                } catch (Exception e) {
+                    Log.e("MeetLink", "read error body", e);
+                }
+            }
+            Toast.makeText(this, detail, Toast.LENGTH_LONG).show();
+            return;
+        }
+        MeetResponse body = response.body();
+        if (body == null || body.meetLink == null || body.meetLink.trim().isEmpty()) {
+            String detail =
+                    body != null && body.error != null && !body.error.trim().isEmpty()
+                            ? body.error.trim()
+                            : "Supabase returned no meet link. Check Edge Function logs and Calendar setup.";
+            Toast.makeText(this, detail, Toast.LENGTH_LONG).show();
+            return;
+        }
+        persistMeetLinkAndNotify(appt, studentName, counselorName, body.meetLink.trim());
+    }
+
+    private void persistMeetLinkAndNotify(Appointment appt, String studentName, String counselorName,
+                                           String meetLink) {
+        Map<String, Object> slotUpdate = new HashMap<>();
+        slotUpdate.put("meetLink", meetLink);
+        slotUpdate.put("meetLinkGeneratedAt", FieldValue.serverTimestamp());
+        db.collection("timeslots").document(appt.getTimeSlotId())
+                .update(slotUpdate)
+                .addOnSuccessListener(v -> {
+                    notificationController.sendMeetLinkReady(
+                            appt.getStudentId(),
+                            counselorUid,
+                            studentName,
+                            counselorName,
+                            meetLink,
+                            appt.getAppointmentId());
+                    Toast.makeText(CounselorDashboardActivity.this,
+                            "Google Meet link generated!",
+                            Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("MeetLink", e.getMessage() != null ? e.getMessage() : "firestore", e);
+                    Toast.makeText(CounselorDashboardActivity.this,
+                            "Meet link received but saving failed: "
+                                    + (e.getMessage() != null ? e.getMessage() : ""),
+                            Toast.LENGTH_LONG).show();
                 });
     }
 

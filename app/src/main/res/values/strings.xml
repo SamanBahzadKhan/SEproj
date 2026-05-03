@@ -16,4 +16,10 @@
     <string name="session_notes_status_pending">Not submitted yet</string>
     <string name="journal_delete">Delete entry</string>
     <string name="journal_delete_confirm">Delete this journal entry? This cannot be undone.</string>
+    <string name="google_web_client_id" translatable="false">YOUR_WEB_CLIENT_ID.apps.googleusercontent.com</string>
+    <string name="verify_email_body_template">We sent a verification link to %1$s. Please check your inbox and click the link to continue.</string>
+    <string name="resend_email_countdown">Resend in %1$ds…</string>
+    <!-- Must be https; trailing slash optional (normalized in code). -->
+    <string name="supabase_url" translatable="false">https://fuswhojmfbreyzzdnhcb.supabase.co/</string>
+    <string name="supabase_anon_key" translatable="false">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1c3dob2ptZmJyZXl6emRuaGNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3ODg2NzQsImV4cCI6MjA5MzM2NDY3NH0.3JwQtOS5_tomjWwRJLgsIUVjr-kubbsnuNP2NIFWvqU</string>
 </resources>

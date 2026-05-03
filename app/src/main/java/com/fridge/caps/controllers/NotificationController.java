@@ -137,6 +137,30 @@ public class NotificationController {
                 "REMINDER");
     }
 
+    /**
+     * After Meet link is stored, notifies student and counsellor (same shape as legacy Cloud Function).
+     */
+    public void sendMeetLinkReady(String studentId, String counselorId,
+                                  String studentName, String counselorName,
+                                  String meetLink, String appointmentId) {
+        if (studentId != null && !studentId.isEmpty()) {
+            NotificationUtils.writeMeetLinkNotification(db, studentId,
+                    "Your Meeting Link is Ready",
+                    "Your online session with "
+                            + (counselorName != null ? counselorName : "your counsellor")
+                            + " is confirmed. Tap to join.",
+                    meetLink, appointmentId, "meet_link");
+        }
+        if (counselorId != null && !counselorId.isEmpty()) {
+            NotificationUtils.writeMeetLinkNotification(db, counselorId,
+                    "Session Confirmed",
+                    "Online session with "
+                            + (studentName != null ? studentName : "your student")
+                            + " confirmed. Google Meet link generated.",
+                    meetLink, appointmentId, "meet_link");
+        }
+    }
+
     private void writeNotification(String recipientId, String title, String message, String type) {
         NotificationUtils.writeNotification(db, recipientId, title, message, type);
     }

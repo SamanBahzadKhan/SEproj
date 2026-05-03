@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/caps_palette_bg">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
@@ -247,39 +247,6 @@
                 android:layout_marginTop="12dp"
                 android:fontFamily="sans-serif-black"
                 android:letterSpacing="0.08"
-                android:text="Pending Counselor Signups"
-                android:textAllCaps="true"
-                android:textColor="@color/caps_palette_neutral_dark"
-                android:textSize="14sp" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvPendingSignups"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:clipToPadding="false"
-                android:nestedScrollingEnabled="false"
-                android:paddingHorizontal="10dp" />
-
-            <TextView
-                android:id="@+id/tvNoSignups"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_marginTop="8dp"
-                android:paddingHorizontal="12dp"
-                android:text="No pending counselor signups"
-                android:textColor="@color/caps_palette_grey_warm"
-                android:textSize="16sp"
-                android:visibility="gone" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="12dp"
-                android:fontFamily="sans-serif-black"
-                android:letterSpacing="0.08"
                 android:text="All Reported Users"
                 android:textAllCaps="true"
                 android:textColor="@color/caps_palette_neutral_dark"
@@ -370,7 +337,7 @@
                     android:textSize="16sp" />
             </FrameLayout>
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <ProgressBar
         android:id="@+id/progressBar"

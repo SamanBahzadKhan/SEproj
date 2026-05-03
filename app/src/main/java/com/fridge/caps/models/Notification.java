@@ -23,6 +23,8 @@ public class Notification {
     private boolean          read;
     private String relatedReportId;
     private String relatedSignupId;
+    private String meetLink;
+    private String appointmentId;
 
     public Notification() {}
 
@@ -62,6 +64,8 @@ public class Notification {
         n.setType(mapTypeKey(tk));
         n.setRelatedReportId(doc.getString("relatedReportId"));
         n.setRelatedSignupId(doc.getString("relatedSignupId"));
+        n.setMeetLink(doc.getString("meetLink"));
+        n.setAppointmentId(doc.getString("appointmentId"));
         return n;
     }
 
@@ -82,6 +86,8 @@ public class Notification {
                 return NotificationType.COMPLETED;
             case "PENDING":
                 return NotificationType.PENDING;
+            case "meet_link":
+                return NotificationType.CONFIRMATION;
             default:
                 return NotificationType.CONFIRMATION;
         }
@@ -108,6 +114,8 @@ public class Notification {
     public boolean isRead()             { return read; }
     public String getRelatedReportId()  { return relatedReportId; }
     public String getRelatedSignupId()  { return relatedSignupId; }
+    public String getMeetLink()         { return meetLink; }
+    public String getAppointmentId()    { return appointmentId; }
 
     public void setNotificationId(String id)        { this.notificationId = id; }
     public void setRecipientId(String id)           { this.recipientId = id; }
@@ -120,4 +128,6 @@ public class Notification {
     public void setRead(boolean read)               { this.read = read; }
     public void setRelatedReportId(String relatedReportId) { this.relatedReportId = relatedReportId; }
     public void setRelatedSignupId(String relatedSignupId) { this.relatedSignupId = relatedSignupId; }
+    public void setMeetLink(String meetLink) { this.meetLink = meetLink; }
+    public void setAppointmentId(String appointmentId) { this.appointmentId = appointmentId; }
 }

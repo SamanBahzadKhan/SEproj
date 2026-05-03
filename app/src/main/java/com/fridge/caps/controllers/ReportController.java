@@ -1,5 +1,7 @@
 package com.fridge.caps.controllers;
 
+import android.util.Log;
+
 import com.fridge.caps.models.UserReport;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -15,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 public class ReportController {
+    private static final String TAG = "ReportController";
+
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public interface ReportListCallback {
@@ -40,17 +44,35 @@ public class ReportController {
                         callback.onFailure(e != null ? e.getMessage() : "Failed to load reports.");
                         return;
                     }
-                    List<UserReport> list = new ArrayList<>();
-                    for (QueryDocumentSnapshot doc : snap) {
-                        list.add(UserReport.fromDocument(doc));
+                    try {
+                        List<UserReport> list = new ArrayList<>();
+                        for (QueryDocumentSnapshot doc : snap) {
+                            try {
+                                list.add(UserReport.fromDocument(doc));
+                            } catch (RuntimeException ex) {
+                                Log.w(TAG, "Skipping invalid report doc " + doc.getId(), ex);
+                            }
+                        }
+                        Collections.sort(list, (a, b) -> {
+                            long ta = safeMillis(a);
+                            long tb = safeMillis(b);
+                            return Long.compare(tb, ta);
+                        });
+                        callback.onSuccess(list);
+                    } catch (Throwable t) {
+                        Log.e(TAG, "listenPendingReports failed", t);
+                        callback.onSuccess(new ArrayList<>());
                     }
-                    Collections.sort(list, (a, b) -> {
-                        long ta = a.getTimestamp() != null ? a.getTimestamp().toDate().getTime() : 0L;
-                        long tb = b.getTimestamp() != null ? b.getTimestamp().toDate().getTime() : 0L;
-                        return Long.compare(tb, ta);
-                    });
-                    callback.onSuccess(list);
                 });
+    }
+
+    private static long safeMillis(UserReport r) {
+        try {
+            if (r == null || r.getTimestamp() == null) return 0L;
+            return r.getTimestamp().toDate().getTime();
+        } catch (RuntimeException ex) {
+            return 0L;
+        }
     }
 
     public void getReportById(String reportId, ReportCallback callback) {

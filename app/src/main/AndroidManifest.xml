@@ -32,7 +32,7 @@
         <activity android:name=".views.activities.LoginActivity" />
         <activity android:name=".views.activities.AdminLoginActivity" />
         <activity android:name=".views.activities.RegisterActivity" />
-        <activity android:name=".views.activities.CounselorRegisterActivity" />
+        <activity android:name=".views.activities.AddCounselorActivity" />
         <activity android:name=".views.activities.StudentListActivity" />
         <activity android:name=".views.activities.StudentDashboardActivity" />
         <activity android:name=".views.activities.CounselorDashboardActivity" />
@@ -48,7 +48,6 @@
         <activity android:name=".views.activities.NotificationsActivity" />
         <activity android:name=".views.activities.ReportUserActivity" />
         <activity android:name=".views.activities.ReportDetailActivity" />
-        <activity android:name=".views.activities.PendingCounselorSignupDetailActivity" />
         <activity android:name=".views.activities.AppointmentsActivity" />
         <activity android:name=".views.activities.FeedbackActivity" />
         <activity android:name=".views.activities.AvailabilityActivity" />

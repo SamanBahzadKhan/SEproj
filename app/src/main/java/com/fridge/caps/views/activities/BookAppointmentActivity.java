@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
@@ -27,7 +28,9 @@ import com.fridge.caps.utils.DateUtils;
 import com.fridge.caps.workers.ReminderWorker;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -69,7 +72,7 @@ public class BookAppointmentActivity extends AppCompatActivity {
     private String selectedDate;
     private String selectedPeriod;
     private String selectedTime;
-    private TextView selectedTimeView;
+    private View selectedSlotView;
     private boolean isTestMode;
 
     @Override
@@ -174,7 +177,7 @@ public class BookAppointmentActivity extends AppCompatActivity {
                 }
                 selectedPeriod = null;
                 selectedTime = null;
-                selectedTimeView = null;
+                selectedSlotView = null;
                 loadAvailabilityForDate(selectedDate);
             });
             llDateChips.addView(chip);
@@ -234,7 +237,7 @@ public class BookAppointmentActivity extends AppCompatActivity {
                     } else {
                         selectedPeriod = null;
                         selectedTime = null;
-                        selectedTimeView = null;
+                        selectedSlotView = null;
                         resetPeriodCards();
                         labelSelectTime.setVisibility(android.view.View.GONE);
                         gridTimes.setVisibility(android.view.View.GONE);
@@ -278,30 +281,82 @@ public class BookAppointmentActivity extends AppCompatActivity {
             stylePeriodCard(cardPickAfternoon, true);
         }
         selectedTime = null;
-        selectedTimeView = null;
+        selectedSlotView = null;
         loadBookedTimesAndRenderGrid();
     }
 
     private void loadBookedTimesAndRenderGrid() {
         if (selectedDate == null || selectedPeriod == null || counselorId == null) return;
         progressBar.setVisibility(android.view.View.VISIBLE);
-        db.collection("timeslots")
+        String studentUid = !isTestMode && FirebaseAuth.getInstance().getCurrentUser() != null
+                ? FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
+
+        com.google.android.gms.tasks.Task<QuerySnapshot> coachTask = db.collection("timeslots")
                 .whereEqualTo("counselorId", counselorId)
                 .whereEqualTo("date", selectedDate)
                 .whereEqualTo("isBooked", true)
+                .get();
+
+        com.google.android.gms.tasks.Task<QuerySnapshot> studentTask = studentUid != null
+                ? db.collection("timeslots")
+                .whereEqualTo("studentId", studentUid)
+                .whereEqualTo("date", selectedDate)
                 .get()
-                .addOnSuccessListener(q -> {
+                : null;
+
+        if (studentTask == null) {
+            coachTask.addOnSuccessListener(q -> {
+                progressBar.setVisibility(android.view.View.GONE);
+                Set<String> coachBooked = new HashSet<>();
+                for (com.google.firebase.firestore.QueryDocumentSnapshot d : q) {
+                    String t = d.getString("startTime");
+                    if (t != null) {
+                        coachBooked.add(t);
+                    }
+                }
+                List<String> slots = "Morning".equals(selectedPeriod)
+                        ? DateUtils.getMorningSlots()
+                        : DateUtils.getAfternoonSlots();
+                renderTimeGrid(slots, coachBooked, new HashSet<>());
+            }).addOnFailureListener(e -> {
+                progressBar.setVisibility(android.view.View.GONE);
+                Toast.makeText(this, e.getMessage() != null ? e.getMessage() : "Query failed",
+                        Toast.LENGTH_SHORT).show();
+            });
+            return;
+        }
+
+        coachTask.addOnSuccessListener(qCoach -> studentTask
+                .addOnSuccessListener(qStudent -> {
                     progressBar.setVisibility(android.view.View.GONE);
-                    Set<String> booked = new HashSet<>();
-                    for (com.google.firebase.firestore.QueryDocumentSnapshot d : q) {
-                        String t = d.getString("startTime");
-                        if (t != null) booked.add(t);
+                    Set<String> coachBooked = new HashSet<>();
+                    for (com.google.firebase.firestore.QueryDocumentSnapshot d : qCoach) {
+                        String st = d.getString("startTime");
+                        if (st != null) {
+                            coachBooked.add(st);
+                        }
+                    }
+                    Set<String> studentBusy = new HashSet<>();
+                    for (DocumentSnapshot d : qStudent.getDocuments()) {
+                        String status = d.getString("status");
+                        if (!isActiveBookingStatus(status)) {
+                            continue;
+                        }
+                        String start = d.getString("startTime");
+                        if (start != null) {
+                            studentBusy.add(start);
+                        }
                     }
                     List<String> slots = "Morning".equals(selectedPeriod)
                             ? DateUtils.getMorningSlots()
                             : DateUtils.getAfternoonSlots();
-                    renderTimeGrid(slots, booked);
+                    renderTimeGrid(slots, coachBooked, studentBusy);
                 })
+                .addOnFailureListener(e -> {
+                    progressBar.setVisibility(android.view.View.GONE);
+                    Toast.makeText(this, e.getMessage() != null ? e.getMessage() : "Query failed",
+                            Toast.LENGTH_SHORT).show();
+                }))
                 .addOnFailureListener(e -> {
                     progressBar.setVisibility(android.view.View.GONE);
                     Toast.makeText(this, e.getMessage() != null ? e.getMessage() : "Query failed",
@@ -309,7 +364,14 @@ public class BookAppointmentActivity extends AppCompatActivity {
                 });
     }
 
-    private void renderTimeGrid(List<String> slots, Set<String> booked) {
+    private static boolean isActiveBookingStatus(String status) {
+        if (status == null) {
+            return false;
+        }
+        return "PENDING".equals(status) || "BOOKED".equals(status);
+    }
+
+    private void renderTimeGrid(List<String> slots, Set<String> coachBooked, Set<String> studentBusy) {
         gridTimes.removeAllViews();
         labelSelectTime.setVisibility(android.view.View.VISIBLE);
         gridTimes.setVisibility(android.view.View.VISIBLE);
@@ -317,45 +379,126 @@ public class BookAppointmentActivity extends AppCompatActivity {
         int col = 0;
         int row = 0;
         for (String time : slots) {
-            TextView b = new TextView(this);
-            b.setText(time);
-            b.setGravity(Gravity.CENTER);
-            b.setPadding(dp(8), dp(10), dp(8), dp(10));
-            boolean isBooked = booked.contains(time);
+            boolean coachTaken = coachBooked.contains(time);
+            boolean studentTaken = studentBusy.contains(time);
+            boolean unavailable = coachTaken || studentTaken;
+
+            LinearLayout cell = new LinearLayout(this);
+            cell.setOrientation(LinearLayout.VERTICAL);
+            cell.setGravity(Gravity.CENTER);
+            cell.setPadding(dp(8), dp(10), dp(8), dp(10));
+
+            TextView timeTv = new TextView(this);
+            timeTv.setText(time);
+            timeTv.setGravity(Gravity.CENTER);
+            timeTv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+
+            cell.addView(timeTv);
+            if (studentTaken) {
+                TextView busyLabel = new TextView(this);
+                busyLabel.setText("Busy");
+                busyLabel.setGravity(Gravity.CENTER);
+                busyLabel.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+                busyLabel.setTextColor(Color.parseColor("#B7B5AE"));
+                cell.addView(busyLabel);
+            }
+
             GridLayout.LayoutParams lp = new GridLayout.LayoutParams();
             lp.columnSpec = GridLayout.spec(col, 1f);
             lp.rowSpec = GridLayout.spec(row);
             lp.width = 0;
             lp.setMargins(dp(4), dp(4), dp(4), dp(4));
-            b.setLayoutParams(lp);
+            cell.setLayoutParams(lp);
 
-            if (isBooked) {
-                b.setBackgroundColor(Color.parseColor("#EEEEEE"));
-                b.setTextColor(Color.parseColor("#AAAAAA"));
-                b.setClickable(false);
+            if (unavailable) {
+                timeTv.setTextColor(Color.parseColor("#B7B5AE"));
+                android.graphics.drawable.GradientDrawable stroke = new android.graphics.drawable.GradientDrawable();
+                stroke.setColor(Color.parseColor("#E8E9EB"));
+                stroke.setStroke((int) (1 * getResources().getDisplayMetrics().density),
+                        Color.parseColor("#B7B5AE"));
+                stroke.setCornerRadius(8 * getResources().getDisplayMetrics().density);
+                cell.setBackground(stroke);
+                cell.setClickable(false);
             } else {
-                b.setBackgroundResource(R.drawable.bg_chip_date_unselected);
-                b.setTextColor(Color.parseColor("#2D2D2D"));
-                b.setClickable(true);
+                timeTv.setTextColor(Color.parseColor("#2D2D2D"));
+                cell.setBackgroundResource(R.drawable.bg_chip_date_unselected);
+                cell.setClickable(true);
                 final String timeF = time;
-                b.setOnClickListener(v -> {
-                    if (selectedTimeView != null) {
-                        selectedTimeView.setBackgroundResource(R.drawable.bg_chip_date_unselected);
-                        selectedTimeView.setTextColor(Color.parseColor("#2D2D2D"));
+                cell.setOnClickListener(v -> {
+                    if (selectedSlotView != null) {
+                        selectedSlotView.setBackgroundResource(R.drawable.bg_chip_date_unselected);
+                        if (selectedSlotView instanceof LinearLayout) {
+                            resetSlotChildrenTextColor((LinearLayout) selectedSlotView);
+                        }
                     }
+                    selectedSlotView = cell;
                     selectedTime = timeF;
-                    selectedTimeView = b;
-                    b.setBackgroundResource(R.drawable.bg_chip_date_selected);
-                    b.setTextColor(Color.WHITE);
+                    cell.setBackgroundResource(R.drawable.bg_chip_date_selected);
+                    timeTv.setTextColor(Color.WHITE);
+                    if (cell.getChildCount() > 1) {
+                        TextView bl = (TextView) cell.getChildAt(1);
+                        bl.setTextColor(Color.WHITE);
+                    }
                 });
             }
-            gridTimes.addView(b);
+            gridTimes.addView(cell);
             col++;
             if (col >= 3) {
                 col = 0;
                 row++;
             }
         }
+    }
+
+    private void resetSlotChildrenTextColor(LinearLayout cell) {
+        for (int i = 0; i < cell.getChildCount(); i++) {
+            View c = cell.getChildAt(i);
+            if (c instanceof TextView) {
+                if (i == 0) {
+                    ((TextView) c).setTextColor(Color.parseColor("#2D2D2D"));
+                } else {
+                    ((TextView) c).setTextColor(Color.parseColor("#B7B5AE"));
+                }
+            }
+        }
+    }
+
+    private void checkStudentSlotConflict(String studentId, String date, String time,
+                                        String excludeSlotId,
+                                        Runnable onNoConflict,
+                                        Runnable onConflict) {
+        db.collection("timeslots")
+                .whereEqualTo("studentId", studentId)
+                .whereEqualTo("date", date)
+                .get()
+                .addOnSuccessListener(q -> {
+                    for (DocumentSnapshot d : q.getDocuments()) {
+                        if (excludeSlotId != null && excludeSlotId.equals(d.getId())) {
+                            continue;
+                        }
+                        String st = d.getString("status");
+                        if (!isActiveBookingStatus(st)) {
+                            continue;
+                        }
+                        String start = d.getString("startTime");
+                        if (time != null && time.equals(start)) {
+                            onConflict.run();
+                            return;
+                        }
+                    }
+                    onNoConflict.run();
+                })
+                .addOnFailureListener(e -> onNoConflict.run());
+    }
+
+    private void showSlotConflictDialog() {
+        View content = getLayoutInflater().inflate(R.layout.dialog_slot_conflict, null);
+        AlertDialog d = new AlertDialog.Builder(this)
+                .setView(content)
+                .setCancelable(true)
+                .create();
+        content.findViewById(R.id.btnConflictOk).setOnClickListener(v -> d.dismiss());
+        d.show();
     }
 
     private void confirmBooking() {
@@ -407,44 +550,50 @@ public class BookAppointmentActivity extends AppCompatActivity {
                     String studentName = doc.getString("name") != null
                             ? doc.getString("name") : "Student";
 
-                    appointmentController.createBookingFromAvailability(
-                            counselorId, selectedDate, selectedTime, selectedPeriod, type,
-                            uid, studentName, notes,
-                            new AppointmentController.AppointmentCallback() {
-                                @Override
-                                public void onSuccess() {
-                                    String datePart = selectedDate + " " + selectedTime;
-                                    notificationController.sendBookingRequestNotifications(
-                                            uid, studentName, counselorId, counselorName, datePart);
-                                    ReminderWorker.scheduleIfFuture(BookAppointmentActivity.this,
-                                            uid, counselorName, selectedDate, selectedTime);
-                                    progressBar.setVisibility(android.view.View.GONE);
-                                    Toast.makeText(BookAppointmentActivity.this,
-                                            "Appointment request sent!", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(BookAppointmentActivity.this,
-                                            StudentDashboardActivity.class);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    startActivity(intent);
-                                    finish();
-                                }
+                    checkStudentSlotConflict(uid, selectedDate, selectedTime, null,
+                            () -> appointmentController.createBookingFromAvailability(
+                                    counselorId, selectedDate, selectedTime, selectedPeriod, type,
+                                    uid, studentName, notes,
+                                    new AppointmentController.AppointmentCallback() {
+                                        @Override
+                                        public void onSuccess() {
+                                            String datePart = selectedDate + " " + selectedTime;
+                                            notificationController.sendBookingRequestNotifications(
+                                                    uid, studentName, counselorId, counselorName, datePart);
+                                            ReminderWorker.scheduleIfFuture(BookAppointmentActivity.this,
+                                                    uid, counselorName, selectedDate, selectedTime);
+                                            progressBar.setVisibility(android.view.View.GONE);
+                                            Toast.makeText(BookAppointmentActivity.this,
+                                                    "Appointment request sent!", Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(BookAppointmentActivity.this,
+                                                    StudentDashboardActivity.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                            startActivity(intent);
+                                            finish();
+                                        }
 
-                                @Override
-                                public void onFailure(String error) {
-                                    progressBar.setVisibility(android.view.View.GONE);
-                                    btnConfirm.setEnabled(true);
-                                    if ("This slot is no longer available.".equals(error)
-                                            || (error != null && error.contains("no longer"))) {
-                                        new AlertDialog.Builder(BookAppointmentActivity.this)
-                                                .setTitle("Slot unavailable")
-                                                .setMessage("This slot was just booked. Please pick another time.")
-                                                .setPositiveButton("OK", (d, w) ->
-                                                        loadBookedTimesAndRenderGrid())
-                                                .show();
-                                    } else {
-                                        Toast.makeText(BookAppointmentActivity.this,
-                                                error, Toast.LENGTH_SHORT).show();
-                                    }
-                                }
+                                        @Override
+                                        public void onFailure(String error) {
+                                            progressBar.setVisibility(android.view.View.GONE);
+                                            btnConfirm.setEnabled(true);
+                                            if ("This slot is no longer available.".equals(error)
+                                                    || (error != null && error.contains("no longer"))) {
+                                                new AlertDialog.Builder(BookAppointmentActivity.this)
+                                                        .setTitle("Slot unavailable")
+                                                        .setMessage("This slot was just booked. Please pick another time.")
+                                                        .setPositiveButton("OK", (d, w) ->
+                                                                loadBookedTimesAndRenderGrid())
+                                                        .show();
+                                            } else {
+                                                Toast.makeText(BookAppointmentActivity.this,
+                                                        error, Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    }),
+                            () -> {
+                                progressBar.setVisibility(android.view.View.GONE);
+                                btnConfirm.setEnabled(true);
+                                showSlotConflictDialog();
                             });
                 })
                 .addOnFailureListener(e -> {
@@ -505,35 +654,42 @@ public class BookAppointmentActivity extends AppCompatActivity {
         db.collection("students").document(uid).get()
                 .addOnSuccessListener(doc -> {
                     String studentName = doc.getString("name") != null ? doc.getString("name") : "Student";
-                    appointmentController.rescheduleCreateNew(
-                            slotToRelease, counselorId, selectedDate, selectedTime, selectedPeriod, type,
-                            uid, studentName, notes,
-                            new AppointmentController.AppointmentCallback() {
-                                @Override
-                                public void onSuccess() {
-                                    notificationController.sendReschedule(uid, counselorName, selectedTime);
-                                    progressBar.setVisibility(android.view.View.GONE);
-                                    Toast.makeText(BookAppointmentActivity.this,
-                                            "Appointment rescheduled.", Toast.LENGTH_SHORT).show();
-                                    finish();
-                                }
+                    final String exclude = slotToRelease;
+                    checkStudentSlotConflict(uid, selectedDate, selectedTime, exclude,
+                            () -> appointmentController.rescheduleCreateNew(
+                                    slotToRelease, counselorId, selectedDate, selectedTime, selectedPeriod, type,
+                                    uid, studentName, notes,
+                                    new AppointmentController.AppointmentCallback() {
+                                        @Override
+                                        public void onSuccess() {
+                                            notificationController.sendReschedule(uid, counselorName, selectedTime);
+                                            progressBar.setVisibility(android.view.View.GONE);
+                                            Toast.makeText(BookAppointmentActivity.this,
+                                                    "Appointment rescheduled.", Toast.LENGTH_SHORT).show();
+                                            finish();
+                                        }
 
-                                @Override
-                                public void onFailure(String error) {
-                                    progressBar.setVisibility(android.view.View.GONE);
-                                    btnConfirm.setEnabled(true);
-                                    if (error != null && error.contains("no longer")) {
-                                        new AlertDialog.Builder(BookAppointmentActivity.this)
-                                                .setTitle("Slot unavailable")
-                                                .setMessage("Please choose another time.")
-                                                .setPositiveButton("OK", (d, w) ->
-                                                        loadBookedTimesAndRenderGrid())
-                                                .show();
-                                    } else {
-                                        Toast.makeText(BookAppointmentActivity.this,
-                                                error, Toast.LENGTH_LONG).show();
-                                    }
-                                }
+                                        @Override
+                                        public void onFailure(String error) {
+                                            progressBar.setVisibility(android.view.View.GONE);
+                                            btnConfirm.setEnabled(true);
+                                            if (error != null && error.contains("no longer")) {
+                                                new AlertDialog.Builder(BookAppointmentActivity.this)
+                                                        .setTitle("Slot unavailable")
+                                                        .setMessage("Please choose another time.")
+                                                        .setPositiveButton("OK", (d, w) ->
+                                                                loadBookedTimesAndRenderGrid())
+                                                        .show();
+                                            } else {
+                                                Toast.makeText(BookAppointmentActivity.this,
+                                                        error, Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    }),
+                            () -> {
+                                progressBar.setVisibility(android.view.View.GONE);
+                                btnConfirm.setEnabled(true);
+                                showSlotConflictDialog();
                             });
                 })
                 .addOnFailureListener(e -> {

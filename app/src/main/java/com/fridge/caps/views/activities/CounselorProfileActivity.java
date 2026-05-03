@@ -340,11 +340,19 @@ public class CounselorProfileActivity extends AppCompatActivity {
 
     private String initialsOf(String name) {
         if (name == null || name.trim().isEmpty()) return "DR";
-        String clean = name.trim().replaceFirst("(?i)^dr\\.\\s*", "");
+        String clean = name.trim().replaceFirst("(?i)^dr\\.\\s*", "").trim();
+        if (clean.isEmpty()) return "DR";
         String[] parts = clean.split("\\s+");
-        if (parts.length == 1) return parts[0].substring(0, 1).toUpperCase(java.util.Locale.US);
-        String first = parts[0].substring(0, 1).toUpperCase(java.util.Locale.US);
-        String last = parts[parts.length - 1].substring(0, 1).toUpperCase(java.util.Locale.US);
-        return first + last;
+        if (parts.length == 0) return "DR";
+        if (parts.length == 1) {
+            String only = parts[0];
+            if (only.isEmpty()) return "DR";
+            return only.substring(0, 1).toUpperCase(java.util.Locale.US);
+        }
+        String first = parts[0];
+        String last = parts[parts.length - 1];
+        if (first.isEmpty() || last.isEmpty()) return "DR";
+        return first.substring(0, 1).toUpperCase(java.util.Locale.US)
+                + last.substring(0, 1).toUpperCase(java.util.Locale.US);
     }
 }

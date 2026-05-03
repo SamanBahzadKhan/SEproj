@@ -7,7 +7,9 @@ package com.fridge.caps.views.adapters;
  * View in the MVC pattern.
  */
 import android.animation.AnimatorInflater;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
@@ -163,6 +165,43 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                 h.btnCancelStudent.setOnClickListener(v -> {
                     if (onCancel != null) onCancel.run(a);
                 });
+                if (h.rowMeetOnline != null) {
+                    boolean online = "Online".equals(a.getType());
+                    String link = a.getMeetLink();
+                    boolean hasLink = link != null && !link.trim().isEmpty();
+                    if (online) {
+                        h.rowMeetOnline.setVisibility(View.VISIBLE);
+                        if (hasLink) {
+                            if (h.tvMeetLinkPending != null) {
+                                h.tvMeetLinkPending.setVisibility(View.GONE);
+                            }
+                            if (h.frameJoinMeet != null) {
+                                h.frameJoinMeet.setVisibility(View.VISIBLE);
+                            }
+                            if (h.btnJoinMeet != null) {
+                                h.btnJoinMeet.setOnClickListener(v -> {
+                                    try {
+                                        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(link.trim()));
+                                        h.itemView.getContext().startActivity(i);
+                                    } catch (Exception ex) {
+                                        Toast.makeText(h.itemView.getContext(),
+                                                "Could not open meeting link.",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        } else {
+                            if (h.tvMeetLinkPending != null) {
+                                h.tvMeetLinkPending.setVisibility(View.VISIBLE);
+                            }
+                            if (h.frameJoinMeet != null) {
+                                h.frameJoinMeet.setVisibility(View.GONE);
+                            }
+                        }
+                    } else {
+                        h.rowMeetOnline.setVisibility(View.GONE);
+                    }
+                }
                 h.rowCounselorActions.setVisibility(View.GONE);
                 h.btnFeedback.setVisibility(View.GONE);
                 break;
@@ -434,6 +473,10 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         final View btnComplete, btnNoShow, btnCancelCounselor;
         @Nullable final View rowRecordDiagnosis;
         @Nullable final View btnRecordDiagnosis;
+        @Nullable final View rowMeetOnline;
+        @Nullable final TextView tvMeetLinkPending;
+        @Nullable final View frameJoinMeet;
+        @Nullable final View btnJoinMeet;
 
         VH(@NonNull View itemView) {
             super(itemView);
@@ -454,6 +497,10 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             btnCancelCounselor = itemView.findViewById(R.id.btnCancelCounselor);
             rowRecordDiagnosis = itemView.findViewById(R.id.rowRecordDiagnosis);
             btnRecordDiagnosis = itemView.findViewById(R.id.btnRecordDiagnosis);
+            rowMeetOnline = itemView.findViewById(R.id.rowMeetOnline);
+            tvMeetLinkPending = itemView.findViewById(R.id.tvMeetLinkPending);
+            frameJoinMeet = itemView.findViewById(R.id.frameJoinMeet);
+            btnJoinMeet = itemView.findViewById(R.id.btnJoinMeet);
         }
     }
 }

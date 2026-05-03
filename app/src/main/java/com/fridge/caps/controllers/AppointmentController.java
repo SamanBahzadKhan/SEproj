@@ -453,6 +453,7 @@ public class AppointmentController {
         a.setType(s.getAppointmentType());
         a.setNotes(s.getNotes());
         a.setFeedbackSubmitted(s.isFeedbackSubmitted());
+        a.setMeetLink(s.getMeetLink());
 
         String st = s.getStatus();
         if (st == null) st = "";

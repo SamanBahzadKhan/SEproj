@@ -27,4 +27,24 @@ public final class NotificationUtils {
         notif.put("isRead", false);
         db.collection("notifications").add(notif);
     }
+
+    /** Meet link notification (type {@code meet_link}; optional {@code meetLink}, {@code appointmentId}). */
+    public static void writeMeetLinkNotification(FirebaseFirestore db, String recipientId,
+                                               String title, String message, String meetLink,
+                                               String appointmentId, String type) {
+        if (db == null || recipientId == null || recipientId.isEmpty()) {
+            return;
+        }
+        Map<String, Object> notif = new HashMap<>();
+        notif.put("recipientId", recipientId);
+        notif.put("title", title != null ? title : "");
+        notif.put("message", message != null ? message : "");
+        notif.put("type", type != null ? type : "meet_link");
+        notif.put("meetLink", meetLink != null ? meetLink : "");
+        notif.put("appointmentId", appointmentId != null ? appointmentId : "");
+        notif.put("timestamp", System.currentTimeMillis());
+        notif.put("read", false);
+        notif.put("isRead", false);
+        db.collection("notifications").add(notif);
+    }
 }

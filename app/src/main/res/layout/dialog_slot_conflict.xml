@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="20dp"
+    android:paddingTop="18dp"
+    android:paddingBottom="14dp">
+
+    <TextView
+        android:id="@+id/tvConflictTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-black"
+        android:text="Time Slot Unavailable"
+        android:textColor="@color/caps_palette_neutral_dark"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tvConflictBody"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fontFamily="sans-serif"
+        android:text="You already have an appointment booked at this time. Please choose a different time slot."
+        android:textColor="@color/caps_palette_grey_warm"
+        android:textSize="15sp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/bg_offset_button_rose_12">
+
+        <Button
+            android:id="@+id/btnConflictOk"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@android:color/transparent"
+            android:fontFamily="sans-serif-black"
+            android:text="OK"
+            android:textColor="@color/caps_palette_neutral_dark"
+            android:textSize="15sp" />
+    </FrameLayout>
+</LinearLayout>

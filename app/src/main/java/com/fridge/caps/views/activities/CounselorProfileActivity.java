@@ -259,6 +259,22 @@ public class CounselorProfileActivity extends AppCompatActivity {
     }
 
     private void loadFeedbackReviews() {
+        String uid = FirebaseAuth.getInstance().getCurrentUser() != null
+                ? FirebaseAuth.getInstance().getCurrentUser().getUid()
+                : null;
+        if (uid == null) {
+            loadFeedbackReviewsForViewer(false);
+            return;
+        }
+        db.collection("admins").document(uid).get()
+                .addOnSuccessListener(adminDoc -> loadFeedbackReviewsForViewer(adminDoc.exists()))
+                .addOnFailureListener(e -> loadFeedbackReviewsForViewer(false));
+    }
+
+    /**
+     * Students and counsellors see reviewer as anonymous; admins (collection {@code admins}) see stored names.
+     */
+    private void loadFeedbackReviewsForViewer(boolean viewerIsAdmin) {
         db.collection("feedback")
                 .whereEqualTo("counselorId", counselorId)
                 .get()
@@ -283,9 +299,16 @@ public class CounselorProfileActivity extends AppCompatActivity {
                         return Long.compare(tB, tA);
                     });
 
+                    String anonymous = getString(R.string.anonymous_feedback);
                     List<FeedbackItem> reviews = new ArrayList<>();
                     for (DocumentSnapshot doc : docs) {
-                        String name = doc.getString("studentName");
+                        String storedName = doc.getString("studentName");
+                        String displayName;
+                        if (viewerIsAdmin && storedName != null && !storedName.trim().isEmpty()) {
+                            displayName = storedName.trim();
+                        } else {
+                            displayName = anonymous;
+                        }
                         Long r = doc.getLong("rating");
                         int rating = r != null ? r.intValue() : 0;
                         String comment = doc.getString("comment");
@@ -294,7 +317,7 @@ public class CounselorProfileActivity extends AppCompatActivity {
                         if (t instanceof Long) {
                             ts = (Long) t;
                         }
-                        reviews.add(new FeedbackItem(name, rating, comment, ts));
+                        reviews.add(new FeedbackItem(displayName, rating, comment, ts));
                     }
 
                     tvNoReviews.setVisibility(View.GONE);

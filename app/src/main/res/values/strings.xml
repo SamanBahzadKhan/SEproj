@@ -14,6 +14,7 @@
     <string name="session_notes_list_empty">No session notes yet. When a counsellor shares notes after a session, they will appear here.</string>
     <string name="session_notes_status_shared">Shared</string>
     <string name="session_notes_status_pending">Not submitted yet</string>
+    <string name="anonymous_feedback">Anonymous</string>
     <string name="journal_delete">Delete entry</string>
     <string name="journal_delete_confirm">Delete this journal entry? This cannot be undone.</string>
     <string name="cd_email_verify_icon">Email</string>

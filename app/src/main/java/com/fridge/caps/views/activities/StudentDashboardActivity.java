@@ -26,6 +26,7 @@ import com.fridge.caps.models.AppointmentStatus;
 import com.fridge.caps.utils.GreetingUtils;
 import com.fridge.caps.views.BottomNavUi;
 import com.fridge.caps.views.adapters.AppointmentAdapter;
+import com.fridge.caps.views.adapters.StudentCompletedHistoryAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -254,7 +255,8 @@ public class StudentDashboardActivity extends AppCompatActivity {
                             i.putExtra(FeedbackActivity.EXTRA_APPOINTMENT_DATE, dateLine);
                             startActivity(i);
                         },
-                        null, null));
+                        null, null, null,
+                        StudentDashboardActivity.this::openStudentSessionNotes));
             }
 
             @Override
@@ -263,6 +265,16 @@ public class StudentDashboardActivity extends AppCompatActivity {
                 Toast.makeText(StudentDashboardActivity.this, "Failed to load appointments.", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void openStudentSessionNotes(Appointment appt) {
+        Intent i = new Intent(this, StudentSessionNotesViewActivity.class);
+        i.putExtra(StudentSessionNotesViewActivity.EXTRA_TIME_SLOT_ID, appt.getTimeSlotId());
+        i.putExtra(StudentSessionNotesViewActivity.EXTRA_APPOINTMENT_ID, appt.getAppointmentId());
+        i.putExtra(StudentSessionNotesViewActivity.EXTRA_COUNSELOR_NAME, appt.getCounselorName());
+        i.putExtra(StudentSessionNotesViewActivity.EXTRA_SESSION_DATE_LINE,
+                StudentCompletedHistoryAdapter.formatSessionLine(appt));
+        startActivity(i);
     }
 
     private void cancelAppointment(Appointment appt) {

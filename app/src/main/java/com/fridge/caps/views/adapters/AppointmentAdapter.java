@@ -58,6 +58,8 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     @Nullable private final Action onComplete;
     @Nullable private final Action onNoShow;
     @Nullable private final Action onRecordDiagnosis;
+    /** Only used in {@link #MODE_STUDENT_PAST}: whole-row tap opens session notes. */
+    @Nullable private final Action onStudentPastOpenNotes;
 
     public interface Action {
         void run(Appointment a);
@@ -69,7 +71,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                               @Nullable Action onFeedback,
                               @Nullable Action onComplete,
                               @Nullable Action onNoShow) {
-        this(items, mode, onCancel, onReschedule, onFeedback, onComplete, onNoShow, null);
+        this(items, mode, onCancel, onReschedule, onFeedback, onComplete, onNoShow, null, null);
     }
 
     public AppointmentAdapter(List<Appointment> items, int mode,
@@ -79,6 +81,18 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                               @Nullable Action onComplete,
                               @Nullable Action onNoShow,
                               @Nullable Action onRecordDiagnosis) {
+        this(items, mode, onCancel, onReschedule, onFeedback, onComplete, onNoShow, onRecordDiagnosis,
+                null);
+    }
+
+    public AppointmentAdapter(List<Appointment> items, int mode,
+                              @Nullable Action onCancel,
+                              @Nullable Action onReschedule,
+                              @Nullable Action onFeedback,
+                              @Nullable Action onComplete,
+                              @Nullable Action onNoShow,
+                              @Nullable Action onRecordDiagnosis,
+                              @Nullable Action onStudentPastOpenNotes) {
         this.items     = items;
         this.mode      = mode;
         this.itemLayoutRes = mode == MODE_STUDENT_UPCOMING
@@ -90,6 +104,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         this.onComplete = onComplete;
         this.onNoShow   = onNoShow;
         this.onRecordDiagnosis = onRecordDiagnosis;
+        this.onStudentPastOpenNotes = onStudentPastOpenNotes;
     }
 
     @NonNull
@@ -224,6 +239,11 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
                     h.tvSecondaryLine.setVisibility(View.VISIBLE);
                     h.tvSecondaryLine.setText("Feedback submitted");
                     h.tvSecondaryLine.setTextColor(Color.parseColor("#9E9E9E"));
+                }
+                if (onStudentPastOpenNotes != null) {
+                    h.itemView.setOnClickListener(v -> onStudentPastOpenNotes.run(a));
+                } else {
+                    h.itemView.setOnClickListener(null);
                 }
                 break;
 

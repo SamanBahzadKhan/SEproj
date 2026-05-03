@@ -121,7 +121,27 @@ Location: `UI_Mockups/`
 
 ![UI Mockups](UI_Mockups/mockups.png)
 
-Screens included: Splash Screen, Login Screen, Student Dashboard, Counselor Dashboard, Appointment Booking Screen, Appointment Confirmation Screen, Appointment History Screen, Notification Screen, Student Profile Screen, Counselor Profile Screen, Edit Profile Screen, Admin Dashboard, Admin Login Screen, Feedback Screen, Leave Feedback Screen, Counselor Sign Up Screen, Student Sign Up Screen, Counselor Appointments Screen, Student Journal Screen, Session Notes Screen
+Screens included:
+- Splash Screen
+- Login Screen
+- Student Sign Up Screen
+- Admin Sign In Screen
+- AI Assistant / Chatbot Screen
+- Counselor Dashboard
+- Counselor Profile Screen
+- Student Dashboard
+- Edit Profile Screen
+- Appointment Booking Screen (Date & Time Slot Selection)
+- Appointment Booking Screen (Appointment Type & Notes)
+- Notifications Screen
+- Student Profile Screen
+- Feedback Screen (Appointment History)
+- Leave Feedback Screen
+- Counselor Appointments Screen
+- Admin Panel (Overview, Reported Users, Manage Counselors)
+- Student Journal Screen
+- Session Notes Screen (Counselor view — Diagnosis, Prescription, Recommendations)
+- Session Notes Screen (Student view — Uploaded Documents)
 
 #### 4. Storyboards
 
@@ -151,13 +171,29 @@ Firebase is used as the backend for storing application data.
 
 ---
 
-### Phase 3 — Halfway Prototype
+### Phase 3 — Halfway Release
 
-Following TA feedback from Phase 2, the entire UI was redesigned and revamped to better align with usability and visual consistency standards. The prototype was then built to cover approximately half the planned requirements, corresponding to the halfway release checkpoint marked in the product backlog.
+Following TA feedback, the UI was fully redesigned for improved usability and visual consistency. The halfway release prototype covered the following screens and functionality:
 
-Sprint planning and review records for this phase are documented in `PROJECT_DOCUMENTATION.md`.
+- **Splash Screen** — Entry point of the app displaying the CAPs branding before routing the user to login.
+- **Login Screen** — Allows students and counselors to sign in using their credentials, with an option to navigate to student registration or admin login.
+- **Student Sign Up Screen** — New students can register by providing their full name, email, password, phone number, department, and year of study.
+- **Student Dashboard** — The central hub for students. Displays upcoming appointments with options to reschedule or cancel, past appointment history, and quick action buttons for booking a new appointment, accessing the journal, viewing notifications, and opening the chatbot.
+- **Counselor Dashboard** — Shows the counselor their full list of upcoming appointments and provides an availability management interface where they can set which days and time slots they are open for bookings.
+- **Appointment Booking Screen** — A multi-step booking flow where students select a counselor, pick a date, choose an available time slot, select the appointment type (in-person or online), and optionally add notes for the counselor before confirming.
+- **Appointment Confirmation Screen** — Displays a summary of the booked appointment and confirms the booking was successful.
+- **Appointment History Screen** — Lists all past appointments for the student, showing counselor name, date, appointment type, and status.
+- **Notifications Screen** — Displays real-time and scheduled notifications for the student, including appointment confirmations, reminders, and cancellation alerts.
+- **Student Profile Screen** — Shows the student's personal information, department, year of study, and account settings including notification preferences and privacy settings.
+- **Counselor Profile Screen** — Displays the counselor's information, star rating based on student feedback, about section, and student reviews.
+- **Edit Profile Screen** — Allows users to update their personal details including name, phone number, department, and year of study.
+- **Admin Sign In Screen** — A separate login portal for administrators to access the admin dashboard.
+- **Admin Dashboard** — At this stage, administrators could view platform-wide statistics including total appointments and active users.
+- **Feedback Screen** — Displays the student's past appointments with an option to leave feedback on completed sessions.
+- **Leave Feedback Screen** — Students can rate their session and write a comment about their experience with a counselor.
+- **Counselor Appointments Screen** — Provides counselors with a dedicated view of all their appointments, filtered by upcoming and past, with appointment type and status indicators.
 
-**Progress against backlog:** See the GitHub Projects board for which user stories were marked complete at this checkpoint.
+Sprint planning and review records are documented in `PROJECT_DOCUMENTATION.md`.
 
 ---
 
@@ -176,17 +212,15 @@ The complete, release-ready application covering all planned requirements.
 
 #### Design Decisions
 
-Several significant design decisions were made during this phase based on TA feedback and evolving requirements:
+**Counselor onboarding via Admin:** Counselor accounts are created exclusively by administrators. Students register independently through the app, while counselors are added to the platform by the admin and assigned credentials. This ensures all counselors on the platform are verified and authorized before becoming visible to students.
 
-**Admin-controlled counselor onboarding:** Counselors can no longer self-register through the app. Only students can sign up directly. Counselor accounts must be created and approved by an administrator. This ensures that only verified, legitimate counselors are accessible to students.
+**Scoped AI chatbot for counselor recommendation:** Rather than implementing a general-purpose open-ended AI assistant, the chatbot was deliberately scoped to a single function: recommending which counselor to book based on the student's described needs. This was an intentional design choice given the mental health context of the app — open-ended AI conversations on sensitive topics carry a risk of causing harm or providing inappropriate guidance. By limiting the chatbot to counselor recommendations only, the feature remains useful without overstepping into territory that should be handled by qualified professionals.
 
-**AI-powered counselor recommendation chatbot:** An LLM-based chatbot was integrated into the student-facing side of the app. Students can describe their needs or concerns, and the chatbot recommends the most suitable counselor for them based on the available counselor profiles. This helps students who are unsure which counselor to approach.
+**Student daily journal:** Students have access to a private journaling feature within the app to log their thoughts and track their mental well-being between sessions. Journal entries are entirely private and not accessible to counselors or administrators.
 
-**Student daily journal:** Students have access to a private journaling feature within the app. This allows them to log their thoughts and track their mental well-being between sessions, entirely separate from the counselor's view.
+**Structured session notes:** At the end of a session, counselors can create a structured session note that functions as a formal session record. This includes fields for diagnosis, prescribed medication (if applicable), recommendations and follow-up suggestions, and a counselor signature. The completed note is then made visible to the student on their dashboard, giving them an accessible record of their session.
 
-**Session notes by counselors:** At the end of a session, counselors can add structured notes. These notes are then made visible to the student on their dashboard, giving students a reference point for what was discussed and any follow-up actions.
-
-**Report to Admin:** Students and counselors can submit reports about users (counselors or students respectively). Administrators can review these reports and choose to either remove the reported user from the platform or dismiss the report.
+**Report to Admin moderation system:** Both students and counselors can submit reports against other users. Administrators review all incoming reports through the Admin Panel and can either remove the reported user from the platform or dismiss the report if unwarranted.
 
 ---
 

@@ -58,6 +58,10 @@
         <activity android:name=".views.activities.StudentAppointmentHistoryActivity" />
         <activity android:name=".views.activities.StudentSessionNotesViewActivity" />
         <activity android:name=".views.activities.StudentSessionNotesListActivity" />
+        <activity
+            android:name=".views.activities.AiAssistantActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

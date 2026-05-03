@@ -89,6 +89,8 @@ public class StudentDashboardActivity extends AppCompatActivity {
             tvNoPast.setVisibility(View.VISIBLE);
         }
 
+        findViewById(R.id.topBarAi).setOnClickListener(v ->
+                startActivity(new Intent(this, AiAssistantActivity.class)));
         findViewById(R.id.topBarBell).setOnClickListener(v ->
                 startActivity(new Intent(this, NotificationsActivity.class)));
         findViewById(R.id.topBarSettings).setOnClickListener(v ->
@@ -104,7 +106,7 @@ public class StudentDashboardActivity extends AppCompatActivity {
         findViewById(R.id.btnNotifications).setOnClickListener(v ->
                 startActivity(new Intent(this, NotificationsActivity.class)));
         findViewById(R.id.btnHistory).setOnClickListener(v ->
-                startActivity(new Intent(this, StudentAppointmentHistoryActivity.class)));
+                startActivity(new Intent(this, AiAssistantActivity.class)));
         findViewById(R.id.btnSessionNotesList).setOnClickListener(v ->
                 startActivity(new Intent(this, StudentSessionNotesListActivity.class)));
 

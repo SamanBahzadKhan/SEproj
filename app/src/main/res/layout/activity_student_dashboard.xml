@@ -41,6 +41,25 @@
         </LinearLayout>
 
         <FrameLayout
+            android:id="@+id/topBarAi"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_offset_circle_40"
+            android:clickable="true"
+            android:focusable="true"
+            android:stateListAnimator="@animator/press_down_button">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/cd_ai_assistant"
+                android:src="@drawable/ic_ai_sparkle_title"
+                android:tint="@color/caps_palette_neutral_dark" />
+        </FrameLayout>
+
+        <FrameLayout
             android:id="@+id/topBarBell"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -340,7 +359,7 @@
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:layout_gravity="center"
-                                android:src="@android:drawable/ic_menu_agenda"
+                                android:src="@android:drawable/ic_menu_help"
                                 android:tint="@color/caps_palette_neutral_dark" />
                         </FrameLayout>
 
@@ -349,7 +368,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:fontFamily="sans-serif-black"
-                            android:text="History"
+                            android:text="ChatBot"
                             android:textColor="@color/caps_palette_neutral_dark"
                             android:textSize="13sp" />
                     </LinearLayout>

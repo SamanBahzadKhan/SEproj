@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
  */
 public class StudentDashboardActivity extends AppCompatActivity {
 
+    private TextView    tvGreeting;
     private TextView    tvWelcome;
     private RecyclerView rvUpcoming, rvPast;
     private ProgressBar progressBar;
@@ -68,6 +69,7 @@ public class StudentDashboardActivity extends AppCompatActivity {
         appointmentController  = new AppointmentController();
         notificationController = new NotificationController();
 
+        tvGreeting   = findViewById(R.id.tvGreeting);
         tvWelcome    = findViewById(R.id.tvWelcome);
         rvUpcoming   = findViewById(R.id.rvUpcoming);
         rvPast       = findViewById(R.id.rvPast);
@@ -84,7 +86,8 @@ public class StudentDashboardActivity extends AppCompatActivity {
             loadWelcomeName();
             attachUnreadBadge();
         } else {
-            tvWelcome.setText(GreetingUtils.greetingWithName("Ahmad Raza"));
+            applyStudentGreetingLine();
+            tvWelcome.setText("Ahmad Raza");
             tvNoUpcoming.setVisibility(View.VISIBLE);
             tvNoPast.setVisibility(View.VISIBLE);
         }
@@ -161,8 +164,11 @@ public class StudentDashboardActivity extends AppCompatActivity {
         BottomNavUi.applyStudentNav(this, selectedBottomNavId);
 
         if (isTestMode) {
+            applyStudentGreetingLine();
             return;
         }
+
+        applyStudentGreetingLine();
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
@@ -193,16 +199,23 @@ public class StudentDashboardActivity extends AppCompatActivity {
                 });
     }
 
+    private void applyStudentGreetingLine() {
+        if (tvGreeting != null) {
+            tvGreeting.setText(GreetingUtils.greetingLineComma());
+        }
+    }
+
     private void loadWelcomeName() {
         String uid = FirebaseAuth.getInstance().getCurrentUser() != null
                 ? FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
         if (uid == null) return;
 
+        applyStudentGreetingLine();
         FirebaseFirestore.getInstance().collection("students").document(uid)
                 .get()
                 .addOnSuccessListener(doc -> {
                     if (doc.exists() && doc.getString("name") != null) {
-                        tvWelcome.setText(GreetingUtils.greetingWithName(doc.getString("name")));
+                        tvWelcome.setText(doc.getString("name"));
                     }
                 });
     }

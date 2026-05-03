@@ -137,6 +137,27 @@ public final class DateUtils {
         return dayPart + " · " + startTime;
     }
 
+    /**
+     * Whether the slot start (date + {@link #STORAGE_TIME} string) is strictly before the current instant.
+     * Used to block booking times that have already passed on the selected day.
+     */
+    public static boolean isSlotStartInPast(String dateYmd, String startTimeHm) {
+        if (dateYmd == null || dateYmd.isEmpty() || startTimeHm == null || startTimeHm.isEmpty()) {
+            return false;
+        }
+        try {
+            SimpleDateFormat df = new SimpleDateFormat(STORAGE_DATE + " " + STORAGE_TIME, Locale.US);
+            df.setLenient(false);
+            Date slotStart = df.parse(dateYmd + " " + startTimeHm.trim());
+            if (slotStart == null) {
+                return false;
+            }
+            return slotStart.before(new Date());
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
     private static Calendar startOfDayCalendar() {
         Calendar c = Calendar.getInstance(Locale.US);
         c.set(Calendar.HOUR_OF_DAY, 0);

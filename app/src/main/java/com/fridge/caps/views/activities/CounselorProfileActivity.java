@@ -7,6 +7,7 @@ package com.fridge.caps.views.activities;
  * View in the MVC pattern.
  */
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -41,6 +43,8 @@ import java.util.List;
 public class CounselorProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "CounselorProfile";
+    private static final String PREFS = "caps_prefs";
+    private static final String KEY_NOTIF_REMINDERS = "notif_reminders_enabled";
 
     public static final String EXTRA_COUNSELOR_ID   = "counselor_id";
     public static final String EXTRA_COUNSELOR_NAME = "counselor_name";
@@ -56,6 +60,10 @@ public class CounselorProfileActivity extends AppCompatActivity {
     private TextView tvRatingValue, tvRatingCount;
     private TextView tvNoReviews;
     private TextView tvAvatarInitials;
+    private View tvSettingsHeaderCounselor;
+    private View rowNotificationsCounselor;
+    private View rowPrivacyCounselor;
+    private View rowHelpCounselor;
     private RecyclerView rvReviews;
 
     private ImageView[] starAvg;
@@ -103,6 +111,10 @@ public class CounselorProfileActivity extends AppCompatActivity {
         tvRatingCount = findViewById(R.id.tvRatingCount);
         tvNoReviews = findViewById(R.id.tvNoReviews);
         tvAvatarInitials = findViewById(R.id.tvAvatarInitials);
+        tvSettingsHeaderCounselor = findViewById(R.id.tvSettingsHeaderCounselor);
+        rowNotificationsCounselor = findViewById(R.id.rowNotificationsCounselor);
+        rowPrivacyCounselor = findViewById(R.id.rowPrivacyCounselor);
+        rowHelpCounselor = findViewById(R.id.rowHelpCounselor);
         rvReviews = findViewById(R.id.rvReviews);
         progressBar = findViewById(R.id.progressBar);
         cardOwnProfile = findViewById(R.id.cardOwnProfile);
@@ -128,6 +140,8 @@ public class CounselorProfileActivity extends AppCompatActivity {
             tvName.setText(withDrPrefix(nameExtra));
         }
 
+        findViewById(R.id.btnBackProfile).setOnClickListener(v -> finish());
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle("Counselor Profile");
@@ -140,6 +154,10 @@ public class CounselorProfileActivity extends AppCompatActivity {
             cardOwnProfile.setVisibility(View.VISIBLE);
             btnSignOut.setVisibility(View.VISIBLE);
             btnEditProfile.setVisibility(View.VISIBLE);
+            if (tvSettingsHeaderCounselor != null) tvSettingsHeaderCounselor.setVisibility(View.VISIBLE);
+            if (rowNotificationsCounselor != null) rowNotificationsCounselor.setVisibility(View.VISIBLE);
+            if (rowPrivacyCounselor != null) rowPrivacyCounselor.setVisibility(View.VISIBLE);
+            if (rowHelpCounselor != null) rowHelpCounselor.setVisibility(View.VISIBLE);
             btnEditProfile.setOnClickListener(v ->
                     startActivity(new Intent(this, EditCounselorProfileActivity.class)));
             if (barBookAppointmentBottom != null) {
@@ -168,6 +186,24 @@ public class CounselorProfileActivity extends AppCompatActivity {
                             }
                         });
             }
+        }
+
+        if (rowNotificationsCounselor != null) {
+            rowNotificationsCounselor.setOnClickListener(v -> showNotificationPrefsDialog());
+        }
+        if (rowPrivacyCounselor != null) {
+            rowPrivacyCounselor.setOnClickListener(v -> new AlertDialog.Builder(this)
+                    .setTitle("Privacy")
+                    .setMessage("Your data is stored securely and used only for appointment management within CAPs.")
+                    .setPositiveButton("OK", null)
+                    .show());
+        }
+        if (rowHelpCounselor != null) {
+            rowHelpCounselor.setOnClickListener(v -> new AlertDialog.Builder(this)
+                    .setTitle("Help & Support")
+                    .setMessage(getString(R.string.help_support_message))
+                    .setPositiveButton("OK", null)
+                    .show());
         }
 
         switchAccepting.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -256,6 +292,25 @@ public class CounselorProfileActivity extends AppCompatActivity {
         }
         btnBookAppointment.setEnabled(counselorAcceptingClients);
         btnBookAppointment.setAlpha(counselorAcceptingClients ? 1f : 0.5f);
+    }
+
+    private void showNotificationPrefsDialog() {
+        SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
+        boolean enabled = prefs.getBoolean(KEY_NOTIF_REMINDERS, true);
+
+        SwitchCompat sw = new SwitchCompat(this);
+        sw.setText("Enable appointment reminders");
+        sw.setChecked(enabled);
+        int pad = (int) (16 * getResources().getDisplayMetrics().density);
+        sw.setPadding(pad, pad, pad, pad);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Notification Preferences")
+                .setView(sw)
+                .setPositiveButton("Save", (d, w) ->
+                        prefs.edit().putBoolean(KEY_NOTIF_REMINDERS, sw.isChecked()).apply())
+                .setNegativeButton("Close", null)
+                .show();
     }
 
     private void loadFeedbackReviews() {

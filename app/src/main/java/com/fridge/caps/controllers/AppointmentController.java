@@ -296,6 +296,10 @@ public class AppointmentController {
                                               String period, String appointmentType,
                                               String studentId, String studentName, String notes,
                                               AppointmentCallback callback) {
+        if (DateUtils.isSlotStartInPast(date, startTime)) {
+            callback.onFailure("This time has already passed. Please choose a later slot.");
+            return;
+        }
         String docId = slotDocumentId(counselorId, date, startTime);
         DocumentReference ref = db.collection(TIMESLOTS).document(docId);
         db.runTransaction(transaction -> {

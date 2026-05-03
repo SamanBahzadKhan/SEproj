@@ -8,6 +8,7 @@ package com.fridge.caps.views.activities;
  */
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -31,6 +32,7 @@ import com.fridge.caps.network.MeetRequest;
 import com.fridge.caps.network.MeetResponse;
 import com.fridge.caps.network.SupabaseMeetClient;
 import com.fridge.caps.utils.DateUtils;
+import com.fridge.caps.utils.GreetingUtils;
 import com.fridge.caps.utils.MeetLinkTimeHelper;
 import com.fridge.caps.views.BottomNavUi;
 import com.fridge.caps.views.adapters.AppointmentAdapter;
@@ -79,7 +81,7 @@ public class CounselorDashboardActivity extends AppCompatActivity {
             R.id.cell_a4, R.id.cell_a5, R.id.cell_a6
     };
 
-    private TextView     tvWelcome, tvTodayCount, tvWeekCount, tvPending;
+    private TextView     tvGreeting, tvWelcome, tvTodayCount, tvWeekCount, tvPending;
     private RecyclerView rvAppointments, rvPending;
     private ProgressBar  progressBar;
     private TextView     tvEmpty;
@@ -115,7 +117,9 @@ public class CounselorDashboardActivity extends AppCompatActivity {
         counselorUid = FirebaseAuth.getInstance().getCurrentUser() != null
                 ? FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
 
+        tvGreeting      = findViewById(R.id.tvGreeting);
         tvWelcome       = findViewById(R.id.tvWelcome);
+        applyGreetingLine();
         tvTodayCount    = findViewById(R.id.tvTodayCount);
         tvWeekCount     = findViewById(R.id.tvWeekCount);
         tvPending       = findViewById(R.id.tvPending);
@@ -311,20 +315,32 @@ public class CounselorDashboardActivity extends AppCompatActivity {
                             lines.add(s.getStartTime() != null ? s.getStartTime() : "?");
                         }
                     }
+                    String dayLabel = weekDates[col];
+                    try {
+                        Date d = new SimpleDateFormat(DateUtils.STORAGE_DATE, Locale.US)
+                                .parse(weekDates[col]);
+                        if (d != null) {
+                            dayLabel = new SimpleDateFormat("EEE, MMM d", Locale.US).format(d);
+                        }
+                    } catch (ParseException ignored) {
+                    }
                     if (lines.isEmpty()) {
                         new AlertDialog.Builder(this)
-                                .setTitle(morning ? "Morning" : "Afternoon")
-                                .setMessage("No bookings yet in this period.")
+                                .setTitle(morning ? "Morning shift" : "Afternoon shift")
+                                .setMessage("You are not booked for this period on " + dayLabel + ".")
                                 .setPositiveButton("OK", null)
                                 .show();
                     } else {
                         new AlertDialog.Builder(this)
-                                .setTitle("Booked times")
-                                .setItems(lines.toArray(new String[0]), null)
+                                .setTitle("Booked for this shift")
+                                .setMessage("You have booking(s) during this period:\n\n• "
+                                        + TextUtils.join("\n• ", lines))
                                 .setPositiveButton("OK", null)
                                 .show();
                     }
-                });
+                })
+                .addOnFailureListener(e -> Toast.makeText(this,
+                        "Could not check bookings.", Toast.LENGTH_SHORT).show());
     }
 
     private void attachTimeslotsListener() {
@@ -488,6 +504,7 @@ public class CounselorDashboardActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        applyGreetingLine();
 
         BottomNavUi.applyCounselorNav(this, selectedCounselorNavId);
 
@@ -512,6 +529,12 @@ public class CounselorDashboardActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> Log.e("CounselorDashboard",
                         "Session check failed: " + (e.getMessage() != null ? e.getMessage() : "")));
+    }
+
+    private void applyGreetingLine() {
+        if (tvGreeting != null) {
+            tvGreeting.setText(GreetingUtils.greetingLineComma());
+        }
     }
 
     @Override

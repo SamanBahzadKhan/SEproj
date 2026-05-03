@@ -39,4 +39,21 @@ public class DateUtilsTest {
         assertEquals(14, dates.size());
         assertEquals(DateUtils.getTodayString(), dates.get(0));
     }
+
+    @Test
+    public void isSlotStartInPast_trueForOldDate() {
+        assertTrue(DateUtils.isSlotStartInPast("2000-01-01", "11:30 PM"));
+    }
+
+    @Test
+    public void isSlotStartInPast_falseForFarFutureDate() {
+        assertFalse(DateUtils.isSlotStartInPast("2099-12-31", "8:00 AM"));
+    }
+
+    @Test
+    public void isSlotStartInPast_falseForNullInputs() {
+        assertFalse(DateUtils.isSlotStartInPast(null, "10:00 AM"));
+        assertFalse(DateUtils.isSlotStartInPast("2026-01-01", null));
+        assertFalse(DateUtils.isSlotStartInPast("", "10:00 AM"));
+    }
 }

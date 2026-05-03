@@ -381,7 +381,8 @@ public class BookAppointmentActivity extends AppCompatActivity {
         for (String time : slots) {
             boolean coachTaken = coachBooked.contains(time);
             boolean studentTaken = studentBusy.contains(time);
-            boolean unavailable = coachTaken || studentTaken;
+            boolean pastSlot = DateUtils.isSlotStartInPast(selectedDate, time);
+            boolean unavailable = coachTaken || studentTaken || pastSlot;
 
             LinearLayout cell = new LinearLayout(this);
             cell.setOrientation(LinearLayout.VERTICAL);

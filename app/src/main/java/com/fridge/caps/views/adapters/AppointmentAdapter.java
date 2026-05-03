@@ -145,14 +145,16 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             case MODE_STUDENT_UPCOMING: {
                 int navy = ContextCompat.getColor(h.itemView.getContext(), R.color.caps_brut_navy);
                 int blueGray = ContextCompat.getColor(h.itemView.getContext(), R.color.caps_brut_blue_gray);
-                String counselorName = a.getCounselorName() != null ? a.getCounselorName() : "Counsellor";
-                if (!counselorName.toLowerCase(Locale.US).startsWith("dr.")) {
-                    counselorName = "Dr. " + counselorName;
-                }
-                h.tvPrimaryName.setText(counselorName);
+                boolean missingCounsellor = isMissingCounsellorName(a.getCounselorName());
+                h.tvPrimaryName.setText(displayCounsellorName(a.getCounselorName()));
                 h.tvPrimaryName.setTextColor(navy);
                 h.tvSecondaryLine.setVisibility(View.VISIBLE);
-                h.tvSecondaryLine.setText(formatUpcomingDateLine(a));
+                if (missingCounsellor) {
+                    h.tvSecondaryLine.setText(h.itemView.getContext()
+                            .getString(R.string.appointment_deleted_counsellor_subtitle));
+                } else {
+                    h.tvSecondaryLine.setText(formatUpcomingDateLine(a));
+                }
                 h.tvSecondaryLine.setTextColor(blueGray);
                 h.tvStatusChip.setVisibility(View.VISIBLE);
                 if (st == AppointmentStatus.PENDING) {
@@ -223,8 +225,16 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             }
 
             case MODE_STUDENT_PAST:
-                h.tvPrimaryName.setText(a.getCounselorName() != null ? a.getCounselorName() : "Counsellor");
-                h.tvSecondaryLine.setVisibility(View.GONE);
+                boolean missingCounsellor = isMissingCounsellorName(a.getCounselorName());
+                h.tvPrimaryName.setText(displayCounsellorName(a.getCounselorName()));
+                if (missingCounsellor) {
+                    h.tvSecondaryLine.setVisibility(View.VISIBLE);
+                    h.tvSecondaryLine.setText(h.itemView.getContext()
+                            .getString(R.string.appointment_deleted_counsellor_subtitle));
+                    h.tvSecondaryLine.setTextColor(Color.parseColor("#8A8680"));
+                } else {
+                    h.tvSecondaryLine.setVisibility(View.GONE);
+                }
                 h.tvStatusChip.setVisibility(View.VISIBLE);
                 setPastStatusUi(h.tvStatusChip, a);
                 h.rowStudentActions.setVisibility(View.GONE);
@@ -330,6 +340,10 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             if (showOverflow) {
                 h.tvOverflow.setOnClickListener(v -> showOverflowMenu(v, a));
             }
+        }
+
+        if (h.tvSessionNotesHint != null) {
+            h.tvSessionNotesHint.setVisibility(mode == MODE_STUDENT_PAST ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -480,6 +494,21 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         return day + (time.isEmpty() ? "" : " · " + time);
     }
 
+    private static boolean isMissingCounsellorName(@Nullable String rawName) {
+        return rawName == null || rawName.trim().isEmpty();
+    }
+
+    private static String displayCounsellorName(@Nullable String rawName) {
+        if (isMissingCounsellorName(rawName)) {
+            return "Dr. X";
+        }
+        String name = rawName.trim();
+        if (!name.toLowerCase(Locale.US).startsWith("dr.")) {
+            name = "Dr. " + name;
+        }
+        return name;
+    }
+
     @Override
     public int getItemCount() {
         return items.size();
@@ -497,6 +526,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         @Nullable final TextView tvMeetLinkPending;
         @Nullable final View frameJoinMeet;
         @Nullable final View btnJoinMeet;
+        @Nullable final TextView tvSessionNotesHint;
 
         VH(@NonNull View itemView) {
             super(itemView);
@@ -521,6 +551,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             tvMeetLinkPending = itemView.findViewById(R.id.tvMeetLinkPending);
             frameJoinMeet = itemView.findViewById(R.id.frameJoinMeet);
             btnJoinMeet = itemView.findViewById(R.id.btnJoinMeet);
+            tvSessionNotesHint = itemView.findViewById(R.id.tvSessionNotesHint);
         }
     }
 }

@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">CAPs</string>
     <string name="cd_back">Back</string>
+    <string name="counselor_availability_hint">Green cells show shifts you plan to clock in for. Tap a green cell to see whether you have a booking in that period.</string>
+    <string name="student_past_card_session_notes_hint">Click to view session notes</string>
+    <string name="appointment_deleted_counsellor_subtitle">This counsellor has left CAPs</string>
+    <string name="help_support_message">Please reach out to our services and for further guidance on emails and services displayed at our website https://caps.lums.edu.pk/ or for emergencies, please reach out to CAPS Emergency Number: +92 307 0247704</string>
     <string name="cd_edit_journal">Edit journal entry</string>
     <string name="cd_remove_attachment">Remove file</string>
     <string name="session_notes_not_submitted">Counsellor hasnt submitted any notes.</string>

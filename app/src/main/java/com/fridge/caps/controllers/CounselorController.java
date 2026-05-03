@@ -8,6 +8,7 @@ package com.fridge.caps.controllers;
  */
 import com.fridge.caps.models.Counselor;
 import com.fridge.caps.models.TimeSlot;
+import com.fridge.caps.utils.DateUtils;
 import android.util.Log;
 
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -149,6 +150,10 @@ public class CounselorController {
                     for (QueryDocumentSnapshot doc : querySnapshot) {
                         TimeSlot slot = TimeSlot.fromSnapshot(doc);
                         if (!slot.isBooked()) {
+                            String st = slot.getStartTime();
+                            if (DateUtils.isSlotStartInPast(dateYmd, st)) {
+                                continue;
+                            }
                             slots.add(slot);
                         }
                     }

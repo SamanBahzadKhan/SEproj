@@ -20,8 +20,8 @@
             android:background="@drawable/bg_offset_circle_40_bell_admin"
             android:contentDescription="@string/cd_back"
             android:padding="10dp"
-            android:src="@android:drawable/ic_media_previous"
-            android:tint="@color/caps_palette_white" />
+            android:src="@drawable/ic_arrow_back_black"
+            android:tint="@color/caps_palette_neutral_dark" />
 
         <TextView
             android:layout_width="0dp"

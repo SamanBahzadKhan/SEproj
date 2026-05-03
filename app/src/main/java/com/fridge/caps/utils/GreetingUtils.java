@@ -22,6 +22,11 @@ public final class GreetingUtils {
         return "Good evening";
     }
 
+    /** First line for dashboards, e.g. "Good afternoon," */
+    public static String greetingLineComma() {
+        return timeOfDayGreeting(Calendar.getInstance(Locale.getDefault())) + ",";
+    }
+
     public static String greetingWithName(String displayName) {
         String g = timeOfDayGreeting(Calendar.getInstance(Locale.getDefault()));
         String n = displayName != null ? displayName.trim() : "";

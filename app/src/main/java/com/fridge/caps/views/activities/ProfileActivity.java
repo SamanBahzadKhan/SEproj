@@ -99,7 +99,7 @@ public class ProfileActivity extends AppCompatActivity {
                 .show());
         findViewById(R.id.rowHelp).setOnClickListener(v -> new AlertDialog.Builder(this)
                 .setTitle("Help & Support")
-                .setMessage("For assistance, contact: caps-support@lums.edu.pk\n\nVersion 1.0.0")
+                .setMessage(getString(R.string.help_support_message))
                 .setPositiveButton("OK", null)
                 .show());
     }

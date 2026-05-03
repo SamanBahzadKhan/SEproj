@@ -233,5 +233,16 @@
                 android:src="@drawable/ic_close_white_24"
                 android:tint="@color/caps_palette_neutral_dark" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvSessionNotesHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif"
+            android:text="@string/student_past_card_session_notes_hint"
+            android:textColor="@color/caps_palette_blue"
+            android:textSize="11sp"
+            android:visibility="gone" />
     </LinearLayout>
 </FrameLayout>

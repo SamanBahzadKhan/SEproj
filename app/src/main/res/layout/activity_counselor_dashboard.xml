@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/caps_palette_bg">
+    android:background="@color/caps_dashboard_bg">
 
     <LinearLayout
         android:id="@+id/topBar"
@@ -92,12 +92,13 @@
             android:paddingBottom="16dp">
 
             <TextView
+                android:id="@+id/tvGreeting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:paddingHorizontal="16dp"
                 android:fontFamily="sans-serif"
-                android:text="Good Morning,"
+                android:text="Good morning,"
                 android:textColor="@color/caps_palette_grey_warm"
                 android:textSize="14sp" />
 
@@ -379,6 +380,17 @@
                     </TableLayout>
                 </HorizontalScrollView>
             </FrameLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="2dp"
+                android:text="@string/counselor_availability_hint"
+                android:textColor="@color/caps_palette_grey_warm"
+                android:textSize="12sp" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
@@ -386,7 +398,7 @@
         android:id="@+id/bottomNavCounselor"
         android:layout_width="match_parent"
         android:layout_height="82dp"
-        android:background="@color/caps_palette_bg"
+        android:background="@color/caps_dashboard_bg"
         android:gravity="center"
         android:orientation="horizontal"
         android:paddingTop="4dp"

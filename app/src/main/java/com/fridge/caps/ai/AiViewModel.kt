@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.fridge.caps.R
+import java.util.Locale
 
 class AiViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -46,6 +48,15 @@ class AiViewModel(application: Application) : AndroidViewModel(application) {
         current.add(ChatMessage.LoadingMessage)
         _messages.value = current
         _showSuggestedPrompts.value = false
+
+        val localHelpReply = helpReplyIfRequested(q)
+        if (localHelpReply != null) {
+            val updated = _messages.value?.toMutableList() ?: mutableListOf<ChatMessage>()
+            updated.removeAll { it is ChatMessage.LoadingMessage }
+            updated.add(ChatMessage.AssistantMessage(text = localHelpReply))
+            _messages.value = updated
+            return
+        }
 
         try {
             Log.d("AI_DEBUG", "ViewModel: repository.getRecommendation callback for \"$q\"")
@@ -98,5 +109,18 @@ class AiViewModel(application: Application) : AndroidViewModel(application) {
             )
             _messages.value = updated
         }
+    }
+
+    private fun helpReplyIfRequested(query: String): String? {
+        val q = query.lowercase(Locale.US)
+        val asksForSupport = q.contains("help") ||
+            q.contains("support") ||
+            q.contains("emergency") ||
+            q.contains("contact") ||
+            q.contains("website")
+        if (!asksForSupport) {
+            return null
+        }
+        return getApplication<Application>().getString(R.string.help_support_message)
     }
 }

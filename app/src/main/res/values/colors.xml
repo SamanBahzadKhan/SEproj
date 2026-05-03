@@ -14,6 +14,7 @@
 
     <!-- Project palette -->
     <color name="caps_palette_bg">#E8E9EB</color>
+    <color name="caps_dashboard_bg">#EFEBE8</color>
     <color name="caps_palette_green_soft">#8FA68A</color>
     <color name="caps_palette_white">#FFFFFF</color>
     <color name="caps_palette_grey_warm">#8A8680</color>
